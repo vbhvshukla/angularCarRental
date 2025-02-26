@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carental! At Your Service</title>
+    <base href="/">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="app/assets/style/index.style.css">
+    <link rel="stylesheet" href="app/views/home/home.style.css">
+    <link rel="stylesheet" href="app/components/navbar/navbar.style.css">
+    <link rel="stylesheet" href="app/views/auth/login/login.style.css">
+    <link rel="stylesheet" href="node_modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="app/views/bid/bid.style.css">
+    <link rel="stylesheet" href="app/components/carDetails/carDetails.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/userDashboard.style.css">
+    <link rel="stylesheet" href="app/components/userSidebar/usersidebar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/bids/allbids.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/messages/messages.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/messages/message/message.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/admin/admin.style.css">
+    
+    <!-- Core Angular and Dependencies  -->
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="node_modules/toastr/build/toastr.min.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!-- Main Application Module  -->
+    <script src="app.js"></script>
+
+    <!-- Factories  -->
+    <script src="app/factories/schemaValidator.factory.js"></script>
+    <script src="app/factories/idGenerator.factory.js"></script>
+    <script src="app/factories/toast.factory.js"></script>
+
+    <!-- Services  -->
+    <script src="app/services/db.service.js"></script>
+    <script src="app/services/cars.service.js"></script>
+    <script src="app/services/category.service.js"></script>
+    <script src="app/services/city.service.js"></script>
+    <script src="app/services/seed.service.js"></script>
+    <script src="app/services/auth.service.js"></script>
+    <script src="app/services/errorService.service.js"></script>
+    <script src="app/services/bid.service.js"></script>
+    <script src="app/services/chat.service.js"></script>
+    <script src="app/services/user.service.js"></script>
+    <script src="app/services/booking.service.js"></script>
+
+    <!-- Directives  -->
+    <script src="app/directives/rating.directive.js"></script>
+    <script src="app/directives/compareTo.directive.js"></script>
+    <script src="app/directives/bidDateValidation.directive.js"></script>
+    <script src="app/directives/fileInput.directive.js"></script>
+
+    <!-- Controllers  -->
+    <script src="app/components/navbar/navbar.controller.js"></script>
+    <script src="app/views/home/home.controller.js"></script>
+    <script src="app/views/auth/login/login.controller.js"></script>
+    <script src="app/views/auth/register/register.controller.js"></script>
+    <script src="app/views/bid/bid.controller.js"></script>
+    <script src="app/views/dashboard/user/bookings/bookings.controller.js"></script>
+    <script src="app/views/dashboard/user/userDashboard.controller.js"></script>
+    <script src="app/views/dashboard/user/profile/profile.controller.js"></script>
+    <script src="app/views/dashboard/user/bids/allbids.controller.js"></script>
+    <script src="app/views/dashboard/user/messages/messages.controller.js"></script>
+    <script src="app/views/dashboard/user/messages/message/message.controller.js"></script>
+    <script src="app/views/dashboard/admin/admin.controllers.js"></script>
+
+    <script src="app/components/bid/bid.component.js"></script>
+    <script src="app/components/chat/chat.component.js"></script>
+    <script src="app/components/priceModal/priceModal.component.js"></script>
+    <script src="app/components/carDetails/carDetails.component.js"></script>
+    <script src="app/components/carCard/carCard.component.js"></script>
+    <script src="app/components/userSidebar/usersidebar.component.js"></script>
+
+    <!-- Configuration -->
+    <script src="app/config/routes.config.js"></script>
+
+    <!-- Filters -->
+    <script src="app/filters/car.filters.js"></script>
+    <script src="app/filters/price.filters.js"></script>
+
+</head>
+
+<body ng-app="mainApp">
+    <div ng-include="'app/components/navbar/navbar.view.html'" ng-controller="NavbarController as vm"></div>
+    <div ui-view></div>
+    <div class="footer-container">
+        <div class="footer">
+            &copy; 2025 Car Rental. All rights reserved.
+        </div>
+    </div>
+</body>
+
+</html>

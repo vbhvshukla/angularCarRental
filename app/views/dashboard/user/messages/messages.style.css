@@ -1,0 +1,99 @@
+.content {
+    flex: 0 0 75%;
+    max-width: 73%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.message-list {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    min-height: 300px;
+}
+
+/* Update the message list items */
+.message-list > div {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.message-list > div:hover {
+    background: #e3f2fd;
+}
+
+.message-list > div:last-child {
+    border-bottom: none;
+}
+
+/* Add specific styling for the profile images */
+.message-list > div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.message-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.message-item:hover {
+    background: #e3f2fd;
+}
+
+.message-item:last-child {
+    border-bottom: none;
+}
+
+.message-item img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.message-content {
+    flex-grow: 1;
+}
+
+.message-content .name {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.message-content .last-message {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.message-content .timestamp {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.no-messages {
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+    padding: 30px 0;
+}

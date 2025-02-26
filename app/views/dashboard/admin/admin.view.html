@@ -1,0 +1,119 @@
+<div class="main" ng-controller="AdminController as vm">
+    <div class="section">
+        <h2>Users</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th ng-click="vm.sortBy('role')">Role</th>
+                    <th ng-click="vm.sortBy('rating')">Rating</th>
+                    <th ng-click="vm.sortBy('ratingCount')">Rating Count</th>
+                    <th ng-click="vm.sortBy('isApproved')">Approved</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in vm.users | orderBy:vm.sortField:vm.reverseSort">
+                    <td>{{user.username}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.role}}</td>
+                    <td>{{user.rating}}</td>
+                    <td>{{user.ratingCount}}</td>
+                    <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
+                    <td>
+                        <button ng-click="vm.showUserApprovalModal(user)">Manage</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div total-items="vm.totalUsers" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></div>
+    </div>
+
+    <div class="section">
+        <h2>Cars</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Car Name</th>
+                    <th ng-click="vm.sortBy('categoryName')">Category</th>
+                    <th>Owner</th>
+                    <th>City</th>
+                    <th ng-click="vm.sortBy('basePrice')">Base Price</th>
+                    <th ng-click="vm.sortBy('rating')">Rating</th>
+                    <th ng-click="vm.sortBy('ratingCount')">Rating Count</th>
+                    <th ng-click="vm.sortBy('availability')">Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="car in vm.cars | orderBy:vm.sortField:vm.reverseSort">
+                    <td>{{car.name}}</td>
+                    <td>{{car.categoryName}}</td>
+                    <td>{{car.owner}}</td>
+                    <td>{{car.city}}</td>
+                    <td>{{car.basePrice | currency}}</td>
+                    <td>{{car.rating}}</td>
+                    <td>{{car.ratingCount}}</td>
+                    <td>{{car.availability ? 'Yes' : 'No'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div uib-pagination total-items="vm.totalCars" ng-model="vm.currentCarPage" ng-change="vm.carPageChanged()"></div>
+    </div>
+
+    <div class="section">
+        <h2>Categories</h2>
+        <button class="button" ng-click="vm.showAddCategoryModal()">Add Category</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="category in vm.categories">
+                    <td>{{category.name}}</td>
+                    <td>
+                        <button ng-click="vm.deleteCategory(category)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" ng-show="vm.showUserModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>User Approval</h2>
+            <button type="button" class="close" ng-click="vm.closeUserModal()">&times;</button>
+        </div>
+        <div class="modal-body" ng-if="vm.selectedUser">
+            <div class="user-details">
+                <p>Username: {{vm.selectedUser.username}}</p>
+                <p>Email: {{vm.selectedUser.email}}</p>
+            </div>
+            <div class="approval-buttons">
+                <button ng-click="vm.approveUser()">Approve</button>
+                <button ng-click="vm.rejectUser()">Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" ng-show="vm.showCategoryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Category</h2>
+            <button type="button" class="close" ng-click="vm.closeCategoryModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form ng-submit="vm.addCategory()">
+                <label for="category-name">Category Name</label>
+                <input type="text" id="category-name" ng-model="vm.newCategory.name" required>
+                <button type="submit" class="button">Add Category</button>
+            </form>
+        </div>
+    </div>
+</div>

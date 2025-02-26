@@ -1,0 +1,46 @@
+<div class="modal-overlay" ng-click="$ctrl.close()">
+    <div class="modal-content" ng-click="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Price Information</h2>
+            <button class="close-btn" ng-click="$ctrl.close()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Local Rental Section -->
+            <div class="price-section" ng-if="$ctrl.car.isAvailableForLocal">
+                <h3>Local Rental Rates</h3>
+                <div class="price-details">
+                    <p>Base Rate: <strong>{{$ctrl.formatPrice($ctrl.car.rentalOptions.local.pricePerHour)}}/hour</strong></p>
+                    <p>Maximum Distance: {{$ctrl.car.rentalOptions.local.maxKmPerHour}} km/hour</p>
+                    <p>Extra Hour Rate: {{$ctrl.formatPrice($ctrl.car.rentalOptions.local.extraHourRate)}}/hour</p>
+                    <p>Extra KM Rate: {{$ctrl.formatPrice($ctrl.car.rentalOptions.local.extraKmRate)}}/km</p>
+                </div>
+            </div>
+
+            <!-- Outstation Rental Section -->
+            <div class="price-section" ng-if="$ctrl.car.isAvailableForOutstation">
+                <h3>Outstation Rental Rates</h3>
+                <div class="price-details">
+                    <p>Base Rate: <strong>{{$ctrl.formatPrice($ctrl.car.rentalOptions.outstation.pricePerDay)}}/day</strong></p>
+                    <p>Per KM Charge: {{$ctrl.formatPrice($ctrl.car.rentalOptions.outstation.pricePerKm)}}/km</p>
+                    <p>Minimum KM Chargeable: {{$ctrl.car.rentalOptions.outstation.minimumKmChargeable}} km</p>
+                    <p>Maximum Distance: {{$ctrl.car.rentalOptions.outstation.maxKmLimitPerDay}} km/day</p>
+                    <p>Extra Day Rate: {{$ctrl.formatPrice($ctrl.car.rentalOptions.outstation.extraDayRate)}}/day</p>
+                    <p>Extra Hourly Rate: {{$ctrl.formatPrice($ctrl.car.rentalOptions.outstation.extraHourlyRate)}}/hour</p>
+                    <p>Extra KM Rate: {{$ctrl.formatPrice($ctrl.car.rentalOptions.outstation.extraKmRate)}}/km</p>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="info-section">
+                <h3>Additional Information</h3>
+                <ul>
+                    <li>Fuel charges are included in the base rate</li>
+                    <li>Toll and parking charges are extra</li>
+                    <li>Driver allowance is included for outstation trips</li>
+                    <li>Extra hours/km charges will be calculated at the end of the trip</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

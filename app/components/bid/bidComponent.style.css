@@ -1,0 +1,86 @@
+/* Bid Page Layout */
+.bid-page {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+  
+  .bid-page .car-section {
+    margin-bottom: 20px;
+  }
+  
+  .bid-page .bid-chat-container {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 20px;
+  }
+  
+  /* Loading Spinner */
+  .loading-spinner {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .bid-page .bid-chat-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .bid-form {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rental-type-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .rental-type-buttons button {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .rental-type-buttons button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .rental-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .rental-form label {
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .rental-form input {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+  }
+  
+  .bid-amount {
+    margin-top: 20px;
+  }
+  
+  .bid-limits {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }

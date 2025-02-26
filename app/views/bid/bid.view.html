@@ -1,0 +1,31 @@
+<div class="bid-page">
+    <div class="main" ng-controller="BiddingController as vm">
+        <div ng-if="vm.loading" class="loading-spinner">
+            Loading...
+        </div>
+        
+        <div ng-if="!vm.loading">
+            <div class="car-section">
+                <car-details car="vm.car"></car-details>
+            </div>
+
+            <div class="bid-chat-container">
+                <div class="bid-section">
+                    <bid-form 
+                        car-id="vm.car.carId" 
+                        car="vm.car"
+                        on-bid-submit="vm.handleBidSubmit(bid)">
+                    </bid-form>
+                </div>
+
+                <div class="chat-section" ng-if="vm.chatId">
+                    <chat-box 
+                        chat-id="vm.chatId" 
+                        from-user="vm.currentUser" 
+                        to-user="vm.car.owner">
+                    </chat-box>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="car-details">
+    <div class="car-header">
+        <h2>{{$ctrl.car.carName}}</h2>
+        <span class="category-badge">{{$ctrl.car.category.categoryName}}</span>
+    </div>
+
+    <div class="car-images">
+        <button class="nav-btn prev" ng-click="$ctrl.prevImage()" ng-show="$ctrl.car.images.length > 1">
+            <i class="fa fa-chevron-left"></i>
+        </button>
+        
+        <img ng-src="{{$ctrl.car.images[$ctrl.currentImageIndex]}}" 
+             alt="{{$ctrl.car.carName}}"
+             class="main-image">
+        
+        <button class="nav-btn next" ng-click="$ctrl.nextImage()" ng-show="$ctrl.car.images.length > 1">
+            <i class="fa fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="car-info">
+        <div class="info-row">
+            <div class="info-item">
+                <label>Type:</label>
+                <span>{{$ctrl.car.carType}}</span>
+            </div>
+            <div class="info-item">
+                <label>City:</label>
+                <span>{{$ctrl.car.city}}</span>
+            </div>
+        </div>
+
+        <div class="description">
+            <h3>Description</h3>
+            <p>{{$ctrl.car.description}}</p>
+        </div>
+
+        <div class="owner-info">
+            <h3>Owner Details</h3>
+            <p>{{$ctrl.car.owner.username}}</p>
+            <div class="rating" ng-if="$ctrl.car.owner.avgRating">
+                <span class="stars">★★★★★</span>
+                <span class="rating-value">{{$ctrl.car.owner.avgRating | number:1}}</span>
+                <span class="rating-count">({{$ctrl.car.owner.ratingCount}} ratings)</span>
+            </div>
+        </div>
+
+        <div class="availability">
+            <div class="availability-item" ng-if="$ctrl.car.isAvailableForLocal">
+                <i class="fa fa-check"></i> Available for Local Rentals
+            </div>
+            <div class="availability-item" ng-if="$ctrl.car.isAvailableForOutstation">
+                <i class="fa fa-check"></i> Available for Outstation Rentals
+            </div>
+        </div>
+    </div>
+</div>

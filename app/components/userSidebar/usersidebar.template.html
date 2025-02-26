@@ -1,0 +1,12 @@
+<div class="sidebar">
+    <h3>User Dashboard</h3>
+    <ul>
+        <li ng-repeat="item in $ctrl.menuItems">
+            <a ui-sref="{{item.state}}" 
+               ng-class="{'active': $ctrl.isActive(item.state)}">
+                <span class="icon">{{item.icon}}</span>
+                <span>{{item.label}}</span>
+            </a>
+        </li>
+    </ul>
+</div>

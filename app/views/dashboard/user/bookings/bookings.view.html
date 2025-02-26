@@ -1,0 +1,62 @@
+<div class="content" ng-init="vm.init()">
+    <div ng-if="errorMessage" class="alert alert-danger">
+        {{errorMessage}}
+    </div>
+    <div ng-if="isLoading" class="loading">
+        Loading bookings...
+    </div>
+    
+    <table id="booking-table">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Car Name</th>
+                <th>Owner Name</th>
+                <th>Bid Amount</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Created At</th>
+                <th>Total Fare</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="booking in vm.bookings">
+                <td>{{booking.bookingId}}</td>
+                <td>{{booking.bid.car.carName}}</td>
+                <td>{{booking.bid.car.owner.username}}</td>
+                <td>{{booking.bid.bidAmount | currency}}</td>
+                <td>{{booking.fromTimestamp | date}}</td>
+                <td>{{booking.toTimestamp | date}}</td>
+                <td>{{booking.createdAt | date:'medium'}}</td>
+                <td>{{booking.totalFare | currency}}</td>
+                <td>{{booking.status}}</td>
+                <td>
+                    <button ng-if="booking.status !== 'cancelled'" 
+                            ng-click="vm.cancelBooking(booking.bookingId)" 
+                            class="action-btn">Cancel</button>
+                    <button ng-click="vm.rateBooking(booking)" 
+                            class="action-btn">Rate</button>
+                </td>
+            </tr>
+            <!-- Add no bookings message -->
+            <tr ng-if="bookings.length === 0">
+                <td colspan="10" class="text-center">No bookings found</td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="pagination-controls"></div>
+    <!-- <div id="rating-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Rate Your Car</h2>
+            <p id="modal-car-name"></p>
+            <label for="user-rating">Your Rating (0-5):</label>
+            <input type="number" id="user-rating" min="0" max="5" step="0.5" required>
+            <span id="rating-error" class="error-message hidden">Please enter a valid rating (0-5).</span>
+            <button id="submit-rating">Submit</button>
+            <button id="close-modal">Close</button>
+        </div>
+    </div> -->
+</div>

@@ -1,0 +1,85 @@
+<div class="wrap" ng-controller="HomeController as vm" ng-init="vm.init()">
+    <div class="main">
+        <div class="sidebar">
+            <h3>Search for Cars</h3>
+            <form>
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" 
+                           ng-model="vm.filters.location"
+                           placeholder="Enter city or area"
+                           list="city-list">
+                    <datalist id="city-list">
+                        <option ng-repeat="city in vm.cities" value="{{city}}">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="car-category">Car Category:</label>
+                    <select id="car-category" ng-model="vm.filters.carCategory">
+                        <option value="">All Category</option>
+                        <option ng-repeat="category in vm.categories" 
+                                value="{{category.categoryId}}">
+                            {{category.categoryName}}
+                        </option>
+                    </select>
+                </div>
+                <h3>Filter by</h3>
+                <div class="form-group">
+                    <label for="price-range">Price Range: {{vm.filters.priceRange}}</label>
+                    <div>
+                        <input type="range" id="price-range" 
+                               ng-model="vm.filters.priceRange"
+                               min="0" max="500" step="50"
+                               ng-model-options="{ debounce: 300 }"
+                               ng-change="vm.updatePriceRangeValue(vm.filters.priceRange)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="car-type">Car Type:</label>
+                    <select id="car-type" ng-model="vm.filters.carType">
+                        <option value="">Select Type</option>
+                        <option value="automatic">Automatic</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="availability">Availability:</label>
+                    <select id="availability" ng-model="vm.filters.availability">
+                        <option value="">Select Availability</option>
+                        <option value="local">Local</option>
+                        <option value="outstation">Outstation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="features">Features:</label>
+                    <input type="text" id="features" 
+                           ng-model="vm.filters.features"
+                           placeholder="e.g., AC, Bluetooth"
+                           list="features-list">
+                    <datalist id="features-list">
+                        <option ng-repeat="feature in vm.features" value="{{feature}}">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="rating">Minimum Rating:</label>
+                    <select id="rating" ng-model="vm.filters.rating">
+                        <option value="">Select Rating</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                    </select>
+                </div>
+                <button type="submit" ng-click="vm.applyFilters()">Filter</button>
+            </form>
+        </div>
+
+        <div class="content">
+            <div class="cars-container">
+                <car-card ng-repeat="car in vm.cars" car="car" on-book="vm.goToBooking(car.carId)">
+                </car-card>
+            </div>
+        </div>
+    </div>
+</div>

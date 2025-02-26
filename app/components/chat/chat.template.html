@@ -1,0 +1,46 @@
+<div class="chatbox">
+    <h3>Chat with {{$ctrl.toUser.username}}</h3>
+    <div class="chat-messages">
+        <div ng-repeat="message in $ctrl.messages"
+             ng-class="{'sent': $ctrl.isOwnMessage(message), 
+                       'received': !$ctrl.isOwnMessage(message)}"
+             class="message">
+            <p>{{message.message}}</p>
+            <small>{{message.createdAt | date:'short'}}</small>
+            <div ng-if="message.hasAttachment" class="attachment">
+                <img ng-if="message.attachment" 
+                     ng-src="{{message.attachment}}" 
+                     alt="Attachment"
+                     ng-click="$ctrl.viewAttachment(message.attachment)">
+                <span ng-if="!message.attachment">Uploading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" 
+               ng-model="$ctrl.newMessage" 
+               placeholder="Type a message"
+               ng-keypress="$event.keyCode === 13 && $ctrl.sendMessage()">
+
+        <label for="chatFileInput" class="chat-file-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16 9V7a4 4 0 0 0-8 0v10a2 2 0 0 0 4 0V7a1 1 0 1 1 2 0v10a4 4 0 1 1-8 0V7a6 6 0 1 1 12 0v2h-2z"/>
+            </svg>
+        </label>
+
+        <input type="file" 
+               id="chatFileInput" 
+               class="chat-file-input"
+               accept="image/*,video/*,application/pdf"
+               onchange="angular.element(this).scope().$ctrl.handleFileSelect(this)">
+
+        <button ng-click="$ctrl.sendMessage()" 
+                ng-disabled="!$ctrl.newMessage && !$ctrl.selectedFile"
+                class="send-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+            </svg>
+        </button>
+    </div>
+</div>

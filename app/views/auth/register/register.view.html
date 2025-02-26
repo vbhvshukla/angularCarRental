@@ -1,0 +1,79 @@
+<div class="auth-container" ng-controller="RegisterController as vm">
+    <div class="auth-box">
+        <h2>Create an Account</h2>
+        <p class="subtext">Sign up to start renting or listing cars.</p>
+
+        <form name="registerForm" ng-submit="vm.register()" novalidate>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" ng-model="vm.userData.username" ng-minlength="4"
+                    ng-maxlength="8" ng-pattern="/^\S+$/" required>
+                <p class="error-message" ng-show="registerForm.username.$dirty && registerForm.username.$invalid">
+                    <span ng-show="registerForm.username.$error.required">Username is required.</span>
+                    <span ng-show="registerForm.username.$error.minlength">Username must be at least 4
+                        characters.</span>
+                    <span ng-show="registerForm.username.$error.maxlength">Username cannot exceed 8 characters.</span>
+                    <span ng-show="registerForm.username.$error.pattern">Username cannot contain spaces.</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" ng-model="vm.userData.password" ng-minlength="8"
+                    ng-pattern="/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/" required>
+                <p class="error-message" ng-show="registerForm.password.$dirty && registerForm.password.$invalid">
+                    <span ng-show="registerForm.password.$error.required">Password is required.</span>
+                    <span ng-show="registerForm.password.$error.minlength">Password must be at least 8
+                        characters.</span>
+                    <span ng-show="registerForm.password.$error.pattern">Password must contain uppercase, lowercase, and
+                        numbers.</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword"
+                    ng-model="vm.userData.confirmPassword" compare-to="vm.userData.password" required>
+                <p class="error-message"
+                    ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid">
+                    <span ng-show="registerForm.confirmPassword.$error.required">Please confirm your password.</span>
+                    <span ng-show="registerForm.confirmPassword.$error.compareTo">Passwords do not match.</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" ng-model="vm.userData.email" required>
+                <p class="error-message" ng-show="registerForm.email.$dirty && registerForm.email.$invalid">
+                    <span ng-show="registerForm.email.$error.required">Email is required.</span>
+                    <span ng-show="registerForm.email.$error.email">Please enter a valid email address.</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Register as:</label>
+                <select id="role" name="role" ng-model="vm.userData.role" required>
+                    <option value="customer">Customer</option>
+                    <option value="owner">Owner</option>
+                </select>
+            </div>
+
+            <div class="form-group" ng-show="vm.userData.role === 'owner'">
+                <label for="verificationFile">Upload Verification Document:</label>
+                <input type="file" id="verificationFile" name="verificationFile"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    onchange="angular.element(this).scope().vm.handleFileSelect(this)" required>
+                <p class="file-info">Please upload a valid identity document (PDF, DOC, DOCX, JPG or PNG, max 5MB).</p>
+                <p class="error-message" ng-show="vm.userData.role === 'owner' && !vm.verificationFile">
+                    Verification document is required for owner registration.
+                </p>
+            </div>
+
+            <button type="submit" ng-disabled="registerForm.$invalid">Register</button>
+
+            <p class="error-message" ng-show="vm.errorMessage">{{vm.errorMessage}}</p>
+
+            <p class="switch-page">Already have an account? <a ui-sref="login">Login here</a></p>
+        </form>
+    </div>
+</div>

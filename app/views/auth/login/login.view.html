@@ -1,0 +1,34 @@
+<div class="auth-container" ng-controller="LoginController as vm">
+    <div class="auth-box">
+        <h2>Welcome Back!</h2>
+        <p class="subtext">Login to continue renting cars.</p>
+
+        <form name="loginForm" ng-submit="vm.login()" novalidate>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input id="email" type="email" name="email" ng-model="vm.credentials.email"
+                    placeholder="Enter your email" required>
+                <p class="error-message" ng-show="loginForm.email.$dirty && loginForm.email.$invalid">
+                    <span ng-show="loginForm.email.$error.required">Email is required.</span>
+                    <span ng-show="loginForm.email.$error.email">Please enter a valid email.</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input id="password" type="password" name="password" ng-model="vm.credentials.password" ng-minlength="6"
+                    placeholder="Enter your password" required>
+                <p class="error-message" ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                    <span ng-show="loginForm.password.$error.required">Password is required.</span>
+                    <span ng-show="loginForm.password.$error.minlength">Password must be at least 6 characters.</span>
+                </p>
+            </div>
+
+            <button type="submit" ng-disabled="loginForm.$invalid">Login</button>
+
+            <p class="error-message" ng-show="vm.errorMessage">{{vm.errorMessage}}</p>
+
+            <p class="switch-page">Not registered? <a ui-sref="register">Sign up here</a></p>
+        </form>
+    </div>
+</div>

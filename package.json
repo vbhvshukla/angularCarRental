@@ -1,0 +1,20 @@
+{
+  "name": "car-rental",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc -c jsdoc.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@uirouter/angularjs": "^1.0.30",
+    "angular": "^1.8.3",
+    "angular-animate": "^1.8.3",
+    "angular-cookies": "^1.8.3",
+    "jquery": "^3.7.1",
+    "toastr": "^2.1.4"
+  }
+}

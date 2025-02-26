@@ -1,0 +1,119 @@
+.car-section {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 20px;
+}
+.car-details {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.car-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.category-badge {
+  background: #e9ecef;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.car-images {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.main-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.nav-btn.prev {
+  left: 10px;
+}
+.nav-btn.next {
+  right: 10px;
+}
+
+.car-info {
+  padding: 20px 0;
+}
+
+.info-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  flex: 1;
+}
+
+.info-item label {
+  color: #6c757d;
+  margin-right: 8px;
+}
+
+.description {
+  margin-bottom: 24px;
+}
+
+.owner-info {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.rating {
+  white-space: nowrap;
+  margin-top: 8px;
+}
+
+.stars {
+  color: #ffd700;
+  letter-spacing: 2px;
+}
+
+.rating-value {
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+.rating-count {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.availability {
+  display: flex;
+  gap: 16px;
+}
+
+.availability-item {
+  color: #198754;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
