@@ -3,8 +3,8 @@ mainApp.component('bidForm', {
     controller: ['$scope', 'bidService', 'errorService', 'authService',
         function ($scope, bidService, errorService, authService) {
             let $ctrl = this;
+
             $ctrl.$onInit = function () {
-                
                 if (!$ctrl.carId || !$ctrl.car) {
                     errorService.handleError('Car data is required', 'BidForm :: Initialization');
                     return;
@@ -27,19 +27,14 @@ mainApp.component('bidForm', {
                         $ctrl.currentUser = user;
                     })
                     .catch(error => errorService.handleError(error, 'BidForm :: User Fetch Failed'));
-
-                $scope.$watch('$ctrl.car', function (newVal) {
-                    if (!newVal) {
-                        errorService.handleError('Car data is required', 'BidForm :: Initialization');
-                    }
-                });
             };
 
-            $scope.dateWatcher = $scope.$watchGroup(['$ctrl.bid.startDate', '$ctrl.bid.endDate'], function () {
+            // Instead of $watch, use ng-change in the template
+            $ctrl.onDateChange = function() {
                 if ($ctrl.bid.startDate && $ctrl.bid.endDate) {
                     $ctrl.calculateEstimate();
                 }
-            });
+            };
 
             $ctrl.setRentalType = function (type) {
                 if (type === 'local' && !$ctrl.car.isAvailableForLocal) {
@@ -146,22 +141,7 @@ mainApp.component('bidForm', {
             };
         }
     ],
-    /*However, scope isolation only goes so far, because AngularJS uses two-way binding. 
-    So if you pass an object to a component like this - bindings: {item: '='}, and modify
-    one of its properties, the change will be reflected in the parent component. 
-    For components however, only the component that owns the data should modify it, 
-    to make it easy to reason about what data is changed, and when. For that reason, 
-    components should follow a few simple conventions:
-    Inputs should be using < and @ bindings. The < symbol denotes one-way bindings which 
-    are available since 1.5. The difference to = is that the bound properties in the component 
-    scope are not watched, which means if you assign a new value to the property in the component
-    scope, it will not update the parent scope. Note however, that both parent and component scope 
-    reference the same object, so if you are changing object properties or array elements in the 
-    component, the parent will still reflect that change. The general rule should therefore be to 
-    never change an object or array property in the component scope. @ bindings can be used when 
-    the input is a string, especially when the value of the binding doesn't change. */
-    
-     bindings: {
+    bindings: {
         carId: '<',
         car: '<',
         onBidSubmit: '&'

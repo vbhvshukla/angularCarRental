@@ -10,18 +10,18 @@
     <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
         <div ng-show="$ctrl.rentalType === 'local'" class="rental-form">
             <label>Start Date & Time</label>
-            <input type="datetime-local" ng-model="$ctrl.bid.startDate" required>
+            <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" required>
 
             <label>End Date & Time</label>
-            <input type="datetime-local" ng-model="$ctrl.bid.endDate" required>
+            <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" required>
         </div>
 
         <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form">
             <label>Start Date</label>
-            <input type="date" ng-model="$ctrl.bid.startDate" required>
+            <input type="date" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" required>
 
             <label>End Date</label>
-            <input type="date" ng-model="$ctrl.bid.endDate" required>
+            <input type="date" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" required>
         </div>
 
         <price-info base-price="$ctrl.basePrice" total-price="$ctrl.totalPrice" show-breakup="$ctrl.showPriceBreakup">

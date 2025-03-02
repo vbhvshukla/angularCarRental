@@ -297,3 +297,50 @@ button[type="submit"]:hover {
     width: 100%;
   }
 }
+
+.loading-more {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-more .spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.load-more-container {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+.load-more-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.load-more-btn:hover {
+    background-color: #2980b9;
+}
+
+.load-more-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}

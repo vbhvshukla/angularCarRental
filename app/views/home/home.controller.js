@@ -2,9 +2,19 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
     function ($q, $state, carService, categoryService, cityService, $filter) {
         var vm = this;
 
-        //Holds all fetched cars
         vm.originalCars = [];
-        //Holds all filters
+        vm.cars = [];
+        vm.categories = [];
+        vm.cities = [];
+        vm.features = [];
+
+        vm.pagination = {
+            currentPage: 1,
+            itemsPerPage: 6,
+            totalItems: 0,
+            loading: false
+        };
+
         vm.filters = {
             location: '',
             carCategory: '',
@@ -14,17 +24,9 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             features: '',
             rating: ''
         };
-        //Holds all filtered cars
-        vm.cars = [];
-        //Holds all the categories
-        vm.categories = [];
-        //Holds all the cities
-        vm.cities = [];
-        //Holds all the features
-        vm.features = [];
 
-        //Initialization function (Gets All Cities,Available Cars & Categories and Assign it to "vm")
         vm.init = function () {
+            vm.loading = true;
             async.parallel([
                 function (callback) {
                     cityService.getAllCities().then(cities => {
@@ -34,8 +36,11 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
                     });
                 },
                 function (callback) {
-                    carService.getAvailableCars().then(cars => {
-                        callback(null, cars);
+                    carService.getAvailableCarsWithPagination(
+                        vm.pagination.currentPage,
+                        vm.pagination.itemsPerPage
+                    ).then(result => {
+                        callback(null, result);
                     }).catch(error => {
                         callback(error);
                     });
@@ -52,18 +57,40 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
                     console.log("Home Controller :: Init Error :: ", error);
                 } else {
                     vm.cities = results[0];
-                    vm.cars = results[1];
+                    vm.cars = results[1].cars;
+                    vm.pagination.totalItems = results[1].total;
                     vm.categories = results[2];
                 }
+                vm.loading = false;
             });
-        }
+        };
 
-        //Function to update selected value of the price slider.
+        vm.loadMoreCars = function() {
+            if (vm.pagination.loading || vm.cars.length >= vm.pagination.totalItems) {
+                return;
+            }
+            
+            vm.pagination.loading = true;
+            vm.pagination.currentPage++;
+            
+            carService.getAvailableCarsWithPagination(
+                vm.pagination.currentPage,
+                vm.pagination.itemsPerPage,
+                vm.filters  
+            ).then(result => {
+                vm.cars = vm.cars.concat(result.cars);
+                vm.pagination.totalItems = result.total;
+            }).catch(error => {
+                console.error('Error loading more cars:', error);
+            }).finally(() => {
+                vm.pagination.loading = false;
+            });
+        };
+
         vm.updatePriceRangeValue = function (value) {
             vm.filters.priceRange = value;
         };
 
-        //Function to redirect to the booking's page along with the carId as params.
         vm.goToBooking = function (carId) {
             if (!carId) {
                 errorService.handleError('Car Not Available', 'HomeController :: Navigation');
@@ -73,11 +100,23 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             $state.go('bid', { carId: carId });
         };
 
-        //Function to apply filters.
         vm.applyFilters = function () {
-            if (vm.originalCars.length) {
-                vm.cars = $filter('carFilter')(vm.originalCars, vm.filters);
-            }
+            vm.pagination.currentPage = 1;
+            vm.pagination.loading = true;
+            
+            carService.getAvailableCarsWithPagination(
+                vm.pagination.currentPage,
+                vm.pagination.itemsPerPage,
+                vm.filters 
+            ).then(result => {
+                vm.cars = result.cars;
+                vm.pagination.totalItems = result.total;
+            }).catch(error => {
+                console.error('Error applying filters:', error);
+            }).finally(() => {
+                vm.pagination.loading = false;
+            });
         };
 
-    }]);
+    }
+]);

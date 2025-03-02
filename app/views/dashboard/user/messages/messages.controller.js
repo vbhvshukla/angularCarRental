@@ -32,7 +32,9 @@ mainApp.controller('UserMessagesController', ['$state', 'authService', 'chatServ
                     vm.messages = result.conversations;
                 }
                 vm.loading = false;
+
             })
+
         }
 
         //Function to redirect to the particular

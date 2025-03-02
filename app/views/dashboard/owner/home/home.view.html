@@ -1,11 +1,13 @@
 <div class="content" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm">
     <div class="container">
+        <!-- Pending Bids Section -->
         <h2>Pending Bids</h2>
-        <select id="rental-type-sort-pending">
+        <select ng-model="vm.filters.pendingType" ng-change="vm.applyFilters()">
             <option value="all">All</option>
             <option value="local">Local</option>
             <option value="outstation">Outstation</option>
         </select>
+        
         <table id="pending-bids-table">
             <thead>
                 <tr>
@@ -20,23 +22,33 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="bid in vm.pendingBids">
+                <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredPendingBids, vm.pagination.pendingBids)">
                 </tr>
             </tbody>
         </table>
-        <div class="pagination" id="pending-pagination">
-            <button id="prev-pending">Previous</button>
-            <span id="pending-page-info"></span>
-            <button id="next-pending">Next</button>
+        
+        <!-- Pending Bids Pagination -->
+        <div class="pagination" ng-if="vm.shouldShowPagination('pendingBids')">
+            <button ng-click="vm.previousPage('pendingBids')" 
+                    ng-disabled="vm.pagination.pendingBids.currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{vm.pagination.pendingBids.currentPage}} of {{vm.getTotalPages('pendingBids')}}</span>
+            <button ng-click="vm.nextPage('pendingBids')"
+                    ng-disabled="vm.pagination.pendingBids.currentPage >= vm.getTotalPages('pendingBids')}">
+                Next
+            </button>
         </div>
         <p id="no-pending-bids" class="hidden">No pending bids.</p>
 
+        <!-- Active Bookings Section -->
         <h2>Active Bookings</h2>
-        <select id="rental-type-sort-bookings">
+        <select ng-model="vm.filters.bookingType" ng-change="vm.applyFilters()">
             <option value="all">All</option>
             <option value="local">Local</option>
             <option value="outstation">Outstation</option>
         </select>
+
         <table id="bookings-table">
             <thead>
                 <tr>
@@ -52,8 +64,7 @@
                 </tr>
             </thead>
             <tbody>
-                
-                <tr ng-repeat="booking in vm.bookings">
+                <tr ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings)">
                     <td>{{booking.bid.car.carName}}</td>
                     <td>{{booking.bid.bidAmount}}</td>
                     <td>{{vm.getTotalAmount(booking)}}</td>
@@ -68,20 +79,30 @@
                 </tr>
             </tbody>
         </table>
-        <div class="pagination" id="bookings-pagination">
-            <button id="prev-bookings">Previous</button>
-            <span id="bookings-page-info"></span>
-            <button id="next-bookings">Next</button>
+
+        <!-- Bookings Pagination -->
+        <div class="pagination" ng-if="vm.shouldShowPagination('bookings')">
+            <button ng-click="vm.previousPage('bookings')" 
+                    ng-disabled="vm.pagination.bookings.currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{vm.pagination.bookings.currentPage}} of {{vm.getTotalPages('bookings')}}</span>
+            <button ng-click="vm.nextPage('bookings')"
+                    ng-disabled="vm.pagination.bookings.currentPage >= vm.getTotalPages('bookings')}">
+                Next
+            </button>
         </div>
         <p id="no-bookings" class="hidden">No active bookings.</p>
 
+        <!-- All Bids Section -->
         <h2>All Bids</h2>
-        <select id="status-sort">
+        <select ng-model="vm.filters.bidStatus" ng-change="vm.applyFilters()">
             <option value="all">All</option>
             <option value="pending">Pending</option>
             <option value="accepted">Accepted</option>
             <option value="rejected">Rejected</option>
         </select>
+
         <table id="all-bids-table">
             <thead>
                 <tr>
@@ -96,7 +117,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="bid in vm.allBids">
+                <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids)">
                     <td>{{bid.car.carName}}</td>
                     <td>{{bid.bidAmount | currency}}</td>
                     <td>{{bid.user.username}}</td>
@@ -107,10 +128,18 @@
                 </tr>
             </tbody>
         </table>
-        <div class="pagination" id="all-bids-pagination">
-            <button id="prev-all-bids">Previous</button>
-            <span id="all-bids-page-info"></span>
-            <button id="next-all-bids">Next</button>
+
+        <!-- All Bids Pagination -->
+        <div class="pagination" ng-if="vm.shouldShowPagination('allBids')">
+            <button ng-click="vm.previousPage('allBids')" 
+                    ng-disabled="vm.pagination.allBids.currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{vm.pagination.allBids.currentPage}} of {{vm.getTotalPages('allBids')}}</span>
+            <button ng-click="vm.nextPage('allBids')"
+                    ng-disabled="vm.pagination.allBids.currentPage >= vm.getTotalPages('allBids')}">
+                Next
+            </button>
         </div>
         <p id="no-all-bids" class="hidden">No bids found.</p>
 

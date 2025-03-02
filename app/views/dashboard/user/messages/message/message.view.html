@@ -30,12 +30,9 @@
         <input type="text" ng-model="vm.newMessage" placeholder="Type a message"
             ng-keypress="$event.keyCode === 13 && vm.sendMessage()">
 
-        <label for="chat-file-input" class="chat-file-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                    d="M16 9V7a4 4 0 0 0-8 0v10a2 2 0 0 0 4 0V7a1 1 0 1 1 2 0v10a4 4 0 0 1-8 0V7a6 6 0 1 1 12 0v2h-2z" />
-            </svg>
-        </label>
+            <label for="chat-file-input" class="chat-file-label">
+                📎
+            </label>
         <input type="file" id="chat-file-input" ng-model="vm.fileInput" ng-value="vm.fileInput" class="chat-file-input" accept="image/*,video/*,application/pdf"
             onchange="angular.element(this).scope().handleFileSelect(this.files)">
 

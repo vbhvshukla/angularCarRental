@@ -85,6 +85,17 @@
                 on-button-click="vm.goToBooking(car.carId)"
                 show-button="true">
                 </car-card>
+
+                <div class="loading-more" ng-if="vm.pagination.loading">
+                    <div class="spinner"></div>
+                </div>
+
+                <div class="load-more-container" ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems">
+                    <button class="load-more-btn" ng-click="vm.loadMoreCars()">
+                        Load More
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>

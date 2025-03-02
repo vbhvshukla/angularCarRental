@@ -1,13 +1,13 @@
-<div class="content">
+<div class="content" ng-controller="UserMessagesController" ng-init="vm.init()">
     <h2>All Conversations</h2>
-    <div id="message-list" class="message-list" ng-controller="UserMessagesController">
-        <p class="no-messages" ng-if="!messages.length">Loading conversations...</p>
-        <div ng-repeat="message in messages" ng-click="goToMessagePage(message.chatId)">
-            <img ng-src="{{message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="Profile">
+    <div id="message-list" class="message-list" >
+        <p class="no-messages" ng-if="!vm.messages.length">Loading conversations...</p>
+        <div ng-repeat="message in vm.messages" ng-click="vm.goToMessagePage(message.chatId)">
+            <img ng-src="{{vm.message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="Profile">
             <div class="message-content">
-                <div class="name">{{message.otherParticipant.username}}</div>
+                <div class="name">{{message.owner.username}}</div>
                 <div class="last-message">{{message.lastMessage}}</div>
-                <div class="timestamp">{{message.timestamp}}</div>
+                <div class="timestamp">{{message.lastTimestamp}}</div>
             </div>
         </div>
     </div>

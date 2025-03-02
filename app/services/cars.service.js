@@ -202,4 +202,65 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
                 });
             });
     };
+
+    this.getAvailableCarsWithPagination = function (page = 1, itemsPerPage = 6, filters = {}) {
+        const today = new Date();
+        const skip = (page - 1) * itemsPerPage;
+        
+        return $q.all([
+            dbService.getAllItems('carAvailibility'),
+            dbService.getAllItems('cars')
+        ]).then(function ([carAvailability, allCars]) {
+            const filteredCars = allCars.filter(car => {
+                const carAvailabilityEntries = carAvailability.filter(entry =>
+                    entry.carId === car.carId
+                );
+                const isBooked = carAvailabilityEntries.some(entry => {
+                    const fromDate = new Date(entry.fromTimestamp);
+                    const toDate = new Date(entry.toTimestamp);
+                    return today >= fromDate && today <= toDate;
+                });
+                if (isBooked || car.isDeleted) return false;
+                const locationMatch = !filters.location ||
+                    filters.location.toLowerCase().split(' ')
+                        .some(word => car.city?.toLowerCase().includes(word));
+
+                const categoryMatch = !filters.carCategory ||
+                    car.category.categoryId === filters.carCategory;
+
+                const priceMatch = !filters.priceRange ||
+                    car.rentalOptions.local.pricePerHour <= filters.priceRange ||
+                    car.rentalOptions.outstation.pricePerDay <= filters.priceRange;
+
+                const carTypeMatch = !filters.carType ||
+                    car.carType?.toLowerCase() === filters.carType.toLowerCase();
+
+                const availabilityMatch = !filters.availability ||
+                    (filters.availability === "local" && car.isAvailableForLocal) ||
+                    (filters.availability === "outstation" && car.isAvailableForOutstation);
+
+                const featuresMatch = !filters.features?.length ||
+                    filters.features.every(f =>
+                        car.featured?.map(ft => ft.toLowerCase()).includes(f.toLowerCase())
+                    );
+
+                const ratingMatch = !filters.rating || car.avgRating >= parseFloat(filters.rating);
+
+                return locationMatch &&
+                    categoryMatch &&
+                    priceMatch &&
+                    carTypeMatch &&
+                    availabilityMatch &&
+                    featuresMatch &&
+                    ratingMatch;
+            });
+            const paginatedCars = filteredCars.slice(skip, skip + itemsPerPage);
+
+            return {
+                cars: paginatedCars,
+                total: filteredCars.length,
+                currentPage: page
+            };
+        });
+    };
 }]);

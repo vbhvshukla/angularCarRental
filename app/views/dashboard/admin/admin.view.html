@@ -100,8 +100,16 @@
                     <p><img ng-src={{vm.selectedUser.verificationFile}}></img></p>
                 </div>
                 <div class="approval-buttons">
-                    <button ng-click="vm.approveUser()">Approve</button>
-                    <button ng-click="vm.rejectUser()">Reject</button>
+                    <button ng-click="vm.approveUser()" 
+                            ng-disabled="vm.selectedUser.isApproved"
+                            class="approve-btn"
+                            title="{{vm.selectedUser.isApproved ? 'User already approved' : 'Approve user'}}">
+                        {{vm.selectedUser.isApproved ? 'Approved' : 'Approve'}}
+                    </button>
+                    <button ng-click="vm.rejectUser()" 
+                            class="reject-btn">
+                        Reject
+                    </button>
                 </div>
             </div>
         </div>
