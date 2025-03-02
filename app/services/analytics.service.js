@@ -26,6 +26,137 @@ mainApp.service('analyticsService', [
             });
         };
 
+        this.getAdminAnalytics = function(days = 30) {
+            return $q.all([
+                dbService.getAllItemsByTimeRange('bookings', 'fromTimestamp', days),
+                dbService.getAllItemsByTimeRange('bids', 'fromTimestamp', days),
+                dbService.getAllItems('cars'),
+                dbService.getAllItems('users')
+            ]).then(([bookings, bids, cars, users]) => {
+                return {
+                    cards: getCardData(bookings, bids, cars, users),
+                    charts: {
+                        totalRevenuePerCategory: getTotalRevenuePerCategory(bookings),
+                        totalRevenuePerCity: getTotalRevenuePerCity(bookings),
+                        averageRevenuePerUser: getAverageRevenuePerUser(bookings),
+                        bookingsOverTime: getBookingsOverTime(bookings),
+                        carsPerCategory: getCarsPerCategory(cars),
+                        highestRatedCarCategoryWise: getHighestRatedCarsByCategory(cars),
+                        bidsPerCategory: getBidsPerCategory(bids),
+                        totalBiddedPricePerCategory: getTotalBiddedPricePerCategory(bids),
+                        carsPerCity: getCarsPerCity(cars),
+                        revenueTrends: getRevenueTrends(bookings)
+                    }
+                };
+            });
+        };
+
+        function getCardData(bookings, bids, cars, users) {
+            const topBidders = getTopBidders(bids);
+            return [
+                { title: 'Total Users', value: users.length },
+                { title: 'Total Bookings', value: bookings.length },
+                { title: 'Total Biddings', value: bids.length },
+                { title: 'Total Cars', value: cars.length },
+                { title: 'Top 3 Bidders', value: topBidders }
+            ];
+        }
+
+        function getTopBidders(bids) {
+            const bidderCounts = {};
+            bids.forEach(bid => {
+                const userId = bid.user.userId;
+                bidderCounts[userId] = (bidderCounts[userId] || 0) + 1;
+            });
+
+            return Object.entries(bidderCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3)
+                .map(([userId, count]) => {
+                    const user = bids.find(b => b.user.userId === userId).user;
+                    return `${user.username} (${count})`;
+                })
+                .join(', ') || 'N/A';
+        }
+
+        function getTotalRevenuePerCategory(bookings) {
+            const revenueByCategory = {};
+            bookings.forEach(booking => {
+                const category = booking.bid.car.category.categoryName;
+                revenueByCategory[category] = (revenueByCategory[category] || 0) + booking.totalFare;
+            });
+
+            return {
+                labels: Object.keys(revenueByCategory),
+                datasets: [{
+                    label: 'Revenue by Category',
+                    data: Object.values(revenueByCategory),
+                    backgroundColor: '#3498db'
+                }]
+            };
+        }
+
+        function getTotalRevenuePerCity(bookings) {
+            const revenueByCity = {};
+            bookings.forEach(booking => {
+                const city = booking.bid.car.city;
+                revenueByCity[city] = (revenueByCity[city] || 0) + booking.totalFare;
+            });
+
+            return {
+                labels: Object.keys(revenueByCity),
+                datasets: [{
+                    label: 'Revenue by City',
+                    data: Object.values(revenueByCity),
+                    backgroundColor: '#2ecc71'
+                }]
+            };
+        }
+
+        function getAverageRevenuePerUser(bookings) {
+            const userRevenue = {};
+            bookings.forEach(booking => {
+                const userId = booking.bid.user.userId;
+                if (!userRevenue[userId]) {
+                    userRevenue[userId] = { total: 0, count: 0 };
+                }
+                userRevenue[userId].total += booking.totalFare;
+                userRevenue[userId].count++;
+            });
+
+            const averages = Object.values(userRevenue).map(({ total, count }) => total / count);
+            const avgRevenue = averages.length ? 
+                averages.reduce((sum, val) => sum + val, 0) / averages.length : 0;
+
+            return {
+                labels: ['Average Revenue per User'],
+                datasets: [{
+                    label: 'Average Revenue',
+                    data: [avgRevenue],
+                    backgroundColor: '#e74c3c'
+                }]
+            };
+        }
+
+        function getBookingsOverTime(bookings) {
+            const bookingsByMonth = {};
+            bookings.forEach(booking => {
+                const month = new Date(booking.createdAt)
+                    .toLocaleString('default', { month: 'short', year: '2-digit' });
+                bookingsByMonth[month] = (bookingsByMonth[month] || 0) + 1;
+            });
+
+            return {
+                labels: Object.keys(bookingsByMonth),
+                datasets: [{
+                    label: 'Bookings',
+                    data: Object.values(bookingsByMonth),
+                    borderColor: '#9b59b6',
+                    fill: false
+                }]
+            };
+        }
+
         function getTotals(bookings, bids, cars) {
             return {
                 totalCars: cars.length,
@@ -347,5 +478,114 @@ mainApp.service('analyticsService', [
             }
         }
 
+       function getCarsPerCategory(cars) {
+            const carsByCategory = {};
+            cars.forEach(car => {
+                const category = car.category.categoryName;
+                carsByCategory[category] = (carsByCategory[category] || 0) + 1;
+            });
+
+            return {
+                labels: Object.keys(carsByCategory),
+                datasets: [{
+                    label: 'Cars by Category',
+                    data: Object.values(carsByCategory),
+                    backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6']
+                }]
+            };
+        }
+
+        function getHighestRatedCarsByCategory(cars) {
+            const categoryBestCars = {};
+            cars.forEach(car => {
+                const category = car.category.categoryName;
+                if (!categoryBestCars[category] || 
+                    categoryBestCars[category].avgRating < car.avgRating) {
+                    categoryBestCars[category] = {
+                        carName: car.carName,
+                        avgRating: car.avgRating
+                    };
+                }
+            });
+
+            return {
+                labels: Object.keys(categoryBestCars),
+                datasets: [{
+                    label: 'Highest Rated Cars',
+                    data: Object.values(categoryBestCars).map(car => car.avgRating),
+                    backgroundColor: '#f1c40f'
+                }]
+            };
+        }
+
+        function getBidsPerCategory(bids) {
+            const bidsByCategory = {};
+            bids.forEach(bid => {
+                const category = bid.car.category.categoryName;
+                bidsByCategory[category] = (bidsByCategory[category] || 0) + 1;
+            });
+
+            return {
+                labels: Object.keys(bidsByCategory),
+                datasets: [{
+                    label: 'Bids per Category',
+                    data: Object.values(bidsByCategory),
+                    backgroundColor: '#e67e22'
+                }]
+            };
+        }
+
+        function getTotalBiddedPricePerCategory(bids) {
+            const bidPriceByCategory = {};
+            bids.forEach(bid => {
+                const category = bid.car.category.categoryName;
+                bidPriceByCategory[category] = (bidPriceByCategory[category] || 0) + bid.bidAmount;
+            });
+
+            return {
+                labels: Object.keys(bidPriceByCategory),
+                datasets: [{
+                    label: 'Total Bid Amount',
+                    data: Object.values(bidPriceByCategory),
+                    backgroundColor: '#16a085'
+                }]
+            };
+        }
+
+        function getCarsPerCity(cars) {
+            const carsByCity = {};
+            cars.forEach(car => {
+                const city = car.city;
+                carsByCity[city] = (carsByCity[city] || 0) + 1;
+            });
+
+            return {
+                labels: Object.keys(carsByCity),
+                datasets: [{
+                    label: 'Cars by City',
+                    data: Object.values(carsByCity),
+                    backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6']
+                }]
+            };
+        }
+
+        function getRevenueTrends(bookings) {
+            const revenueTrends = {};
+            bookings.forEach(booking => {
+                const month = new Date(booking.createdAt)
+                    .toLocaleString('default', { month: 'short', year: '2-digit' });
+                revenueTrends[month] = (revenueTrends[month] || 0) + booking.totalFare;
+            });
+
+            return {
+                labels: Object.keys(revenueTrends),
+                datasets: [{
+                    label: 'Revenue Trend',
+                    data: Object.values(revenueTrends),
+                    borderColor: '#2c3e50',
+                    fill: false
+                }]
+            };
+        }
     }
 ]);

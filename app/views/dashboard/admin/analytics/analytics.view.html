@@ -1,4 +1,4 @@
-<div class="wrap" ng-controller="AnalyticsController as vm" ng-init="vm.loadAnalyticsData()">
+<div class="wrap" ng-controller="AdminAnalyticsController as vm" ng-init="vm.loadAnalyticsData()">
     <div class="main">
         <div class="section">
             <h2>Analytics</h2>
@@ -11,18 +11,69 @@
                     <option value="1095">Last 3 Years</option>
                 </select>
             </div>
-            <br>
+
             <div class="cards-container">
                 <div class="card" ng-repeat="card in vm.cards">
-                    <h3>{{ card.title }}</h3>
-                    <p>{{ card.value }}</p>
+                    <h3>{{card.title}}</h3>
+                    <p>{{card.value}}</p>
                 </div>
             </div>
-            <div class="chart-row" ng-repeat="chart in vm.chartData">
+
+            <div class="charts-grid">
                 <div class="chart-container">
-                    <canvas id="{{ chart.id }}"></canvas>
+                    <h3>Revenue by Category</h3>
+                    <canvas id="totalRevenuePerCategoryChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Revenue by City</h3>
+                    <canvas id="totalRevenuePerCityChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Average Revenue per User</h3>
+                    <canvas id="averageRevenuePerUserChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Bookings Trend</h3>
+                    <canvas id="bookingsOverTimeChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Cars by Category</h3>
+                    <canvas id="carsPerCategoryChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Top Rated Cars by Category</h3>
+                    <canvas id="highestRatedCarCategoryChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Bids by Category</h3>
+                    <canvas id="bidsPerCategoryChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Total Bid Amount by Category</h3>
+                    <canvas id="totalBiddedPricePerCategoryChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Cars by City</h3>
+                    <canvas id="carsPerCityChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Revenue Trends</h3>
+                    <canvas id="revenueTrendsChart"></canvas>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="loading-overlay" ng-if="vm.loading">
+        <div class="spinner"></div>
     </div>
 </div>

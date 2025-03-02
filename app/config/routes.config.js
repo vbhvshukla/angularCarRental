@@ -295,7 +295,7 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
             .state('adminanalytics', {
                 url: '/adminanalytics',
                 templateUrl: 'app/views/dashboard/admin/analytics/analytics.view.html',
-                controller: 'AnalyticsController',
+                controller: 'AdminAnalyticsController',
                 controllerAs: 'vm',
                 resolve: {
                     redirectIfAuthenticated: ['authService', '$state', '$stateParams',
@@ -307,7 +307,7 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                                             JSON.parse($stateParams.params || '{}'));
                                     }
                                     switch (user.role) {
-                                        case 'owner' && user.isApproved: return $state.go('owner.dashboard');
+                                        case 'owner': return $state.go('owner.dashboard');
                                         case 'customer': return $state.go('home');
                                     }
                                 } else {
@@ -432,7 +432,6 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
-            
             .state('ownerdashboard.message', {
                 url: '/message/:chatId',
                 templateUrl: 'app/views/dashboard/owner/allchats/chat/chat.view.html',
