@@ -1,5 +1,5 @@
 mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGenerator', 'schemaValidator', 'errorService',
-    function ($q, $state, $cookies, dbService, idGenerator, schemaValidator, errorService) {
+     function  ($q, $state, $cookies, dbService, idGenerator, schemaValidator, errorService) {
 
         //User Schema defining for validation
         //(Used in addition and updation of user)
@@ -85,8 +85,8 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             const deferred = $q.defer();
             try {
                 $cookies.remove('userId');
-                errorService.logInfo('AuthService :: Authentication', 'User logged out successfully');
                 $state.go('home');
+                errorService.logInfo('AuthService :: Authentication', 'User logged out successfully');
                 deferred.resolve();
             } catch (error) {
                 errorService.handleError('AuthService :: Logout Failed', error);
@@ -130,6 +130,7 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
                 }
                 return $q.resolve();
             };
+            
             handleFileUpload()
                 .then(() => schemaValidator.validate(user, userSchema))
                 .then(() => dbService.getItemByIndex("users", "email", user.email))

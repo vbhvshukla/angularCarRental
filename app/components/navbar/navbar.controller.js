@@ -36,7 +36,7 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
                 .then(function () {
                     vm.isLoggedIn = false;
                     vm.currentUser = null;
-                });
+                }).catch(err => console.error("Navbar Controller :: Couldn't Logout :: ", err))
         };
 
         init();
@@ -44,8 +44,5 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
         $transitions.onSuccess({}, function () {
             init();
         });
-        //set this up later , creating problem
-        // $scope.$on('auth:statusChanged', init);
-
     }
 ]);

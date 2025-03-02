@@ -6,133 +6,168 @@ mainApp.controller('AdminController', [
     'categoryService',
     'errorService',
     function (
+        
         userService,
         authService,
         bookingService,
         carService,
         categoryService,
         errorService,
-        ) {
+    ) {
+
+        //Variable Declarations
         var vm = this;
-        vm.users = [];
-        vm.cars = [];
-        vm.categories = [];
-        vm.currentPage = 1;
-        vm.currentCarPage = 1;
-        vm.sortField = '';
-        vm.reverseSort = false;
+        vm.users = [];                                          //Holds users data
+        vm.cars = [];                                           //Holds cars data
+        vm.categories = [];                                     //Holds category data
+        vm.currentPage = 1;                                     //Current User page
+        vm.currentCarPage = 1;                                  //Current Car Page
+        vm.sortField = '';                                      //Sorting fields
+        vm.reverseSort = false;                                 //Sorting fields
+        vm.showUserModal = false;                               //User Modal Boolean
+        vm.showCategoryModal = false;                           //Category Modal Boolean
+        vm.selectedUser = null;                                 //Holds the selected user's for the modal.
+        vm.newCategory = {};                          //Holds the new category object
 
-        vm.showUserModal = false;
-        vm.showCategoryModal = false;
-        vm.selectedUser = null;
-        vm.newCategory = { name: '' };
 
-        vm.sortBy = sortBy;
-        vm.pageChanged = pageChanged;
-        vm.carPageChanged = carPageChanged;
-        vm.showUserApprovalModal = showUserApprovalModal;
-        vm.showAddCategoryModal = showAddCategoryModal;
-        vm.addCategory = addCategory;
-        vm.deleteCategory = deleteCategory;
-
-        vm.closeUserModal = closeUserModal;
-        vm.closeCategoryModal = closeCategoryModal;
-        vm.approveUser = approveUser;
-        vm.rejectUser = rejectUser;
-
-        activate();
-
-        function activate() {
-            loadUsers();
-            loadCars();
-            loadCategories();
+        //Initialization function (Loads all data)
+        vm.init = function () {
+            vm.loadAllData();
+            console.log(vm.users)
         }
 
-        function sortBy(field) {
-            vm.reverseSort = (vm.sortField === field) ? !vm.reverseSort : false;
-            vm.sortField = field;
-        }
+        vm.loadAllData = function () {
+            async.parallel([
+                function (callback) {
+                    userService.getAllUsers(vm.currentPage)
+                        .then(function (response) {
+                            vm.users = response;
+                            vm.totalUsers = response.length;
+                            callback(null);
+                        }).catch(err => {
+                            errorService.handleError("Admin Controller :: Error Getting All Users :: ", err);
+                            callback(err);
+                        });
+                },
+                function (callback) {
+                    carService.getAllCars(vm.currentCarPage)
+                        .then(function (response) {
+                            vm.cars = response;
+                            vm.totalCars = response.length;
+                            callback(null);
+                        }).catch(err => {
+                            errorService.handleError("Admin Controller :: Error Getting All Cars :: ", err);
+                            callback(err);
+                        });
+                },
+                function (callback) {
+                    categoryService.getAllCategories()
+                        .then(function (response) {
+                            vm.categories = response;
+                            callback(null);
+                        }).catch(err => {
+                            errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err);
+                            callback(err);
+                        });
+                }
+            ], function (err) {
+                if (err) {
+                    console.error("Admin Controller :: Error Fetching Data ", err);
+                } else {
+                    console.log("Admin Controller :: Data fetched successfully!");
+                }
+            });
+        };
 
-        function pageChanged() {
-            loadUsers();
-        }
-
-        function carPageChanged() {
-            loadCars();
-        }
-
-        function loadUsers() {
+        vm.loadUsers = function () {
             userService.getAllUsers(vm.currentPage)
                 .then(function (response) {
                     vm.users = response.data;
                     vm.totalUsers = response.total;
-                });
+                }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
         }
 
-        function loadCars() {
+        vm.loadCars = function () {
             carService.getAllCars(vm.currentCarPage)
                 .then(function (response) {
                     vm.cars = response.data;
                     vm.totalCars = response.total;
-                });
+                }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Cars :: ", err));
         }
 
-        function loadCategories() {
+        vm.loadCategories = function () {
             categoryService.getAllCategories()
                 .then(function (response) {
                     vm.categories = response;
-                });
+                }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err));
         }
 
-        function showUserApprovalModal(user) {
+        vm.sortBy = function (field) {
+            vm.reverseSort = (vm.sortField === field) ? !vm.reverseSort : false;
+            vm.sortField = field;
+        }
+
+        vm.pageChanged = function () {
+            loadUsers();
+        }
+
+        vm.carPageChanged = function () {
+            vm.loadCars();
+        }
+
+        vm.showUserApprovalModal = function (user) {
             vm.selectedUser = user;
             vm.showUserModal = true;
         }
 
-        function closeUserModal() {
+        vm.closeUserModal = function () {
             vm.showUserModal = false;
             vm.selectedUser = null;
+            return false;
         }
 
-        function showAddCategoryModal() {
+        vm.showAddCategoryModal = function () {
             vm.showCategoryModal = true;
+            return true;
         }
 
-        function closeCategoryModal() {
+        vm.closeCategoryModal = function () {
             vm.showCategoryModal = false;
             vm.newCategory = { name: '' };
+            return false;
         }
 
-        function approveUser() {
-            userService.approveUser(vm.selectedUser.id)
+        vm.approveUser = function () {
+            userService.approveUser(vm.selectedUser.userId)
                 .then(function () {
-                    loadUsers();
-                    closeUserModal();
-                });
+                    vm.loadUsers();
+                    vm.closeUserModal();
+                }).catch(err => errorService.handleError("Admin Controller :: Error Approving User :: ", err));
         }
 
-        function rejectUser() {
-            userService.rejectUser(vm.selectedUser.id)
+        vm.rejectUser = function () {
+            userService.rejectUser(vm.selectedUser.userId)
                 .then(function () {
-                    loadUsers();
-                    closeUserModal();
-                });
+                    vm.loadUsers();
+                    vm.closeUserModal();
+                }).catch(err => errorService.handleError("Admin Controller :: Error Rejecting User :: ", err));
         }
 
-        function addCategory() {
-            categoryService.addCategory(vm.newCategory)
+        vm.createCategory = function () {
+            categoryService.createCategory(vm.newCategory)
                 .then(function () {
-                    loadCategories();
-                    closeCategoryModal();
-                });
+                    vm.loadCategories();
+                    vm.closeCategoryModal();
+                }).catch(err => errorService.handleError("Admin Controller :: Error Adding Categories :: ", err));
         }
 
-        function deleteCategory(category) {
+        vm.deleteCategory = function (category) {
+            console.log(category);
             if (confirm('Are you sure you want to delete this category?')) {
-                categoryService.deleteCategory(category.id)
+                categoryService.deleteCategory(category.categoryId)
                     .then(function () {
-                        loadCategories();
-                    });
+                        vm.loadCategories();
+                    }).catch(err => errorService.handleError("Admin Controller :: Error Deleting Categories :: ", err));
             }
         }
 

@@ -1,7 +1,7 @@
 mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'chatService', 'authService', 'carService',
     function ($scope, $q, $stateParams, chatService, authService, carService) {
 
-        //Variable initialization
+        //Variable declaration
         let vm = this;
 
         //Chat ID (Message/Conversation)
@@ -19,19 +19,28 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
 
         //Fetch all the data
         function loadData() {
-            //Return chatService only when the authService gets resolved.
-            authService.getUser()
-                .then(user => {
-                    vm.currentUser = user;
-                    return chatService.getMessages(vm.chatId);
-                })
-                .then(messages => {
-                    vm.messages = messages;
-                    chatService.scrollToBottom();
-                })
-                .catch(error => {
-                    console.error('Error loading data:', error);
-                });
+
+            async.waterfall([
+                function (callback) {
+                    authService.getUser()
+                        .then(user => callback(null, user))
+                        .catch((err) => callback(err));
+                },
+                function (user, callback) {
+                    chatService.getMessages(vm.chatId)
+                        .then(messages => callback(null, { messages, user }))
+                        .catch((err) => callback(err));
+                }
+            ], function (err, results) {
+                if (err) {
+                    console.error('Message Controller :: Error loading data ::', err);
+                }
+                else {
+                    vm.currentUser = results.user;
+                    vm.messages = results.messages;
+                }
+            })
+
         }
 
         //File handler

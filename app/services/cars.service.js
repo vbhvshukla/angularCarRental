@@ -6,7 +6,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
         carName: { type: 'string', required: true, minLength: 2, maxLength: 100 },
         carType: { type: 'string', required: true, minLength: 2, maxLength: 50 },
         city: { type: 'string', required: true, minLength: 2, maxLength: 100 },
-        createdAt: { type: 'string', required: true }, // ISO date string
+        createdAt: { type: 'string', required: true },
         description: { type: 'string', required: false, maxLength: 1000 },
         isAvailableForLocal: { type: 'boolean', required: true, default: false },
         isAvailableForOutstation: { type: 'boolean', required: true, default: false },
@@ -51,22 +51,19 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
             type: 'object',
             required: true,
             validate: function (value, data) {
-                // At least one rental option should be available
                 if (!data.isAvailableForLocal && !data.isAvailableForOutstation) {
                     return ['At least one rental option (local/outstation) must be available'];
                 }
 
-                // Validate local options if local is available
                 if (data.isAvailableForLocal && (!value.local || typeof value.local !== 'object')) {
                     return ['Local rental options are required when isAvailableForLocal is true'];
                 }
 
-                // Validate outstation options if outstation is available
                 if (data.isAvailableForOutstation && (!value.outstation || typeof value.outstation !== 'object')) {
                     return ['Outstation rental options are required when isAvailableForOutstation is true'];
                 }
 
-                return null; // validation passed
+                return null;
             },
             properties: {
                 local: {
@@ -86,7 +83,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
                 },
                 outstation: {
                     type: 'object',
-                    required: false, // Will be validated through parent's validate function
+                    required: false,
                     properties: {
                         pricePerDay: { type: 'number', required: true, min: 0 },
                         pricePerKm: { type: 'number', required: true, min: 0 },
@@ -136,7 +133,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
         return schemaValidator.validate(car, carSchema)
             .then(function (validatedCar) {
                 return dbService.addItem(STORE_NAME, validatedCar);
-            });
+            }).catch(err=>console.log("Car Service :: Failed to Add Car"));
     };
 
     this.updateCar = function (car) {
@@ -159,7 +156,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
 
         return $q.all([
             dbService.getAllItems('carAvailibility'),
-            dbService.getAllItems(STORE_NAME)
+            dbService.getItemsWithPagination(STORE_NAME)
         ]).then(function (responses) {
             const [carAvailability, allCars] = responses;
 

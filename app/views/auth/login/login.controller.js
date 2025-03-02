@@ -3,11 +3,11 @@ mainApp.controller('LoginController', ['$scope', 'authService', '$state', 'error
         var vm = this;
 
         //Variable declarations
-        vm.credentials = {
+        vm.credentials = {          //Holds the user's object of form.
             email: '',
             password: ''
         };
-        vm.errorMessage = '';
+        vm.errorMessage = '';       //Holds the message to be displayed on UI.
 
         //Login and redirection according to the role
         vm.login = function () {

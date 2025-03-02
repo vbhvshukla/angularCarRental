@@ -17,23 +17,28 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authS
         //Load all the bookings
         vm.loadBookings = function () {
             vm.isLoading = true;
-            authService.getUser()
-                .then(function (currentUser) {
-                    if (!currentUser || !currentUser.userId) {
-                        throw new Error('Bookings Controller :: User not authenticated');
-                    }
-                    return bookingService.getUserBookings(currentUser.userId, vm.currentPage, vm.filters);
-                })
-                .then(function (response) {
-                    vm.bookings = response;
-                })
-                .catch(function (error) {
+            //Get the user and fetch all it's bookings from the userId.
+            async.waterfall([
+                function (callback) {
+                    authService.getUser()
+                        .then(user => callback(null, user))
+                        .catch(err => callback(err));
+                },
+                function (user, callback) {
+                    bookingService.getUserBookings(user.userId, vm.currentPage, vm.filters)
+                        .then(bookings => callback(null, { bookings }))
+                        .catch(err => callback(err));
+                }
+            ], function (err, results) {
+                if(err){
                     console.error('Error in loadBookings:', error);
                     vm.errorMessage = 'Bookings Controller :: Failed to load bookings: ' + error.message;
-                    vm.isLoading = false;
-                }).finally(() => {
-                    vm.isLoading = false;
-                })
+                } 
+                else{
+                    vm.bookings = results.bookings;
+                }
+                vm.isLoading = false;
+            })
         };
 
         //Cancel booking function

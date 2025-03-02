@@ -3,6 +3,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
         $urlMatcherFactoryProvider.caseInsensitive(true);
         $urlRouterProvider.otherwise('/');
         $urlRouterProvider.when('/dashboard', '/dashboard/profile');
+        $urlRouterProvider.when('/ownerdashboard', '/ownerdashboard/home');
+
         $stateProvider
             .state('home', {
                 url: '/',
@@ -16,8 +18,11 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                                 if (user && user.role === 'admin') {
                                     return $state.go('admindashboard');
                                 }
-                                if (user && user.role === 'owner') {
-                                    return $state.go('owner.dashboard');
+                                if (user && user.role === 'owner' && user.isApproved===true) {
+                                    return $state.go('ownerdashboard');
+                                }
+                                else{
+                                    return $state.go('home')
                                 }
                             });
                         }
@@ -40,9 +45,10 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                                     }
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
-                                        case 'owner': return $state.go('owner.dashboard');
+                                        case 'owner' && user.isApproved : return $state.go('ownerdashboard');
                                         case 'customer': return $state.go('home');
                                     }
+                                    
                                 }
                                 return true;
                             });
@@ -274,7 +280,6 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                                             JSON.parse($stateParams.params || '{}'));
                                     }
                                     switch (user.role) {
-                                        case 'admin': return $state.go('admindashboard');
                                         case 'owner': return $state.go('owner.dashboard');
                                         case 'customer': return $state.go('home');
                                     }
@@ -285,6 +290,168 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                             });
                         }
                     ]
+                }
+            })
+            .state('adminanalytics', {
+                url: '/adminanalytics',
+                templateUrl: 'app/views/dashboard/admin/analytics/analytics.view.html',
+                controller: 'AnalyticsController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
+                        function (authService, $state, $stateParams) {
+                            return authService.getUser().then(function (user) {
+                                if (user) {
+                                    if ($stateParams.redirect) {
+                                        return $state.go($stateParams.redirect,
+                                            JSON.parse($stateParams.params || '{}'));
+                                    }
+                                    switch (user.role) {
+                                        case 'owner' && user.isApproved: return $state.go('owner.dashboard');
+                                        case 'customer': return $state.go('home');
+                                    }
+                                } else {
+                                    $state.go("home");
+                                }
+                                return true;
+                            });
+                        }
+                    ]
+                }
+            })
+            .state('ownerdashboard', {
+                url: '/ownerdashboard',
+                templateUrl: 'app/views/dashboard/owner/ownerDashboard.view.html',
+                controller: 'OwnerDashboardController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.home', {
+                url: '/home',
+                templateUrl: 'app/views/dashboard/owner/home/home.view.html',
+                controller: 'OwnerHomeDashboardController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.listedcars', {
+                url: '/listedcars',
+                templateUrl: 'app/views/dashboard/owner/listedCars/listedCars.view.html',
+                controller: 'OwnerListedCarsController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.manipulatecars', {
+                url: '/car/:carId',
+                templateUrl: 'app/views/dashboard/owner/manipulatecar/manipulatecar.view.html',
+                controller: 'ManipulateCarController',
+                controllerAs: 'vm',
+                params: {
+                    carId: { value: null }
+                },
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.allmessages', {
+                url: '/allmessages',
+                templateUrl: 'app/views/dashboard/owner/allchats/allChats.view.html',
+                controller: 'OwnerAllChatsController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.message', {
+                url: '/message/:chatId',
+                templateUrl: 'app/views/dashboard/owner/allchats/chat/chat.view.html',
+                controller: 'OwnerChatController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
                 }
             })
     }

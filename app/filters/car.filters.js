@@ -3,36 +3,29 @@ mainApp.filter('carFilter', function () {
         if (!cars || !filters) return cars;
 
         return cars.filter(car => {
-            // Location filter
             const locationMatch = !filters.location ||
                 filters.location.toLowerCase().split(' ')
                     .some(word => car.city?.toLowerCase().includes(word));
 
-            // Category filter
             const categoryMatch = !filters.carCategory ||
                 car.category.categoryName?.toLowerCase() === filters.carCategory.toLowerCase();
 
-            // Price filter
             const priceMatch = !filters.priceRange ||
                 car.rentalOptions.local.pricePerHour <= filters.priceRange ||
                 car.rentalOptions.outstation.pricePerDay <= filters.priceRange;
 
-            // Car type filter
             const carTypeMatch = !filters.carType ||
                 car.carType?.toLowerCase() === filters.carType.toLowerCase();
 
-            // Availability filter
             const availabilityMatch = !filters.availability ||
                 (filters.availability.toLowerCase() === "local" && car.isAvailableForLocal) ||
                 (filters.availability.toLowerCase() === "outstation" && car.isAvailableForOutstation);
 
-            // Features filter
             const featuresMatch = !filters.features?.length ||
                 filters.features.every(f =>
                     car.featured?.map(ft => ft.toLowerCase()).includes(f.toLowerCase())
                 );
 
-            // Rating filter
             const ratingMatch = !filters.rating || car.avgRating >= filters.rating;
 
             return locationMatch &&

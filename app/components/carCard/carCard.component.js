@@ -20,8 +20,10 @@ mainApp.component('carCard', {
             }
         };
 
-        $ctrl.handleBookClick = function() {
-            $ctrl.onBook({ carId: $ctrl.car.carId });
+        $ctrl.handleButtonClick = function() {
+            if ($ctrl.onButtonClick) {
+                $ctrl.onButtonClick({ carId: $ctrl.car.carId });
+            }
         };
 
         $ctrl.getDisplayPrice = function() {
@@ -48,6 +50,10 @@ mainApp.component('carCard', {
     }],
     bindings: {
         car: '<',
-        onBook: '&'
+        onBook: '&',
+        buttonText: '@',          // Custom button text
+        onButtonClick: '&',       // Custom button click handler
+        showButton: '<',          // Optional: control button visibility
+        buttonClass: '@'          // Optional: custom button CSS class
     }
 });

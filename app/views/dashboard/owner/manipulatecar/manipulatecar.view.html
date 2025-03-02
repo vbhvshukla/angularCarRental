@@ -1,0 +1,220 @@
+<div class="car-form-container" ng-controller="ManipulateCarController as vm" ng-init="vm.init()">
+
+    <h2>{{vm.isEditMode ? 'Edit Car' : 'Add New Car'}}</h2>
+
+    <form name="carForm" novalidate ng-submit="vm.submitForm(carForm.$valid)" class="car-form">
+        <section class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-group">
+                <label for="carName">Car Name *</label>
+                <input type="text" id="carName" name="carName" ng-model="vm.car.carName" required ng-minlength="2"
+                    ng-maxlength="500">
+                <div class="error-messages" ng-messages="carForm.carName.$error" 
+                     ng-if="carForm.carName.$touched && carForm.carName.$invalid">
+                    <span ng-message="required">Car name is required</span>
+                    <span ng-message="minlength">Car name must be at least 2 characters</span>
+                    <span ng-message="maxlength">Car name cannot exceed 100 characters</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="carType">Car Type *</label>
+                <select id="carType" name="carType" ng-model="vm.car.carType" required>
+                    <option value="automatic">Automatic</option>
+                    <option value="manual">Manual</option>
+                </select>
+                <div class="error-messages" ng-messages="carForm.carType.$error" 
+                     ng-if="carForm.carType.$touched && carForm.carType.$invalid">
+                    <span ng-message="required">Car type is required</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <input type="text" 
+                       id="category" 
+                       name="category" 
+                       ng-model="vm.car.category.categoryName"
+                       list="categories-list" 
+                       required 
+                       placeholder="Select or type a category">
+                <datalist id="categories-list">
+                    <option ng-repeat="category in vm.categories" 
+                            value="{{category.categoryName}}">
+                    </option>
+                </datalist>
+                <div class="error-messages" 
+                     ng-messages="carForm.category.$error" 
+                     ng-if="carForm.category.$touched && carForm.category.$invalid">
+                    <span ng-message="required">Category is required</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" name="city" ng-model="vm.car.city" list="cities-list" required
+                    placeholder="Select or type a city">
+                <datalist id="cities-list">
+                    <option ng-repeat="city in vm.cities" value="{{city}}">
+                </datalist>
+                <div class="error-messages" ng-messages="carForm.city.$error" 
+                     ng-if="carForm.city.$touched && carForm.city.$invalid">
+                    <span ng-message="required">City is required</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" ng-model="vm.car.description"
+                    ng-maxlength="1000"></textarea>
+                <div class="error-messages" ng-messages="carForm.description.$error" 
+                     ng-if="carForm.description.$touched && carForm.description.$invalid">
+                    <span ng-message="maxlength">Description cannot exceed 1000 characters</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Car Images *</h3>
+            <div class="form-group">
+                <input type="file" accept="image/*" multiple ng-model="vm.newImages"
+                    onchange="angular.element(this).scope().vm.handleImageUpload(this.files)">
+                <div class="image-preview" ng-if="vm.car.images.length">
+                    <div ng-repeat="image in vm.car.images track by $index" class="image-item">
+                        <img ng-src="{{image}}" alt="Car image {{$index + 1}}">
+                        <button type="button" ng-click="vm.removeImage($index)">Remove</button>
+                    </div>
+                </div>
+                <div class="error-message" ng-if="vm.imageError">{{vm.imageError}}</div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Featured Details (Max 3)</h3>
+            <div class="form-group">
+                <label for="featured">Add Feature</label>
+                <div class="feature-input-group">
+                    <input type="text" id="featured" name="featured" ng-model="vm.newFeature"
+                        placeholder="Enter a feature (e.g., 'Air Conditioning')" ng-maxlength="50">
+                    <button type="button" class="add-feature-btn" ng-click="vm.addFeature()"
+                        ng-disabled="!vm.newFeature || vm.car.featured.length >= 3">
+                        Add Feature
+                    </button>
+                </div>
+
+                <div class="feature-tags" ng-if="vm.car.featured.length > 0">
+                    <div class="feature-tag" ng-repeat="feature in vm.car.featured">
+                        {{feature}}
+                        <button type="button" class="remove-feature-btn" ng-click="vm.removeFeature($index)">
+                            ×
+                        </button>
+                    </div>
+                </div>
+
+                <div class="feature-count">
+                    {{vm.car.featured.length}}/3 features added
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Rental Options</h3>
+
+            <div class="rental-option">
+                <label>
+                    <input type="checkbox" ng-model="vm.car.isAvailableForLocal">
+                    Available for Local Rental
+                </label>
+
+                <div ng-if="vm.car.isAvailableForLocal" class="rental-details">
+                    <div class="form-group">
+                        <label>Price per Hour *</label>
+                        <input type="number" name="localPricePerHour" ng-model="vm.car.rentalOptions.local.pricePerHour"
+                            required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max KM per Hour *</label>
+                        <input type="number" name="localMaxKmPerHour" ng-model="vm.car.rentalOptions.local.maxKmPerHour"
+                            required min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra Hour Rate *</label>
+                        <input type="number" name="localExtraHourRate"
+                            ng-model="vm.car.rentalOptions.local.extraHourRate" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra KM Rate *</label>
+                        <input type="number" name="localExtraKmRate" ng-model="vm.car.rentalOptions.local.extraKmRate"
+                            required min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="rental-option">
+                <label>
+                    <input type="checkbox" ng-model="vm.car.isAvailableForOutstation">
+                    Available for Outstation Rental
+                </label>
+
+                <div ng-if="vm.car.isAvailableForOutstation" class="rental-details">
+                    <div class="form-group">
+                        <label>Price per Day *</label>
+                        <input type="number" name="outstationPricePerDay"
+                            ng-model="vm.car.rentalOptions.outstation.pricePerDay" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price per KM *</label>
+                        <input type="number" name="outstationPricePerKm"
+                            ng-model="vm.car.rentalOptions.outstation.pricePerKm" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max KM Limit per Day *</label>
+                        <input type="number" name="outstationMaxKmLimit"
+                            ng-model="vm.car.rentalOptions.outstation.maxKmLimitPerDay" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Minimum KM Chargeable *</label>
+                        <input type="number" name="outstationMinKmCharge"
+                            ng-model="vm.car.rentalOptions.outstation.minimumKmChargeable" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra Day Rate *</label>
+                        <input type="number" name="outstationExtraDayRate"
+                            ng-model="vm.car.rentalOptions.outstation.extraDayRate" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra Hourly Rate *</label>
+                        <input type="number" name="outstationExtraHourlyRate"
+                            ng-model="vm.car.rentalOptions.outstation.extraHourlyRate" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Extra KM Rate *</label>
+                        <input type="number" name="outstationExtraKmRate"
+                            ng-model="vm.car.rentalOptions.outstation.extraKmRate" required min="0">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="submit" ng-disabled="carForm.$invalid || vm.isSubmitting">
+                {{vm.isEditMode ? 'Update Car' : 'Add Car'}}
+            </button>
+            <button type="button" ng-click="vm.cancel()">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div class="loading-overlay" ng-if="vm.loading">
+    <div class="spinner"></div>
+</div>

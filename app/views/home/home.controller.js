@@ -25,13 +25,37 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
 
         //Initialization function (Gets All Cities,Available Cars & Categories and Assign it to "vm")
         vm.init = function () {
-            $q.all([cityService.getAllCities(), carService.getAvailableCars(), categoryService.getAllCategories()]).then((results) => {
-                vm.cities = results[0];
-                vm.cars = results[1];
-                vm.categories = results[2];
-            }).catch((error)=>{
-                console.log("Home Controller :: Init Error :: ",error);
-            })
+            async.parallel([
+                function (callback) {
+                    cityService.getAllCities().then(cities => {
+                        callback(null, cities);
+                    }).catch(error => {
+                        callback(error);
+                    });
+                },
+                function (callback) {
+                    carService.getAvailableCars().then(cars => {
+                        callback(null, cars);
+                    }).catch(error => {
+                        callback(error);
+                    });
+                },
+                function (callback) {
+                    categoryService.getAllCategories().then(categories => {
+                        callback(null, categories);
+                    }).catch(error => {
+                        callback(error);
+                    });
+                }
+            ], function (error, results) {
+                if (error) {
+                    console.log("Home Controller :: Init Error :: ", error);
+                } else {
+                    vm.cities = results[0];
+                    vm.cars = results[1];
+                    vm.categories = results[2];
+                }
+            });
         }
 
         //Function to update selected value of the price slider.

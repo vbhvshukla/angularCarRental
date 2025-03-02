@@ -1,5 +1,5 @@
-mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
-    function ($q, dbService, errorService,$timeout) {
+mainApp.service('chatService', ['$q', 'dbService', 'errorService', '$timeout',
+    function ($q, dbService, errorService, $timeout) {
 
         function generateChatId(userId, ownerId, carId) {
             return `${userId}_${ownerId}_${carId}`;
@@ -12,7 +12,17 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
                         new Date(b.lastTimestamp) - new Date(a.lastTimestamp)
                     );
                 })
-                .catch(error => errorService.handleError(error, 'ChatService :: Conversations Fetch Failed'));
+                .catch(error => errorService.handleError(error, 'ChatService :: User Conversations Fetch Failed'));
+        };
+
+        this.getOwnerConversations = function (ownerId) {
+            return dbService.getAllItemsByIndex('conversations', 'ownerId', ownerId)
+                .then(conversations => {
+                    return conversations.sort((a, b) =>
+                        new Date(b.lastTimestamp) - new Date(a.lastTimestamp)
+                    );
+                })
+                .catch(error => errorService.handleError(error, 'ChatService :: Owner Conversations Fetch Failed'));
         };
 
         this.getMessages = function (chatId) {
@@ -56,6 +66,42 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
             return messagePromise
                 .then(() => this.updateConversation(chatId, message, fromUser, toUser))
                 .catch(error => errorService.handleError(error, 'ChatService :: Message Send Failed'));
+        };
+
+        this.sendOwnerMessage = function (chatId, fromOwner, toUser, message, file) {
+            const messageData = {
+                messageId: Date.now().toString(),
+                chatId: chatId,
+                message: message || '',
+                hasAttachment: !!file,
+                attachment: null,
+                createdAt: new Date().toISOString(),
+                fromUser: {
+                    userId: fromOwner.userId,
+                    username: fromOwner.username,
+                    email: fromOwner.email
+                },
+                toUser: {
+                    userId: toUser.userId,
+                    username: toUser.username,
+                    email: toUser.email
+                }
+            };
+
+            let messagePromise;
+            if (file) {
+                messagePromise = this.uploadFile(file)
+                    .then(fileUrl => {
+                        messageData.attachment = fileUrl;
+                        return dbService.addItem('messages', messageData);
+                    });
+            } else {
+                messagePromise = dbService.addItem('messages', messageData);
+            }
+
+            return messagePromise
+                .then(() => this.updateOwnerConversation(chatId, message, fromOwner, toUser))
+                .catch(error => errorService.handleError(error, 'ChatService :: Owner Message Send Failed'));
         };
 
         this.createChat = function (carId, user, owner) {
@@ -104,6 +150,29 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
                 .catch(error => errorService.handleError(error, 'ChatService :: Conversation Update Failed'));
         };
 
+        this.updateOwnerConversation = function (chatId, message, fromOwner, toUser) {
+            return dbService.getItemByKey('conversations', chatId)
+                .then(conversation => {
+                    if (!conversation) {
+                        return $q.reject('Conversation not found');
+                    }
+                    conversation.lastMessage = message;
+                    conversation.lastTimestamp = new Date().toISOString();
+                    conversation.owner = {
+                        userId: fromOwner.userId,
+                        username: fromOwner.username,
+                        email: fromOwner.email
+                    };
+                    conversation.user = {
+                        userId: toUser.userId,
+                        username: toUser.username,
+                        email: toUser.email
+                    };
+                    return dbService.updateItem('conversations', conversation);
+                })
+                .catch(error => errorService.handleError(error, 'ChatService :: Owner Conversation Update Failed'));
+        };
+
         this.uploadFile = function (file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -112,7 +181,6 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
                 reader.readAsDataURL(file);
             });
         };
-
 
         this.getCarIdFromChatId = function (chatId) {
             const parts = chatId.split('_');
@@ -125,5 +193,19 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService','$timeout',
                 element.scrollTop = element.prop('scrollHeight');
             }, 100);
         }
+
+        this.getChatParticipants = function (chatId) {
+            return dbService.getItemByKey('conversations', chatId)
+                .then(conversation => {
+                    if (!conversation) {
+                        return $q.reject('Conversation not found');
+                    }
+                    return {
+                        owner: conversation.owner,
+                        user: conversation.user
+                    };
+                })
+                .catch(error => errorService.handleError(error, 'ChatService :: Chat Participants Fetch Failed'));
+        };
     }
 ]);

@@ -18,11 +18,19 @@
     <link rel="stylesheet" href="app/components/carDetails/carDetails.style.css">
     <link rel="stylesheet" href="app/views/dashboard/user/userDashboard.style.css">
     <link rel="stylesheet" href="app/components/userSidebar/usersidebar.style.css">
+    <link rel="stylesheet" href="app/components/ownerSidebar/ownersidebar.style.css">
     <link rel="stylesheet" href="app/views/dashboard/user/bids/allbids.style.css">
     <link rel="stylesheet" href="app/views/dashboard/user/messages/messages.style.css">
     <link rel="stylesheet" href="app/views/dashboard/user/messages/message/message.style.css">
     <link rel="stylesheet" href="app/views/dashboard/admin/admin.style.css">
-    
+    <link rel="stylesheet" href="app/views/dashboard/admin/analytics/analytics.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/ownerDashboard.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/home/home.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/listedCars/listedCar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/manipulatecar/manipulatecar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/allChats/allChats.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/allChats/chat/chat.style.css">
+
     <!-- Core Angular and Dependencies  -->
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -31,6 +39,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="node_modules/toastr/build/toastr.min.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.6/async.min.js"
+        integrity="sha512-Ps4UroO9GAII8QTM2IE4KcHjslTEZjoZY6OhztAFKSnnqshNnPR8PQl1usQpGiHQXnyRCwEMZAsVJgGg2z8Kog=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <!-- Main Application Module  -->
     <script src="app.js"></script>
@@ -52,6 +65,7 @@
     <script src="app/services/chat.service.js"></script>
     <script src="app/services/user.service.js"></script>
     <script src="app/services/booking.service.js"></script>
+    <script src="app/services/analytics.service.js"></script>
 
     <!-- Directives  -->
     <script src="app/directives/rating.directive.js"></script>
@@ -72,15 +86,24 @@
     <script src="app/views/dashboard/user/messages/messages.controller.js"></script>
     <script src="app/views/dashboard/user/messages/message/message.controller.js"></script>
     <script src="app/views/dashboard/admin/admin.controllers.js"></script>
-
+    <script src="app/views/dashboard/admin/analytics/analytics.controller.js"></script>
+    <script src="app/views/dashboard/owner/ownerDashboard.controller.js"></script>
+    <script src="app/views/dashboard/owner/home/home.controller.js"></script>
+    <script src="app/views/dashboard/owner/listedCars/listedCars.controller.js"></script>
+    <script src="app/views/dashboard/owner/manipulatecar/manipulatecar.controller.js"></script>
+    <script src="app/views/dashboard/owner/allChats/allChats.controller.js"></script>
+    <script src="app/views/dashboard/owner/allChats/chat/chat.controller.js"></script>
+    
+    <!-- Components -->
     <script src="app/components/bid/bid.component.js"></script>
     <script src="app/components/chat/chat.component.js"></script>
     <script src="app/components/priceModal/priceModal.component.js"></script>
     <script src="app/components/carDetails/carDetails.component.js"></script>
     <script src="app/components/carCard/carCard.component.js"></script>
     <script src="app/components/userSidebar/usersidebar.component.js"></script>
+    <script src="app/components/ownerSidebar/ownersidebar.component.js"></script>
 
-    <!-- Configuration -->
+    <!-- Configurations -->
     <script src="app/config/routes.config.js"></script>
 
     <!-- Filters -->

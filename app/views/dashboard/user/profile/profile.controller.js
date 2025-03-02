@@ -14,7 +14,10 @@ mainApp.controller('UserProfileController', [
         //Profile Initialization function
         vm.init = function () {
             vm.loading = true;
-            authService.getUser().then(user => { vm.user = user }).catch(error => { errorService.handleError('Profile Controller :: Failed to get user :: ', error); }).finally(() => { vm.loading = false; });
+            authService.getUser()
+            .then(user => { vm.user = user })
+            .catch(error => { errorService.handleError('Profile Controller :: Failed to get user :: ', error); })
+            .finally(() => { vm.loading = false; });
         }
 
         //Function to validate old password

@@ -1,0 +1,28 @@
+<div class="wrap" ng-controller="AnalyticsController as vm" ng-init="vm.loadAnalyticsData()">
+    <div class="main">
+        <div class="section">
+            <h2>Analytics</h2>
+            <div class="filter-container">
+                <label for="time-range">Filter by:</label>
+                <select id="time-range" ng-model="vm.selectedTimeRange" ng-change="vm.loadAnalyticsData()">
+                    <option value="7">Last Week</option>
+                    <option value="30" selected>Last Month</option>
+                    <option value="365">Last Year</option>
+                    <option value="1095">Last 3 Years</option>
+                </select>
+            </div>
+            <br>
+            <div class="cards-container">
+                <div class="card" ng-repeat="card in vm.cards">
+                    <h3>{{ card.title }}</h3>
+                    <p>{{ card.value }}</p>
+                </div>
+            </div>
+            <div class="chart-row" ng-repeat="chart in vm.chartData">
+                <div class="chart-container">
+                    <canvas id="{{ chart.id }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

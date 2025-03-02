@@ -1,0 +1,29 @@
+<div class="content" ng-controller="OwnerAllChatsController as vm" ng-init="vm.init()">
+    <h2>All Conversations</h2>
+    <div id="message-list" class="message-list">
+        <div ng-if="vm.loading" class="loading-messages">
+            <div class="spinner"></div>
+        </div>
+        
+        <div ng-if="!vm.loading && !vm.conversations.length" class="no-messages">
+            No conversations yet
+        </div>
+
+        <div ng-repeat="chat in vm.conversations | orderBy:'-lastTimestamp'" 
+             class="message-item" 
+             ng-click="vm.goToChat(chat.chatId)">
+            <img ng-src="{{chat.user.profileImage || '../../../app/assets/images/profile.jpg'}}" 
+                 alt="{{chat.user.username}}'s profile" 
+                 class="profile-image">
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="username">{{chat.user.username}}</span>
+                    <span class="timestamp">{{chat.lastTimestamp | date:'MMM d, y h:mm a'}}</span>
+                </div>
+                <div class="last-message" ng-class="{'no-message': !chat.lastMessage}">
+                    {{chat.lastMessage || 'No messages yet'}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

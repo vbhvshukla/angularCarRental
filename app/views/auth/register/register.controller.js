@@ -3,18 +3,20 @@ mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'er
         let vm = this;
 
         //Variables declaration
-        vm.userData = {
+        
+        vm.userData = {             //Holds the user object
             username: '',
             password: '',
             confirmPassword: '',
             email: '',
             role: 'customer'
         };
-        vm.errorMessage = '';
-        vm.verificationFile = null;
+        vm.errorMessage = '';       //Holds the error message to be displayed on UI.
+        vm.verificationFile = null; //Holds the verification file.
 
         //Register function & Validations
         vm.register = function () {
+
             if (!$scope.registerForm.$valid) {
                 errorService.logWarning('Register Controller :: Please input all fields correctly!');
                 return;
@@ -61,7 +63,7 @@ mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'er
                     fileInput.value = '';
                     return;
                 }
-                //Max file size 5 MB
+                //Limit the size of the file to 5 MB
                 if (file.size > 5 * 1024 * 1024) {
                     vm.errorMessage = 'File size too large. Maximum size is 5MB.';
                     errorService.logError('Register Controller :: File Upload', vm.errorMessage);

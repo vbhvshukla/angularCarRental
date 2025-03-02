@@ -33,7 +33,13 @@
             </span>
             <span class="city">{{$ctrl.car.city}}</span>
         </div>
-        <button class="book-now-btn" ng-click="$ctrl.handleBookClick()">Book Now
+        <button 
+            ng-if="$ctrl.showButton !== false"
+            ng-class="['book-now-btn', $ctrl.buttonClass]" 
+            ng-click="$ctrl.handleButtonClick()">
+            {{$ctrl.buttonText || 'Book Now'}}
+        </button>
+        <!-- <button class="book-now-btn" ng-click="$ctrl.handleBookClick()">Book Now -->
         </button>
     </div>
 </div>

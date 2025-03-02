@@ -1,10 +1,12 @@
 
 mainApp.service('categoryService', function (dbService, schemaValidator,idGenerator) {
     const STORE_NAME = 'categories';
+    
     const categorySchema = {
         categoryId: { type: 'string', required: true, minLength: 2 },
         categoryName: { type: 'string', required: true, minLength: 2, maxLength: 50 },
     };
+
     this.getAllCategories = function () {
         return dbService.getAllItems(STORE_NAME);
     };
@@ -16,6 +18,8 @@ mainApp.service('categoryService', function (dbService, schemaValidator,idGenera
     this.createCategory = function (category) {
         if (!category.categoryId) {
             category.categoryId = idGenerator.generate();
+            // category.categoryName = category.name;
+            console.log(category);
         }
         return schemaValidator.validate(category, categorySchema)
             .then(function (validatedCategory) {
@@ -28,6 +32,7 @@ mainApp.service('categoryService', function (dbService, schemaValidator,idGenera
     };
 
     this.deleteCategory = function (categoryId) {
+        console.log(categoryId);
         return dbService.deleteItem(STORE_NAME, categoryId);
     };
 });

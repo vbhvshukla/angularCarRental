@@ -1,0 +1,118 @@
+<div class="content" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm">
+    <div class="container">
+        <h2>Pending Bids</h2>
+        <select id="rental-type-sort-pending">
+            <option value="all">All</option>
+            <option value="local">Local</option>
+            <option value="outstation">Outstation</option>
+        </select>
+        <table id="pending-bids-table">
+            <thead>
+                <tr>
+                    <th>Car Name</th>
+                    <th>Bid Amount</th>
+                    <th>Total Amount</th>
+                    <th>User</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Rental Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="bid in vm.pendingBids">
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination" id="pending-pagination">
+            <button id="prev-pending">Previous</button>
+            <span id="pending-page-info"></span>
+            <button id="next-pending">Next</button>
+        </div>
+        <p id="no-pending-bids" class="hidden">No pending bids.</p>
+
+        <h2>Active Bookings</h2>
+        <select id="rental-type-sort-bookings">
+            <option value="all">All</option>
+            <option value="local">Local</option>
+            <option value="outstation">Outstation</option>
+        </select>
+        <table id="bookings-table">
+            <thead>
+                <tr>
+                    <th>Car Name</th>
+                    <th>Bid Price</th>
+                    <th>Total Amount</th>
+                    <th>User</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Created At</th>
+                    <th>Rental Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr ng-repeat="booking in vm.bookings">
+                    <td>{{booking.bid.car.carName}}</td>
+                    <td>{{booking.bid.bidAmount}}</td>
+                    <td>{{vm.getTotalAmount(booking)}}</td>
+                    <td>{{booking.bid.user.username}}</td>
+                    <td>{{booking.fromTimestamp}}</td>
+                    <td>{{booking.toTimestamp}}</td>
+                    <td>{{booking.createdAt}}</td>
+                    <td>{{booking.rentalType}}</td>
+                    <td ng-if="vm.isBookingOver(booking)">
+                        <button >Add Additional(Km/Hr)</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination" id="bookings-pagination">
+            <button id="prev-bookings">Previous</button>
+            <span id="bookings-page-info"></span>
+            <button id="next-bookings">Next</button>
+        </div>
+        <p id="no-bookings" class="hidden">No active bookings.</p>
+
+        <h2>All Bids</h2>
+        <select id="status-sort">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+        </select>
+        <table id="all-bids-table">
+            <thead>
+                <tr>
+                    <th>Car Name</th>
+                    <th>Bid Amount</th>
+                    <th>Total Amount</th>
+                    <th>User</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Rental Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="bid in vm.allBids">
+                    <td>{{bid.car.carName}}</td>
+                    <td>{{bid.bidAmount | currency}}</td>
+                    <td>{{bid.user.username}}</td>
+                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
+                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
+                    <td>{{bid.rentalType}}</td>
+                    <td>{{bid.status}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination" id="all-bids-pagination">
+            <button id="prev-all-bids">Previous</button>
+            <span id="all-bids-page-info"></span>
+            <button id="next-all-bids">Next</button>
+        </div>
+        <p id="no-all-bids" class="hidden">No bids found.</p>
+
+    </div>
+</div>

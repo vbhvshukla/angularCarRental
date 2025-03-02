@@ -1,9 +1,8 @@
 mainApp.controller('UserBidsController', ['bidService', 'authService',
     function (bidService, authService) {
 
+        //Var Declarations
         let vm = this;
-
-        //Variable declaration        
         vm.bids = {};
         vm.filteredBids = {};
         vm.filters = {
@@ -18,15 +17,27 @@ mainApp.controller('UserBidsController', ['bidService', 'authService',
 
         //Load the user -> Get it's bid by it's user id and set the variables accordingly.
         function loadUserBids() {
-            authService.getUser()
-                .then((currentUser) => { return bidService.getBidsByUser(currentUser.userId) })
-                .then(function (bids) {
-                    vm.bids = bids;
+            async.waterfall([
+                function(callback){
+                    authService.getUser()
+                    .then(user=>callback(null,user))
+                    .catch(err=>callback(err));
+                },
+                function(user,callback){
+                    bidService.getBidsByUser(user.userId)
+                    .then(bids=>callback(null,{bids}))
+                    .catch(err=>callback(err));
+                }
+
+            ],function(err,results){
+                if(err){
+                    console.error('User Dashboard :: All Bids Controller :: Error Getting Bids :: ', err);
+                }
+                else{
+                    vm.bids = results.bids;
                     vm.filterBids();
-                })
-                .catch(function (error) {
-                    console.error('User Dashboard :: All Bids Controller :: Error Getting Bids :: ', error);
-                })
+                }
+            })
         }
 
         //Filter bids (Types : Rental/Status)

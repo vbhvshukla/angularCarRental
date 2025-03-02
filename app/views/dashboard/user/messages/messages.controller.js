@@ -11,21 +11,28 @@ mainApp.controller('UserMessagesController', ['$state', 'authService', 'chatServ
         //the current logged in user)
 
         vm.init = function () {
-            authService.getUser()
-                .then(user => {
-                    if (!user) throw new Error('Messages Controller :: No User Found!');
-                    return chatService.getUserConversations(user.userId);
-                })
-                .then(conversations => {
-                    vm.messages = conversations;
-                    vm.loading = false;
-                })
-                .catch(error => {
-                    console.log('Messags Controller  :: Error Getting Conversations:', error);
-                    vm.loading = false;
-                }).finally(() => {
-                    vm.loading = false;
-                })
+            //Stops if any one of the promises fail and callback is called immediately.
+            async.waterfall([
+                function (callback) {
+                    authService.getUser()
+                        .then(user => callback(null, user))
+                        .catch((err) => callback(err));
+
+                },
+                function (user, callback) {
+                    chatService.getUserConversations(user.userId)
+                        .then(conversations => callback(null, { conversations, user }))
+                        .catch((err) => callback(err));
+                }
+            ], function (err, result) {
+                if (err) {
+                    console.log('Messags Controller  :: Error Getting Conversations:', err);
+                }
+                else {
+                    vm.messages = result.conversations;
+                }
+                vm.loading = false;
+            })
         }
 
         //Function to redirect to the particular

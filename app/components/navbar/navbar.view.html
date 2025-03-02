@@ -17,9 +17,15 @@
             <a ng-if="vm.isLoggedIn && vm.currentUser.role === 'customer'" 
                ui-sref="userdashboard.profile" 
                ui-sref-active="active">
-                My Dashboard
+                Dashboard
             </a>
             
+            <a ng-if="vm.isLoggedIn && vm.currentUser.role === 'owner'" 
+               ui-sref="ownerdashboard.home" 
+               ui-sref-active="active">
+                Dashboard
+            </a>
+
             <!-- Logout Link -->
             <a ng-if="vm.isLoggedIn" 
                ng-click="vm.logout()" 

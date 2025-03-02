@@ -11,7 +11,7 @@
                     <th>Placed At</th>
                     <th>Total Amount</th>
                     <th>Rental Type
-                        <select ng-model="filters.rentalType" ng-change="vm.filterBids()">
+                        <select ng-model="vm.filters.rentalType" ng-change="vm.filterBids()">
                             <option value="">All</option>
                             <option value="local">Local</option>
                             <option value="outstation">Outstation</option>
@@ -19,7 +19,7 @@
                     </th>
                     <th>
                         Status
-                        <select ng-model="filters.status" ng-change="vm.filterBids()">
+                        <select ng-model="vm.filters.status" ng-change="vm.filterBids()">
                             <option value="">All</option>
                             <option value="pending">Pending</option>
                             <option value="accepted">Approved</option>

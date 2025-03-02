@@ -3,69 +3,81 @@ mainApp.controller('BiddingController', [
     'authService', 'errorService', 'bidService',
     function ($scope, $state, $stateParams, carService, chatService,
         authService, errorService, bidService) {
-        var vm = this;
 
-        vm.car = null;
-        vm.currentUser = null;
-        vm.chatId = null;
-        vm.showPriceInfoModal = false;
-        vm.loading = true;
+        //Variable declarations
 
-        function init() {
+        let vm = this;                  //Global variable holds all functions of controller
+        vm.car = null;                  //Holds the particular car's object.
+        vm.currentUser = null;          //Holds the currently logged in user's object.
+        vm.chatId = null;               //Holds the chatId from the Url Parameters.
+        vm.showPriceInfoModal = false;  //Boolean for displaying or hiding price modal.
+        vm.loading = true;              //Boolean for loader.
+
+        //Initialization function
+
+        vm.init = function () {
             vm.loading = true;
 
-            Promise.all([
-                authService.getUser(),
-                carService.getCarById($stateParams.carId)
-            ])
-                .then(([user, car]) => {
-                    if (!user) {
-                        return $state.go('login', {
-                            redirect: 'bid',
-                            params: JSON.stringify({ carId: $stateParams.carId })
-                        });
-                    }
-                    if (user.role !== 'customer') {
-                        return $state.go('home');
-                    }
-                    if (!car) {
-                        errorService.handleError('Car not found', 'BiddingController :: Init');
-                        return $state.go('home');
-                    }
+            //Tasks list to be fetched parallely.
+            const tasks = [
+                authService.getUser(), //Gets the details of the currently logged in user.
+                carService.getCarById($stateParams.carId) //Gets the params passed in the url.
+            ];
 
-                    vm.currentUser = user;
-                    vm.car = car;
-                    return createOrGetChat();
+            //Results hold the response of all the tasks in async.queue's 'q'.
+            let results = [];
+
+            let q = async.queue((task, completed) => {
+                task.then((res) => {
+                    completed(null, res);
                 })
-                .then(() => {
-                    if (!vm.car || !vm.currentUser || !vm.chatId) {
-                        throw new Error('Missing required data');
+                    .catch((err) => {
+                        completed(err);
+                    });
+            }, 1);
+
+            //Push all the available tasks in the async.queue.
+
+            tasks.forEach((task) => {
+                q.push(task, (err, result) => {
+                    if (err) {
+                        console.log("Error in task :: ", err);
+                    } else {
+                        results.push(result);
                     }
-                })
-                .catch(error => {
-                    errorService.handleError(error, 'BiddingController :: Init Failed');
+                });
+            });
+
+            //If anyone of the task throws an error log it.
+            q.error((task, error) => {
+                console.log("Error in task :: ", task, error);
+            });
+
+            //Once all the tasks are completed in the async.queue 'q'. This will get executed.
+            q.drain(() => {
+                const [user, car] = results;
+
+                vm.currentUser = user;
+                vm.car = car;
+                console.log(vm.car,vm.currentUser);
+                if (!vm.car || !vm.currentUser) {
+                    errorService.handleError('BiddingController  :: Missing required :: Init Failed');
                     return $state.go('home');
-                })
-                .finally(() => {
-                    vm.loading = false;
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
-                });
+                }
+
+                chatService.getOrCreateChat(vm.car.carId, vm.currentUser, vm.car.owner)
+                    .then(chat => {
+                        vm.chatId = chat.chatId;
+                        return chat;
+                    })
+                    .catch(error => {
+                        errorService.handleError(error, 'BiddingController :: Chat Init Failed');
+                    }).finally(() => vm.loading = false);
+            });
+
         }
 
-        function createOrGetChat() {
-            if (!vm.currentUser || !vm.car) return;
-
-            return chatService.getOrCreateChat(vm.car.carId, vm.currentUser, vm.car.owner)
-                .then(chat => {
-                    vm.chatId = chat.chatId;
-                    return chat;
-                })
-                .catch(error => {
-                    errorService.handleError(error, 'BiddingController :: Chat Init Failed');
-                });
-        }
+        //Bid submission handler
 
         vm.handleBidSubmit = function (bid) {
             if (vm.isSubmitting) return;
@@ -97,11 +109,10 @@ mainApp.controller('BiddingController', [
                 })
                 .finally(() => {
                     vm.isSubmitting = false;
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
                 });
         };
+
+        //Price Info Modal Handlers
 
         vm.showPriceInfo = function () {
             vm.showPriceInfoModal = true;
@@ -111,7 +122,5 @@ mainApp.controller('BiddingController', [
             vm.showPriceInfoModal = false;
         };
 
-
-        init();
     }
 ]);

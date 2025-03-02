@@ -1,0 +1,18 @@
+.edit-car-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-car-btn:hover {
+    background-color: #1976D2;
+}
+
+.edit-car-btn:active {
+    background-color: #1565C0;
+}
