@@ -14,7 +14,8 @@
             <h3>Total Revenue</h3>
             <p>{{vm.totals.formattedRevenue}}</p>
             <span class="trend" ng-class="vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue)">
-                <i class="fas" ng-class="{'fa-arrow-up': vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue) === 'up', 
+                <i class="fas"
+                    ng-class="{'fa-arrow-up': vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue) === 'up', 
                                         'fa-arrow-down': vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue) === 'down'}"></i>
             </span>
         </div>
@@ -31,83 +32,43 @@
     <div class="charts-grid">
         <div class="chart-card">
             <h3>Monthly Revenue</h3>
-            <canvas class="chart chart-line"
-                chart-data="vm.charts.revenue.datasets"
-                chart-labels="vm.charts.revenue.labels"
-                chart-options="vm.revenueChartOptions">
-            </canvas>
+            <canvas id="monthlyRevenueChart"></canvas>
         </div>
 
         <div class="chart-card">
             <h3>Bookings per Car</h3>
-            <canvas class="chart chart-bar"
-                chart-data="vm.charts.bookings.datasets"
-                chart-labels="vm.charts.bookings.labels"
-                chart-options="vm.barChartOptions"
-                chart-colors="vm.getChartColors('bookings')">
-            </canvas>
+            <canvas id="bookingsPerCarChart"></canvas>
         </div>
-
 
         <div class="chart-card">
             <h3>Car Utilization</h3>
-            <canvas class="chart chart-bar"
-                chart-data="vm.charts.carUtilization.datasets"
-                chart-labels="vm.charts.carUtilization.labels"
-                chart-options="vm.barChartOptions"
-                chart-colors="vm.getChartColors('utilization')">
-            </canvas>
+            <canvas id="carUtilizationChart"></canvas>
         </div>
 
         <div class="chart-card">
             <h3>Most Active Renters</h3>
-            <canvas class="chart chart-bar"
-                chart-data="vm.charts.activeRenters.datasets"
-                chart-labels="vm.charts.activeRenters.labels"
-                chart-options="vm.barChartOptions"
-                chart-colors="vm.getChartColors('renters')">
-            </canvas>
+            <canvas id="activeRentersChart"></canvas>
         </div>
-
 
         <div class="chart-card">
             <h3>Average Revenue per Booking</h3>
-            <canvas class="chart chart-line"
-                chart-data="vm.charts.avgRevenueByType.datasets"
-                chart-labels="vm.charts.avgRevenueByType.labels"
-                chart-options="vm.revenueChartOptions">
-            </canvas>
+            <canvas id="avgRevenueChart"></canvas>
         </div>
 
         <div class="chart-card">
             <h3>Revenue by Type (Local/Outstation)</h3>
-            <canvas class="chart chart-bar"
-                chart-data="vm.charts.revenueOverTime.datasets"
-                chart-labels="vm.charts.revenueOverTime.labels"
-                chart-series="['Local Revenue', 'Outstation Revenue']"
-                chart-colors="vm.getChartColors('revenue')"
-                chart-options="vm.stackedBarOptions">
-            </canvas>
+            <canvas id="revenueByTypeChart"></canvas>
         </div>
 
         <div class="chart-card">
             <h3>Average Revenue Trends</h3>
-            <canvas class="chart chart-line"
-                chart-data="vm.charts.avgRevenueOverTime.datasets"
-                chart-labels="vm.charts.avgRevenueOverTime.labels"
-                chart-options="vm.revenueChartOptions">
-            </canvas>
+            <canvas id="avgRevenueTrendsChart"></canvas>
         </div>
 
         <div class="chart-card">
             <h3>Average Bid Amount per Car</h3>
-            <canvas class="chart chart-bar"
-                chart-data="vm.charts.avgBidAmount.datasets"
-                chart-labels="vm.charts.avgBidAmount.labels"
-                chart-options="vm.revenueChartOptions">
-            </canvas>
+            <canvas id="avgBidAmountChart"></canvas>
         </div>
-       
     </div>
 
     <div class="loading-overlay" ng-if="vm.loading">

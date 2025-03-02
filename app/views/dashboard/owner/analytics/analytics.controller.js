@@ -2,6 +2,7 @@ mainApp.controller('OwnerAnalyticsController', [
     '$scope', 'analyticsService', 'authService', 'errorService',
     function ($scope, analyticsService, authService, errorService) {
         let vm = this;
+        vm.chartInstances = {};
 
         vm.loading = false;
         vm.selectedDays = 30;
@@ -11,9 +12,9 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.lineChartOptions = {
             responsive: true,
             scales: {
-                yAxes: [{
+                y: {  // Changed from yAxes array to y object
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         callback: function(value) {
                             try {
                                 const label = this.chart.data.datasets[0].label || '';
@@ -25,22 +26,21 @@ mainApp.controller('OwnerAnalyticsController', [
                                 return value;
                             }
                         },
-                        stepSize: 1000,
-                        min: 0,
-                        suggestedMin: 0,
-                        maxTicksLimit: 10
+                        stepSize: 1000
                     }
-                }]
+                }
             },
-            tooltips: {
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        const label = data.datasets[tooltipItem.datasetIndex].label || '';
-                        const value = tooltipItem.yLabel;
-                        if (label.toLowerCase().includes('revenue')) {
-                            return label + ': ₹' + value.toLocaleString();
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw;
+                            if (label.toLowerCase().includes('revenue')) {
+                                return label + ': ₹' + value.toLocaleString();
+                            }
+                            return label + ': ' + Math.floor(value) + ' days';
                         }
-                        return label + ': ' + Math.floor(value) + ' days';
                     }
                 }
             }
@@ -54,56 +54,54 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.barChartOptions = {
             responsive: true,
             scales: {
-                yAxes: [{
+                y: {  // Changed from yAxes array to y object
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         stepSize: 1,
                         precision: 0, 
-                        min: 0,
-                        suggestedMin: 0,
-                        maxTicksLimit: 10, 
                         callback: value => Math.floor(value)
                     }
-                }]
+                }
             }
         };
 
         vm.stackedBarOptions = {
             responsive: true,
             scales: {
-                xAxes: [{
+                x: {  // Changed from xAxes array to x object
                     stacked: true,
-                    gridLines: {
+                    grid: {
                         display: false
                     }
-                }],
-                yAxes: [{
+                },
+                y: {  // Changed from yAxes array to y object
                     stacked: true,
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         callback: value => '₹' + value.toLocaleString(),
-                        maxTicksLimit: 10,
-                        stepSize:500
+                        stepSize: 500
                     },
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Revenue (₹)'
-                    }
-                }]
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        const label = data.datasets[tooltipItem.datasetIndex].label || '';
-                        const value = tooltipItem.yLabel;
-                        return label + ': ₹' + value.toLocaleString();
+                        text: 'Revenue (₹)'
                     }
                 }
             },
-            legend: {
-                position: 'bottom'
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw;
+                            return label + ': ₹' + value.toLocaleString();
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom'
+                }
             }
         };
 
@@ -145,37 +143,67 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.revenueChartOptions = {
             responsive: true,
             scales: {
-                yAxes: [{
+                y: {  
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         callback: value => '₹' + value.toLocaleString(),
-                        maxTicksLimit: 10,
-                        stepSize:500
+                        stepSize: 500
                     },
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Revenue (₹)'
+                        text: 'Revenue (₹)'
                     }
-                }],
-                xAxes: [{
-                    gridLines: { display: false },
-                    scaleLabel: {
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    title: { 
                         display: true,
-                        labelString: 'Time Period'
+                        text: 'Time Period'
                     }
-                }]
+                }
             },
-            tooltips: {
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        const label = data.datasets[tooltipItem.datasetIndex].label || '';
-                        const value = tooltipItem.yLabel;
-                        return label + ': ₹' + value.toLocaleString();
+            plugins: { 
+                tooltip: {
+                    callbacks: {
+                        label: function(context) { 
+                            const label = context.dataset.label || '';
+                            const value = context.raw;
+                            return label + ': ₹' + value.toLocaleString();
+                        }
                     }
                 }
             }
         };
 
+        function createChart(canvasId, type, data, options) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (vm.chartInstances[canvasId]) {
+                vm.chartInstances[canvasId].destroy();
+            }
+
+            vm.chartInstances[canvasId] = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: options
+            });
+        }
+
+        function renderCharts(data) {
+            createChart('monthlyRevenueChart', 'line', data.revenue, vm.revenueChartOptions);
+            createChart('bookingsPerCarChart', 'bar', data.bookings, vm.barChartOptions);
+            createChart('carUtilizationChart', 'bar', data.carUtilization, vm.barChartOptions);
+            createChart('activeRentersChart', 'bar', data.activeRenters, vm.barChartOptions);
+            createChart('avgRevenueChart', 'line', data.avgRevenueByType, vm.revenueChartOptions);
+            createChart('revenueByTypeChart', 'bar', {
+                labels: data.revenueOverTime.labels,
+                datasets: data.revenueOverTime.datasets
+            }, vm.stackedBarOptions);
+            createChart('avgRevenueTrendsChart', 'line', data.avgRevenueOverTime, vm.revenueChartOptions);
+            createChart('avgBidAmountChart', 'bar', data.avgBidAmount, vm.revenueChartOptions);
+        }
 
         vm.init = function () {
             vm.loading = true;
@@ -189,13 +217,13 @@ mainApp.controller('OwnerAnalyticsController', [
                     vm.totals = data.totals;
                     vm.charts = data.charts;
                     vm.totals.formattedRevenue = '₹' + vm.totals.totalRevenue.toLocaleString();
+                    renderCharts(data.charts);
                 })
                 .catch(error => {
                     errorService.handleError('Failed to load analytics', error);
                 })
                 .finally(() => {
                     vm.loading = false;
-                    console.log(vm.totals,vm.charts)
                 });
         };
 
@@ -210,6 +238,7 @@ mainApp.controller('OwnerAnalyticsController', [
                     vm.totals = data.totals;
                     vm.charts = data.charts;
                     vm.totals.formattedRevenue = '₹' + vm.totals.totalRevenue.toLocaleString();
+                    renderCharts(data.charts);
                 })
                 .catch(error => errorService.handleError('Failed to load analytics', error))
                 .finally(() => vm.loading = false);
@@ -242,5 +271,9 @@ mainApp.controller('OwnerAnalyticsController', [
             if (!previous) return 'neutral';
             return current > previous ? 'up' : 'down';
         };
+
+        $scope.$on('$destroy', function() {
+            Object.values(vm.chartInstances).forEach(chart => chart.destroy());
+        });
     }
 ]);
