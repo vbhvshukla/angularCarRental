@@ -432,10 +432,33 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+            
             .state('ownerdashboard.message', {
                 url: '/message/:chatId',
                 templateUrl: 'app/views/dashboard/owner/allchats/chat/chat.view.html',
                 controller: 'OwnerChatController',
+                controllerAs: 'vm',
+                resolve: {
+                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
+                        return authService.getUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved : return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+            .state('ownerdashboard.analytics', {
+                url: '/analytics',
+                templateUrl: 'app/views/dashboard/owner/analytics/analytics.view.html',
+                controller: 'OwnerAnalyticsController',
                 controllerAs: 'vm',
                 resolve: {
                     redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {

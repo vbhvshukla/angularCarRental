@@ -8,6 +8,7 @@ const mainApp = angular
             'ui.router', //Dependency for UI Router
             'ngAnimate', //Dependency for Angular Animate
             'ngCookies', //Dependency for Angular Cookies
+            'chart.js'   //Dependency for Angular Chart
         ]
     )
 
