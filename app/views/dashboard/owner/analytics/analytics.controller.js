@@ -12,7 +12,7 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.lineChartOptions = {
             responsive: true,
             scales: {
-                y: {  // Changed from yAxes array to y object
+                y: { 
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
@@ -54,7 +54,7 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.barChartOptions = {
             responsive: true,
             scales: {
-                y: {  // Changed from yAxes array to y object
+                y: { 
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1,
@@ -68,13 +68,13 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.stackedBarOptions = {
             responsive: true,
             scales: {
-                x: {  // Changed from xAxes array to x object
+                x: { 
                     stacked: true,
                     grid: {
                         display: false
                     }
                 },
-                y: {  // Changed from yAxes array to y object
+                y: {  
                     stacked: true,
                     beginAtZero: true,
                     ticks: {
@@ -177,33 +177,16 @@ mainApp.controller('OwnerAnalyticsController', [
             }
         };
 
-        function createChart(canvasId, type, data, options) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            
-            if (vm.chartInstances[canvasId]) {
-                vm.chartInstances[canvasId].destroy();
-            }
-
-            vm.chartInstances[canvasId] = new Chart(ctx, {
-                type: type,
-                data: data,
-                options: options
-            });
-        }
-
-        function renderCharts(data) {
-            createChart('monthlyRevenueChart', 'line', data.revenue, vm.revenueChartOptions);
-            createChart('bookingsPerCarChart', 'bar', data.bookings, vm.barChartOptions);
-            createChart('carUtilizationChart', 'bar', data.carUtilization, vm.barChartOptions);
-            createChart('activeRentersChart', 'bar', data.activeRenters, vm.barChartOptions);
-            createChart('avgRevenueChart', 'line', data.avgRevenueByType, vm.revenueChartOptions);
-            createChart('revenueByTypeChart', 'bar', {
-                labels: data.revenueOverTime.labels,
-                datasets: data.revenueOverTime.datasets
-            }, vm.stackedBarOptions);
-            createChart('avgRevenueTrendsChart', 'line', data.avgRevenueOverTime, vm.revenueChartOptions);
-            createChart('avgBidAmountChart', 'bar', data.avgBidAmount, vm.revenueChartOptions);
-        }
+        vm.colorSchemes = {
+            revenue: ['#3498db', '#e67e22'],       
+            bookings: ['#2ecc71'],
+            bids: ['#27ae60', '#f1c40f', '#e74c3c'],
+            cars: ['#9b59b6'],
+            rentalTypes: ['#3498db', '#e67e22'],
+            utilization: ['#2c3e50'],
+            renters: ['#f1c40f'],                  
+            duration: ['#8e44ad', '#2c3e50']       
+        };
 
         vm.init = function () {
             vm.loading = true;
@@ -227,6 +210,31 @@ mainApp.controller('OwnerAnalyticsController', [
                 });
         };
 
+        function createChart(canvasId, type, data, options) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (vm.chartInstances[canvasId]) {
+                vm.chartInstances[canvasId].destroy();
+            }
+
+            vm.chartInstances[canvasId] = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: options
+            });
+        }
+
+        function renderCharts(data) {
+            createChart('monthlyRevenueChart', 'line', data.revenue, vm.revenueChartOptions);
+            createChart('bookingsPerCarChart', 'bar', data.bookings, vm.barChartOptions);
+            createChart('carUtilizationChart', 'bar', data.carUtilization, vm.barChartOptions);
+            createChart('activeRentersChart', 'bar', data.activeRenters, vm.barChartOptions);
+            createChart('avgRevenueChart', 'line', data.avgRevenueByType, vm.revenueChartOptions);
+            createChart('revenueByTypeChart', 'bar', {labels: data.revenueOverTime.labels,datasets: data.revenueOverTime.datasets}, vm.stackedBarOptions);
+            createChart('avgRevenueTrendsChart', 'line', data.avgRevenueOverTime, vm.revenueChartOptions);
+            createChart('avgBidAmountChart', 'bar', data.avgBidAmount, vm.revenueChartOptions);
+        }
+
         vm.updateTimeRange = function() {
             const period = vm.selectedDays <= 30 ? 'weekly' : 
                           vm.selectedDays <= 90 ? 'monthly' : 'yearly';
@@ -242,17 +250,6 @@ mainApp.controller('OwnerAnalyticsController', [
                 })
                 .catch(error => errorService.handleError('Failed to load analytics', error))
                 .finally(() => vm.loading = false);
-        };
-
-        vm.colorSchemes = {
-            revenue: ['#3498db', '#e67e22'],       
-            bookings: ['#2ecc71'],
-            bids: ['#27ae60', '#f1c40f', '#e74c3c'],
-            cars: ['#9b59b6'],
-            rentalTypes: ['#3498db', '#e67e22'],
-            utilization: ['#2c3e50'],
-            renters: ['#f1c40f'],                  
-            duration: ['#8e44ad', '#2c3e50']       
         };
 
         vm.getChartColors = function (type) {

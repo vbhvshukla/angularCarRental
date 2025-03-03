@@ -1,10 +1,13 @@
 mainApp.component('carCard', {
     templateUrl: 'app/components/carCard/carCard.view.html',
     controller: ['$scope', '$interval', function($scope, $interval) {
+
+        //Variable initialization
         let $ctrl = this;
         $ctrl.currentImageIndex = 0;
-        let carouselInterval;
+        let carouselInterval; //For storing the interval id
 
+        //Start the caraousel with 2 sec interval
         $ctrl.startCarousel = function() {
             if ($ctrl.car.images.length <= 1) return;    
             if (carouselInterval) $interval.cancel(carouselInterval);
@@ -13,6 +16,7 @@ mainApp.component('carCard', {
             }, 2000);
         };
 
+        //Stop the carousel
         $ctrl.stopCarousel = function() {
             if (carouselInterval) {
                 $interval.cancel(carouselInterval);
@@ -20,12 +24,14 @@ mainApp.component('carCard', {
             }
         };
 
+        //Handle if somebody clicks upon the card
         $ctrl.handleButtonClick = function() {
             if ($ctrl.onButtonClick) {
                 $ctrl.onButtonClick({ carId: $ctrl.car.carId });
             }
         };
 
+        //Get the display price according to thte rental type
         $ctrl.getDisplayPrice = function() {
             if ($ctrl.car.rentalOptions.local) {
                 return {
@@ -50,10 +56,10 @@ mainApp.component('carCard', {
     }],
     bindings: {
         car: '<',
-        onBook: '&',
-        buttonText: '@',          // Custom button text
-        onButtonClick: '&',       // Custom button click handler
-        showButton: '<',          // Optional: control button visibility
-        buttonClass: '@'          // Optional: custom button CSS class
+        onBook: '&',              //Binding For functions
+        buttonText: '@',          
+        onButtonClick: '&',       
+        showButton: '<',          
+        buttonClass: '@'          
     }
 });

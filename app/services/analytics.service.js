@@ -1,6 +1,9 @@
 mainApp.service('analyticsService', [
     '$q', 'dbService',
     function ($q, dbService) {
+
+        //For owner analytics
+        
         this.getOwnerAnalytics = function (ownerId, days = 30) {
             return $q.all([
                 dbService.getItemsByTimeRange('bookings', 'ownerId', ownerId, days),
@@ -62,6 +65,7 @@ mainApp.service('analyticsService', [
             ];
         }
 
+        //Get top 3 bidders
         function getTopBidders(bids) {
             const bidderCounts = {};
             bids.forEach(bid => {
@@ -71,14 +75,17 @@ mainApp.service('analyticsService', [
 
             return Object.entries(bidderCounts)
                 .sort(([, a], [, b]) => b - a)
-                .slice(0, 3)
+                .slice(0, 3) //Slice out the 3 top
                 .map(([userId, count]) => {
                     const user = bids.find(b => b.user.userId === userId).user;
+                    console.log(user);
                     return `${user.username} (${count})`;
                 })
                 .join(', ') || 'N/A';
         }
 
+
+        //Total revenue per category
         function getTotalRevenuePerCategory(bookings) {
             const revenueByCategory = {};
             bookings.forEach(booking => {
@@ -96,6 +103,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Total Revenue per city
         function getTotalRevenuePerCity(bookings) {
             const revenueByCity = {};
             bookings.forEach(booking => {
@@ -113,6 +121,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Average revenue per user
         function getAverageRevenuePerUser(bookings) {
             const userRevenue = {};
             bookings.forEach(booking => {
@@ -123,8 +132,10 @@ mainApp.service('analyticsService', [
                 userRevenue[userId].total += booking.totalFare;
                 userRevenue[userId].count++;
             });
-
+            //Calculate avg for every value in userRevenue object.
             const averages = Object.values(userRevenue).map(({ total, count }) => total / count);
+            //Now we have averages for users now we have to calculate avg revenue for all users
+            //Get the total of averages and divide it by length of the array.
             const avgRevenue = averages.length ? 
                 averages.reduce((sum, val) => sum + val, 0) / averages.length : 0;
 
@@ -138,11 +149,11 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get bookings over time
         function getBookingsOverTime(bookings) {
             const bookingsByMonth = {};
             bookings.forEach(booking => {
-                const month = new Date(booking.createdAt)
-                    .toLocaleString('default', { month: 'short', year: '2-digit' });
+                const month = new Date(booking.createdAt).toLocaleString('default', { month: 'short', year: '2-digit' });
                 bookingsByMonth[month] = (bookingsByMonth[month] || 0) + 1;
             });
 
@@ -157,6 +168,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Total number of bookings,cars,bids,and total revenue
         function getTotals(bookings, bids, cars) {
             return {
                 totalCars: cars.length,
@@ -185,6 +197,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Number of bookings as per owner's listed cars.
         function getBookingsData(bookings) {
             // Group bookings by car
             const bookingsBycar = {};
@@ -203,6 +216,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get count of bids according to there status
         function getBidsData(bids) {
             const bidStatus = { accepted: 0, pending: 0, rejected: 0 };
             bids.forEach(bid => {
@@ -219,6 +233,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get cars per category
         function getCarsData(cars) {
             const carCategories = {};
             cars.forEach(car => {
@@ -236,6 +251,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get utilization rate -> number of days cars was craated vs the number of days on which it was booked
         function getCarUtilizationData(bookings, cars) {
             const utilization = {};
             cars.forEach(car => {
@@ -276,11 +292,11 @@ mainApp.service('analyticsService', [
         }
 
         function getDurationInDays(from, to) {
-            return Math.ceil(
-                (new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24)
-            );
+            //Divide the math.ceil value by the number of milliseconds in a day to get the actual number of days.
+            return Math.ceil((new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24));
         }
 
+        //Get most active renters
         function getMostActiveRenters(bookings) {
             const renters = {};
             bookings.forEach(booking => {
@@ -288,6 +304,7 @@ mainApp.service('analyticsService', [
                 renters[username] = (renters[username] || 0) + 1;
             });
 
+            //[ ["JohnDoe", 3], ["JaneSmith", 5], ["Alice", 2] ] -> if b is greater than a , b should come first and slice the first 5.
             const sortedRenters = Object.entries(renters).sort(([, a], [, b]) => b - a).slice(0, 5);
 
             return {
@@ -300,6 +317,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Rental duration by rental types.
         function getRentalDuration(bookings) {
             const duration = {
                 local: { total: 0, count: 0 },
@@ -326,14 +344,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        function getRevenueOverTime(bookings, period = 'monthly') {
-            console.log('Processing bookings for revenue:', bookings);
-            
+        //Revenue over time
+        function getRevenueOverTime(bookings, period = 'monthly') {            
             const revenue = {};
-            
             bookings.forEach(booking => {
                 if (!booking.totalFare) {
-                    console.warn('Missing totalFare for booking:', booking);
+                    console.log('Missing totalFare for booking:', booking);
                     return;
                 }
         
@@ -346,12 +362,6 @@ mainApp.service('analyticsService', [
                 
                 const totalFare = parseFloat(booking.totalFare);
                 revenue[timeKey][booking.rentalType] += totalFare;
-                
-                console.log(`Added revenue for ${timeKey}:`, {
-                    type: booking.rentalType,
-                    amount: totalFare,
-                    newTotal: revenue[timeKey][booking.rentalType]
-                });
             });
         
             const timeKeys = Object.keys(revenue).sort((a, b) => new Date(a) - new Date(b));
@@ -377,13 +387,15 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Avg revenue over time
         function getAvgRevenueOverTime(bookings, period = 'monthly') {
             const data = {};
 
             bookings.forEach(booking => {
+                //Convert the created at date to a date object.
                 const date = new Date(booking.createdAt);
+                //time key is for grouping the booking over specific time periods (like feb 2025 etc);
                 let timeKey = getTimeKey(date, period);
-
                 if (!data[timeKey]) {
                     data[timeKey] = {
                         local: { total: 0, count: 0 },
@@ -394,6 +406,7 @@ mainApp.service('analyticsService', [
                 data[timeKey][booking.rentalType].count++;
             });
 
+            //Sort the time keys -> if a is earlier than b result will be negative therefore, a comes before b 
             const timeKeys = Object.keys(data).sort((a, b) => new Date(a) - new Date(b));
 
             return {
@@ -421,6 +434,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Avg bid amount per car
         function getAvgBidAmountPerCar(bids, cars) {
             const bidAmounts = {};
             
@@ -460,13 +474,17 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get the week/month/year
         function getTimeKey(date, period) {
             switch (period) {
+                //formate the date to display week number of the year
                 case 'weekly':
+                    //take the first day of the current week , calculate the week number by using formula.
                     const onejan = new Date(date.getFullYear(), 0, 1);
                     const weekNum = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
                     return `Week ${weekNum}, ${date.getFullYear()}`;
 
+                    //Outputs -> Mar 2025
                 case 'monthly':
                     return date.toLocaleString('default', { month: 'short', year: 'numeric' });
 
@@ -477,8 +495,8 @@ mainApp.service('analyticsService', [
                     return date.toLocaleString('default', { month: 'short', year: 'numeric' });
             }
         }
-
-       function getCarsPerCategory(cars) {
+        // Number of cars per category
+        function getCarsPerCategory(cars) {
             const carsByCategory = {};
             cars.forEach(car => {
                 const category = car.category.categoryName;
@@ -495,10 +513,14 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get highest rated cars by category
         function getHighestRatedCarsByCategory(cars) {
             const categoryBestCars = {};
             cars.forEach(car => {
+                //Get the category name
                 const category = car.category.categoryName;
+                //If there's no data in that paritcular category or if the rating of the current car is higher than the
+                //existing highest rated car in that category store it in
                 if (!categoryBestCars[category] || 
                     categoryBestCars[category].avgRating < car.avgRating) {
                     categoryBestCars[category] = {
@@ -518,6 +540,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Get bids per category
         function getBidsPerCategory(bids) {
             const bidsByCategory = {};
             bids.forEach(bid => {
@@ -534,7 +557,7 @@ mainApp.service('analyticsService', [
                 }]
             };
         }
-
+        //Total Bidded Price Per Category
         function getTotalBiddedPricePerCategory(bids) {
             const bidPriceByCategory = {};
             bids.forEach(bid => {
@@ -552,6 +575,7 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Gets car per city
         function getCarsPerCity(cars) {
             const carsByCity = {};
             cars.forEach(car => {
@@ -569,11 +593,16 @@ mainApp.service('analyticsService', [
             };
         }
 
+        //Revenue trends (revenue over month)
         function getRevenueTrends(bookings) {
             const revenueTrends = {};
             bookings.forEach(booking => {
+                //Get the date when the booking was created
+                //and converet it to -> Feb ( using short filter ) and 25 using 2 digit filter
                 const month = new Date(booking.createdAt)
                     .toLocaleString('default', { month: 'short', year: '2-digit' });
+                //if revenueTrends for the particular month exists take that else take 0 for the
+                //caluclation of revenue.    
                 revenueTrends[month] = (revenueTrends[month] || 0) + booking.totalFare;
             });
 

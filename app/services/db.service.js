@@ -1,6 +1,6 @@
 mainApp.service('dbService', function ($q) {
     const dbName = "angularCarRental";
-    const dbVersion = 8;
+    const dbVersion = 10;
     let db = null;
 
     //For Version Change - Migrating Data
@@ -177,6 +177,7 @@ mainApp.service('dbService', function ($q) {
                         const eventCursor = migrateRequest.result;
                         if (eventCursor) {
                             const data = eventCursor.value;
+                            console.log(data);
                             //Get the storename and push data accordingly
                             switch (storeName) {
                                 case 'users':
@@ -217,6 +218,7 @@ mainApp.service('dbService', function ($q) {
                     //as schema
 
                     migrateRequest.oncomplete = function () {
+                        console.log(users, cars, bookings)
                         db.deleteObjectStore(storeName);
                         const newStore = db.createObjectStore(storeName, storeConfig.store);
                         createIndexes(newStore, storeConfig.indexes);
@@ -236,7 +238,7 @@ mainApp.service('dbService', function ($q) {
         request.onsuccess = function (event) {
             db = event.target.result;
             deferred.resolve(db);
-            
+
             //----------Prompts the user running the older version to update and sync the DB--------------
             /*   db.onversionchange = function () {
                      if(window.confirm("DB Version outdated :: Do you want to change DB Version now?")){
@@ -390,7 +392,6 @@ mainApp.service('dbService', function ($q) {
                 const start = (page - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
                 const request = store.openCursor();
-
                 request.onsuccess = (event) => {
                     const cursor = event.target.result;
                     if (cursor) {
@@ -399,7 +400,10 @@ mainApp.service('dbService', function ($q) {
                         }
                         count++;
                         if (count < end) cursor.continue();
-                        else deferred.resolve(items);
+                        else {
+                            console.log()
+                            deferred.resolve(items)
+                        };
                     } else {
                         deferred.resolve(items);
                     }

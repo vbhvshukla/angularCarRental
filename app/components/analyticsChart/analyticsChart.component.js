@@ -1,7 +1,9 @@
 mainApp.component('analyticsChart', {
+    
+    //Binding is basically the input properties that the component receieve from the calling component
     bindings: {
-        chartType: '@',
-        chartData: '<',
+        chartType: '@', //used for strings
+        chartData: '<', //one way binding for (object/array)[component can only read chartData not modify it]
         chartLabels: '<',
         chartOptions: '<',
         chartSeries: '<',
@@ -11,11 +13,17 @@ mainApp.component('analyticsChart', {
     controller: function() {
         let $ctrl = this;
 
+        //on init basically is a lifecycle hook 
+        //and it is called when the component is 
+        //+initialized
+
         $ctrl.$onInit = function() {
             $ctrl.chartOptions = $ctrl.chartOptions || getDefaultOptions($ctrl.chartType);
         };
 
         function getDefaultOptions(type) {
+            //set the baseoptions like responsiveness,
+            //maintainaspectratio to true/false.
             const baseOptions = {
                 responsive: true,
                 maintainAspectRatio: false

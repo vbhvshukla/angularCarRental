@@ -7,12 +7,11 @@ mainApp.controller('AdminAnalyticsController', [
         vm.chartInstances = {};
 
         function renderCharts(charts) {
+            //If this renderCharts is called again with other values then destory all the chartInstances already created.
             Object.entries(vm.chartInstances).forEach(([, chart]) => {
                 chart.destroy();
             });
-            vm.chartInstances = {};
 
-            // Render each chart
             if (charts.totalRevenuePerCategory) {
                 vm.chartInstances.totalRevenuePerCategoryChart = new Chart(
                     document.getElementById('totalRevenuePerCategoryChart'),
@@ -24,7 +23,6 @@ mainApp.controller('AdminAnalyticsController', [
                 );
             }
 
-            // Similarly for other charts...
             const chartConfigs = {
                 totalRevenuePerCity: { id: 'totalRevenuePerCityChart', type: 'bar' },
                 averageRevenuePerUser: { id: 'averageRevenuePerUserChart', type: 'bar' },
@@ -59,7 +57,7 @@ mainApp.controller('AdminAnalyticsController', [
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            precision: 0,  // Ensure whole numbers
+                            precision: 0,
                             callback: function(value) {
                                 if (chartType.includes('revenue')) {
                                     return '₹' + Math.round(value).toLocaleString();
@@ -85,7 +83,6 @@ mainApp.controller('AdminAnalyticsController', [
                 }
             };
 
-            // Special handling for pie charts
             if (chartType === 'carsPerCategory' || chartType === 'carsPerCity') {
                 return {
                     ...baseOptions,
@@ -95,6 +92,7 @@ mainApp.controller('AdminAnalyticsController', [
                             callbacks: {
                                 label: function(context) {
                                     const label = context.label || '';
+                                    //context.parsed is basically the values of the data points
                                     const value = Math.round(context.parsed);
                                     return `${label}: ${value}`;
                                 }
@@ -120,7 +118,6 @@ mainApp.controller('AdminAnalyticsController', [
                 });
         };
 
-        // Clean up on scope destruction
         $scope.$on('$destroy', function() {
             Object.values(vm.chartInstances).forEach(chart => chart.destroy());
         });

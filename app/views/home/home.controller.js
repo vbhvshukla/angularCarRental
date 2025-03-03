@@ -2,11 +2,12 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
     function ($q, $state, carService, categoryService, cityService, $filter) {
         var vm = this;
 
-        vm.originalCars = [];
-        vm.cars = [];
-        vm.categories = [];
-        vm.cities = [];
-        vm.features = [];
+        //Variable declaration
+        vm.originalCars = []; //Holds all the cars fetched
+        vm.cars = [];         //Holds the cars fetched (paginated)
+        vm.categories = [];   //Holds all the categories
+        vm.cities = [];       //Holds all the cities
+        vm.features = [];     //Holds all the features
 
         vm.pagination = {
             currentPage: 1,
@@ -66,6 +67,7 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
         };
 
         vm.loadMoreCars = function() {
+            //If all the items are loaded or the paginating is loading return
             if (vm.pagination.loading || vm.cars.length >= vm.pagination.totalItems) {
                 return;
             }
