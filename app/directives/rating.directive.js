@@ -1,3 +1,7 @@
+/**
+ * Rating Directive
+ * @description Converts the numerical rating into stars.
+ */
 mainApp.directive('starRating', function() {
     return {
         restrict: 'E',

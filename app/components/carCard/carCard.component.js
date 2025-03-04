@@ -1,13 +1,27 @@
 mainApp.component('carCard', {
+    
     templateUrl: 'app/components/carCard/carCard.view.html',
-    controller: ['$scope', '$interval', function($scope, $interval) {
-
-        //Variable initialization
+    
+    controller: ['$scope', '$interval', 
+        
+        function($scope, $interval) {
+        
+        /**
+         * Variable Initialization 
+         * @var $ctrl Alias for view modal for this particular component.
+         * @var carouselInterval Stores the interval id of the carousel.
+         * @var currentImageIndex Stores the index of the image from the images array.
+         */    
+            
         let $ctrl = this;
+        let carouselInterval;
         $ctrl.currentImageIndex = 0;
-        let carouselInterval; //For storing the interval id
 
-        //Start the caraousel with 2 sec interval
+        /**
+         * Start carousel function
+         * @description Starts the carousel at an interval of 2 seconds.
+         */
+
         $ctrl.startCarousel = function() {
             if ($ctrl.car.images.length <= 1) return;    
             if (carouselInterval) $interval.cancel(carouselInterval);
@@ -16,7 +30,11 @@ mainApp.component('carCard', {
             }, 2000);
         };
 
-        //Stop the carousel
+        /**
+         * Stop carousel function
+         * @description Stops the carousel
+         */
+
         $ctrl.stopCarousel = function() {
             if (carouselInterval) {
                 $interval.cancel(carouselInterval);
@@ -24,14 +42,22 @@ mainApp.component('carCard', {
             }
         };
 
-        //Handle if somebody clicks upon the card
+        /**
+         * Handle Card Click
+         * @description Stores the carId in the @var $ctrl.car.carId
+         */
+        
         $ctrl.handleButtonClick = function() {
             if ($ctrl.onButtonClick) {
                 $ctrl.onButtonClick({ carId: $ctrl.car.carId });
             }
         };
 
-        //Get the display price according to thte rental type
+        /**
+         * Get the Display Price according to the rental types (Hr/day)
+         * @description If the rentalOption is local than display it in hours(hr) else day.
+         */
+
         $ctrl.getDisplayPrice = function() {
             if ($ctrl.car.rentalOptions.local) {
                 return {
@@ -47,16 +73,27 @@ mainApp.component('carCard', {
             return { amount: 0, unit: 'hr' };
         };
 
-        //Good practice to destroy interval set
+        /**
+         * Upon unmount, Destroy the interval
+         */
+
         $scope.$on('$destroy', function() {
             if (carouselInterval) {
                 $interval.cancel(carouselInterval);
             }
         });
     }],
+
+    /**
+     * Bindings for the component
+     * @description < : one way binding of data
+     *              & : binding function
+     *              @ : binding string  
+     */
+
     bindings: {
         car: '<',
-        onBook: '&',              //Binding For functions
+        onBook: '&',
         buttonText: '@',          
         onButtonClick: '&',       
         showButton: '<',          

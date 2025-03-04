@@ -17,8 +17,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     service.calculateBaseFare = function (bookingData) {
         const rentalType = bookingData.bid.rentalType;
         const car = bookingData.bid.car;
-        const from = new Date(bookingData.fromTimestamp);
-        const to = new Date(bookingData.toTimestamp);
+        const from = new Date(bookingData.bid.fromTimestamp);
+        const to = new Date(bookingData.bid.toTimestamp);
         const diffTime = Math.abs(to - from);
 
         if (rentalType === 'local') {
@@ -60,45 +60,43 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     };
 
     service.createBooking = function (bookingData) {
-        var deferred = $q.defer();
+        let deferred = $q.defer();
 
         try {
-            // Validate required fields and structure
-            if (!bookingData.bid || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
+            if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
                 throw new Error('Missing required booking information');
             }
 
-            if (!bookingData.bid.bidId || !bookingData.bid.user || !bookingData.bid.car) {
+            if (!bookingData.bidId || !bookingData.user || !bookingData.car) {
                 throw new Error('Invalid bid information');
             }
 
             service.checkCarAvailability(
-                bookingData.bid.car.carId,
+                bookingData.car.carId,
                 bookingData.fromTimestamp,
                 bookingData.toTimestamp
             ).then(function (isAvailable) {
                 if (!isAvailable) {
                     throw new Error('Car is not available for selected dates');
                 }
-
                 const booking = {
                     bookingId: idGenerator.generate(),
                     fromTimestamp: bookingData.fromTimestamp,
                     toTimestamp: bookingData.toTimestamp,
                     status: 'confirmed',
                     createdAt: new Date().toISOString(),
-                    rentalType: bookingData.bid.rentalType,
+                    rentalType: bookingData.rentalType,
                     bid: {
-                        bidId: bookingData.bid.bidId,
-                        fromTimestamp: bookingData.bid.fromTimestamp,
-                        toTimestamp: bookingData.bid.toTimestamp,
-                        status: bookingData.bid.status,
-                        createdAt: bookingData.bid.createdAt,
-                        bidAmount: bookingData.bid.bidAmount,
-                        rentalType: bookingData.bid.rentalType,
-                        bidBaseFare: bookingData.bid.bidBaseFare,
-                        user: bookingData.bid.user,
-                        car: bookingData.bid.car
+                        bidId: bookingData.bidId,
+                        fromTimestamp: bookingData.fromTimestamp,
+                        toTimestamp: bookingData.toTimestamp,
+                        status: 'accepted',
+                        createdAt: bookingData.createdAt,
+                        bidAmount: bookingData.bidAmount,
+                        rentalType: bookingData.rentalType,
+                        bidBaseFare: bookingData.bidBaseFare,
+                        user: bookingData.user,
+                        car: bookingData.car
                     },
                     baseFare: service.calculateBaseFare(bookingData),
                     extraKmCharges: 0,
@@ -112,17 +110,15 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                     toTimestamp: new Date(bookingData.toTimestamp)
                 };
 
-                //Changed Promise.all to $q.all
                 return $q.all([
-                    dbService.saveItem('bookings', booking),
-                    dbService.saveItem('carAvailability', carAvailability)
+                    dbService.addItem('bookings', booking),
+                    dbService.addItem('carAvailibility', carAvailability)
                 ]).then(function () {
                     errorService.success('Booking created successfully!');
                     deferred.resolve(booking);
                 });
-            })
-                .catch(function (error) {
-                    errorService.handleError('Error creating booking: ' + error.message);
+            }).catch(function (error) {
+                    errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
                     deferred.reject(error);
                 });
         } catch (error) {
@@ -159,13 +155,11 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     };
 
     service.checkCarAvailability = function (carId, fromTimestamp, toTimestamp) {
-        var deferred = $q.defer();
+        let deferred = $q.defer();
 
-        dbService.getItems('carAvailability')
+        dbService.getAllItems('carAvailibility')
             .then(function (availabilities) {
-                const carAvailabilities = availabilities.filter(
-                    availability => availability.carId === carId
-                );
+                const carAvailabilities = availabilities.filter(availability => availability.carId === carId);
 
                 const isOverlapping = carAvailabilities.some(function (availability) {
                     const existingFrom = new Date(availability.fromTimestamp);
@@ -174,9 +168,9 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                     const newTo = new Date(toTimestamp);
 
                     return (
-                        (newFrom >= existingFrom && newFrom <= existingTo) || // New start date falls within existing booking
-                        (newTo >= existingFrom && newTo <= existingTo) || // New end date falls within existing booking
-                        (newFrom <= existingFrom && newTo >= existingTo) // New booking completely encompasses existing booking
+                        (newFrom >= existingFrom && newFrom <= existingTo) || // new start date falls within existing booking
+                        (newTo >= existingFrom && newTo <= existingTo) || // new end date falls within existing booking
+                        (newFrom <= existingFrom && newTo >= existingTo) // new booking completely exceeds existing booking
                     );
                 });
 

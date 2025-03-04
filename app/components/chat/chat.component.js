@@ -1,48 +1,62 @@
 mainApp.component('chatBox', {
+    
     templateUrl: 'app/components/chat/chat.template.html',
+    
     controller: ['$scope', '$timeout', 'chatService', 'errorService',
-        function($scope, $timeout, chatService, errorService) {
-            
-            //Variable initialization
-            let $ctrl = this;
-            
-            $ctrl.messages = [];        //Holds all the messages
-            $ctrl.newMessage = '';      //New message object
-            $ctrl.selectedFile = null;  //Selected file
-            $ctrl.loading = false;      //Loader
+    
+        function ($scope, $timeout, chatService, errorService) {
 
-            //Initialization function
-            $ctrl.$onInit = function() {
+            /**
+             * Variable Declarations
+             * @var $ctrl Alias for view modal in this component.
+             * @var $ctrl.messages Array of fetched messages.
+             * @var $ctrl.newMessage Object of the new message to be sent.
+             */
+
+            let $ctrl = this;
+            $ctrl.messages = [];
+            $ctrl.newMessage = '';
+            $ctrl.selectedFile = null;
+            $ctrl.loading = false;
+
+            /**
+             * Initialization function
+             * Check and call loadMessages function.
+             * @return {void}
+             */
+
+            $ctrl.$onInit = function () {
                 if (!$ctrl.chatId || !$ctrl.fromUser || !$ctrl.toUser) {
-                    errorService.handleError('Missing required chat properties', 'ChatBox :: Initialization Failed');
+                    errorService.handleError('ChatBox :: Initialization Failed ::  Missing required chat properties');
                     return;
                 }
                 $ctrl.loadMessages();
             };
 
-            //Load messages
-            $ctrl.loadMessages = function() {
+            /**
+             * Load Messages function
+             * @requires chatService
+             * @description Loads all the messages associated with the ChatId into @var $ctrl.messages
+             */
+
+            $ctrl.loadMessages = function () {
                 $ctrl.loading = true;
                 chatService.getMessages($ctrl.chatId)
                     .then(messages => {
-                        //it ensures that this block is executed within angularjs's digest cycle, 
-                        //which helps in properly updating the scope and bindings.
-                        $timeout(() => {
-                            $ctrl.messages = messages;
-                        });
+                        $timeout(() => $ctrl.messages = messages);
                     })
                     .catch(error => errorService.handleError(error, 'ChatBox :: Messages Load Failed'))
-                    .finally(() => {
-                        $timeout(() => {
-                            $ctrl.loading = false;
-                        });
-                    });
+                    .finally(() => $timeout(() => $ctrl.loading = false));
             };
 
-            //Send message
-            $ctrl.sendMessage = function() {
+            /**
+             * Send Messages function
+             * @requires chatService
+             * @description calls chatService.sendMessage with the message object and loads the messages again.
+             */
+
+            $ctrl.sendMessage = function () {
                 if (!$ctrl.newMessage && !$ctrl.selectedFile) return;
-                
                 $ctrl.sending = true;
                 chatService.sendMessage(
                     $ctrl.chatId,
@@ -51,23 +65,24 @@ mainApp.component('chatBox', {
                     $ctrl.newMessage,
                     $ctrl.selectedFile
                 )
-                .then(() => {
-                    $timeout(() => {
-                        $ctrl.newMessage = '';
-                        $ctrl.selectedFile = null;
-                    });
-                    return $ctrl.loadMessages();
-                })
-                .catch(error => errorService.handleError(error, 'ChatBox :: Message Send Failed'))
-                .finally(() => {
-                    $timeout(() => {
-                        $ctrl.sending = false;
-                    });
-                });
+                    .then(() => {
+                        $timeout(() => {
+                            $ctrl.newMessage = '';
+                            $ctrl.selectedFile = null;
+                        });
+                        return $ctrl.loadMessages();
+                    })
+                    .catch(error => errorService.handleError(error, 'Chat Component :: Message Send Failed'))
+                    .finally(() => $ctrl.sending = false);
             };
 
-            //If the file size if greater than 5 MB throw error
-            $ctrl.handleFileSelect = function(fileInput) {
+            /**
+             * Handle file selection function
+             * @requires errorService
+             * @description Checks if the file size is greater than defined file size limit(5MB) and attatches it to @var $ctrl.selectedFile.
+             */
+
+            $ctrl.handleFileSelect = function (fileInput) {
                 const file = fileInput.files[0];
                 if (file) {
                     if (file.size > 5 * 1024 * 1024) {
@@ -81,19 +96,27 @@ mainApp.component('chatBox', {
                 }
             };
 
-            $ctrl.isOwnMessage = function(message) {
+            /**
+             * Helper function 
+             * @returns Boolean
+             * @description For checking if the message is of user's or the opposite person.
+             */
+
+            $ctrl.isOwnMessage = function (message) {
                 return message.fromUser.userId === $ctrl.fromUser.userId;
             };
 
-
-            //clear or fields when the component is getting destryoed
-            $ctrl.$onDestroy = function() {
+            /**
+             * Clear the memory of @var $ctrl.messages & @var $ctrl.selectedFile
+             */
+            
+            $ctrl.$onDestroy = function () {
                 $ctrl.messages = [];
                 $ctrl.selectedFile = null;
             };
         }
     ],
-    controllerAs:'$ctrl',
+    controllerAs: '$ctrl',
     bindings: {
         chatId: '<',
         fromUser: '<',

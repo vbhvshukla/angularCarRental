@@ -1,17 +1,33 @@
-mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'authService', 'errorService',
-    function ($scope, $state, $transitions, authService, errorService) {
+mainApp.controller('NavbarController', ['$state', '$transitions', 'authService', 'errorService',
+
+    function ($state, $transitions, authService, errorService) {
+
+        /**
+         * Variable declarations
+         * @var vm Alias for view modal for the navbar controller.
+         * @var vm.isLoggedIn Holds boolean for loggedin user.
+         * @var vm.currentUser Holds the currentUser object after authentication.
+         * @var vm.links Holds the links to show in the navbar.
+         */
+
         let vm = this;
         vm.isLoggedIn = false;
         vm.currentUser = null;
         vm.links = [];
 
-        function init() {
+        /**
+         * Function : Initialization
+         * @requires authService
+         * @description Calls authService to get the user and assign it to @var vm.currentUser
+         */
+
+        vm.init = function () {
             if (authService.checkAuth()) {
                 authService.getUser()
                     .then(function (user) {
                         vm.isLoggedIn = true;
                         vm.currentUser = user;
-                        updateNavLinks(); 
+                        updateNavLinks();
                     })
                     .catch(function (error) {
                         errorService.handleError(error, 'NavbarController :: User Fetch Failed');
@@ -24,9 +40,13 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
             }
         }
 
+        /**
+         * Function : Update the navlinks based on user roles
+         */
+
         function updateNavLinks() {
             var links = [];
-            
+
             if (!vm.isLoggedIn || (vm.currentUser && vm.currentUser.role === 'customer')) {
                 links.push({ state: 'home', label: 'Home' });
             }
@@ -36,7 +56,7 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
             }
 
             if (vm.isLoggedIn && vm.currentUser) {
-                switch(vm.currentUser.role) {
+                switch (vm.currentUser.role) {
                     case 'customer':
                         links.push({ state: 'userdashboard.profile', label: 'Dashboard' });
                         break;
@@ -53,6 +73,11 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
             vm.links = links;
         }
 
+        /**
+         * Function : Logout
+         * @requires AuthService
+         */
+
         vm.logout = function () {
             authService.logout()
                 .then(function () {
@@ -64,10 +89,13 @@ mainApp.controller('NavbarController', ['$scope', '$state', '$transitions', 'aut
                 .catch(error => errorService.handleError(error, 'Navbar Controller :: Logout Failed'));
         };
 
-        init();
-
+        /**
+         * Transition
+         * @description If transaction is successful , as the navbar is static recall the init function.
+         */
+        
         $transitions.onSuccess({}, function () {
-            init();
+            vm.init();
         });
     }
 ]);

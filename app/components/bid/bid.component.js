@@ -1,31 +1,43 @@
 mainApp.component('bidForm', {
+
     templateUrl: 'app/components/bid/bid.template.html',
-    controller: ['$scope', 'bidService', 'errorService', 'authService',
-        function ($scope, bidService, errorService, authService) {
+
+    controller: ['bidService', 'errorService', 'authService',
+
+        function (bidService, errorService, authService) {
+            
             let $ctrl = this;
 
-            //Initialization functionf for the bid component.
-            //Get the currently logged in user and set the currentUser to $ctrl.
+            /** Initialization function
+             *@description Initializes the variables , Gets the current logged in user and sets it in @var $ctrl.currentUser
+             *@requires authService
+             *Available list of variables : 
+             *@var $ctrl.rentalType {Holds the type of rental(local/outstation)}
+             *@var $ctrl.isSubmitting {Loader boolean whilst bid submission}
+             *@var $ctrl.showPriceBreakup {Boolean for modal}
+             *@var $ctrl.estimate {Holds the bids estimated amount}
+             *@var $ctrl.bid {Holds the bid object}
+             */
 
             $ctrl.$onInit = function () {
-                
+
                 if (!$ctrl.carId || !$ctrl.car) {
                     errorService.handleError('Car data is required', 'BidForm :: Initialization');
                     return;
                 }
-    
+
                 $ctrl.rentalType = 'local';
                 $ctrl.isSubmitting = false;
                 $ctrl.showPriceBreakup = false;
                 $ctrl.estimate = null;
-    
+
                 $ctrl.bid = {
                     startDate: null,
                     endDate: null,
                     bidAmount: null,
                     rentalType: $ctrl.rentalType
                 };
-        
+
                 authService.getUser()
                     .then(user => {
                         $ctrl.currentUser = user;
@@ -33,16 +45,22 @@ mainApp.component('bidForm', {
                     .catch(error => errorService.handleError(error, 'BidForm :: User Fetch Failed'));
             };
 
-            //Removed $watch here,
-            //If there's a date change calculate the estimated price accordingly.
+            /** Handle Date Change Function
+             * @description Handles the calculations upon date changes.
+             */
 
-            $ctrl.onDateChange = function() {
+            $ctrl.onDateChange = function () {
                 if ($ctrl.bid.startDate && $ctrl.bid.endDate) {
                     $ctrl.calculateEstimate();
                 }
             };
 
-            //Setting the rental type
+            /** Set Rental Type function
+             * @description Sets the rental type to the @var $ctrl.rentalType
+             * @param {*} type 
+             * @requires errorService
+             */
+
             $ctrl.setRentalType = function (type) {
                 if (type === 'local' && !$ctrl.car.isAvailableForLocal) {
                     errorService.handleError('Car not available for local rental', 'BidForm :: Validation');
@@ -52,7 +70,6 @@ mainApp.component('bidForm', {
                     errorService.handleError('Car not available for outstation rental', 'BidForm :: Validation');
                     return;
                 }
-                //Reset the already set data when rental type is changed.
                 $ctrl.rentalType = type;
                 $ctrl.bid.rentalType = type;
                 $ctrl.bid.startDate = null;
@@ -60,25 +77,26 @@ mainApp.component('bidForm', {
                 $ctrl.estimate = null;
             };
 
-            //Calculation
+            /** Estimate calcualtion function
+             * @description Calculates the estimated amount.
+             * Get the start,end date from @var $ctrl.bid format it in Date object
+             * Check for availibility, calculate bid estimate.
+             * @requires bidService
+             */
 
             $ctrl.calculateEstimate = function () {
                 if (!$ctrl.bid.startDate || !$ctrl.bid.endDate) return;
 
-                //Set loader true
                 $ctrl.isCalculating = true;
 
-                //Get the start and end date and format it according to the date object.
                 const start = new Date($ctrl.bid.startDate);
                 const end = new Date($ctrl.bid.endDate);
 
-                //Throw error if the end date is before the start date.
                 if (end <= start) {
                     errorService.handleError('End date must be after start date', 'BidForm :: Validation');
                     return;
                 }
 
-                //Check is the car is available or not.
                 bidService.checkDateAvailability($ctrl.carId, start, end)
                     .then(isAvailable => {
                         if (!isAvailable) {
@@ -94,33 +112,31 @@ mainApp.component('bidForm', {
                         }
                     })
                     .catch(error => errorService.handleError(error, 'BidForm :: Estimate Failed'))
-                    .finally(() => {
-                        $ctrl.isCalculating = false;
-                    });
+                    .finally(() => $ctrl.isCalculating = false);
             };
 
-            //Submit Bid function.
-            $ctrl.submitBid = function () {
-                //Return if the form is not valid(all frontend validations)
-                if ($ctrl.bidForm.$invalid) return;
+            /** Submit Bids function
+             * @description Handles the Bid submission
+             * @requires errorService,bidService
+             */
 
-                //Return if there's no estimate.
-                if (!$ctrl.estimate) {
-                    errorService.handleError('Please wait for price calculation', 'BidForm :: Validation');
+            $ctrl.submitBid = function () {
+
+                if ($ctrl.bidForm.$invalid || !$ctrl.estimate) {
+                    errorService.handleError('BidForm :: Validation :: Please wait for price calculation');
                     return;
                 }
 
                 //The bid amount must be within the range of minBid and maxBid
                 if ($ctrl.bid.bidAmount < $ctrl.estimate.minBid ||
                     $ctrl.bid.bidAmount > $ctrl.estimate.maxBid) {
-                    errorService.handleError('Bid amount must be within allowed range', 'BidForm :: Validation');
+                    errorService.handleError('BidForm :: Validation  :: Bid amount must be within allowed range');
                     return;
                 }
 
-                //Before submitting set this to true
+                //Set loader true
                 $ctrl.isSubmitting = true;
-                
-                //Submit the bid
+
                 bidService.submitBid($ctrl.carId, $ctrl.bid, $ctrl.currentUser)
                     .then(() => {
                         $ctrl.onBidSubmit({
@@ -142,23 +158,24 @@ mainApp.component('bidForm', {
                             $ctrl.bidForm.$setUntouched();
                         }
                     })
-                    .catch(error => errorService.handleError(error, 'BidForm :: Submit Failed'))
-                    .finally(() => {
-                        $ctrl.isSubmitting = false;
-                    });
+                    .catch((error) => errorService.handleError(error, 'BidForm :: Submit Failed'))
+                    .finally(() => { $ctrl.isSubmitting = false });
             };
+
+            /** Price Modal Toggling function
+             * @description Sets the price breakup modal true/false.
+             */
 
             $ctrl.togglePriceBreakup = function () {
                 $ctrl.showPriceBreakup = !$ctrl.showPriceBreakup;
             };
-
-            $ctrl.$onDestroy = function () {
-                if ($scope.dateWatcher) {
-                    $scope.dateWatcher();
-                }
-            };
         }
     ],
+
+    /** Bindings for the component.
+     * @description Bindings : One way binding for carId,car.
+     */
+    
     bindings: {
         carId: '<',
         car: '<',

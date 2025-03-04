@@ -235,13 +235,10 @@ mainApp.controller('OwnerAnalyticsController', [
             createChart('avgBidAmountChart', 'bar', data.avgBidAmount, vm.revenueChartOptions);
         }
 
-        vm.updateTimeRange = function() {
-            const period = vm.selectedDays <= 30 ? 'weekly' : 
-                          vm.selectedDays <= 90 ? 'monthly' : 'yearly';
-                          
+        vm.updateTimeRange = function() {      
             vm.loading = true;
             authService.getUser()
-                .then(user => analyticsService.getOwnerAnalytics(user.userId, vm.selectedDays, period))
+                .then(user => analyticsService.getOwnerAnalytics(user.userId, vm.selectedDays))
                 .then(data => {
                     vm.totals = data.totals;
                     vm.charts = data.charts;
@@ -262,11 +259,6 @@ mainApp.controller('OwnerAnalyticsController', [
 
         vm.formatDate = function (date) {
             return new Date(date).toLocaleDateString();
-        };
-
-        vm.getTrend = function (current, previous) {
-            if (!previous) return 'neutral';
-            return current > previous ? 'up' : 'down';
         };
 
         $scope.$on('$destroy', function() {

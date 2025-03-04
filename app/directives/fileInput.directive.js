@@ -1,3 +1,8 @@
+/**
+ * Handle file Input
+ * @description Handles the file to the element upon file change event.
+ * @requires element
+ */
 mainApp.directive('fileInput', function() {
     return {
         scope: {

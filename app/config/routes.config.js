@@ -1,11 +1,47 @@
 mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvider',
     function ($stateProvider, $urlMatcherFactoryProvider, $urlRouterProvider) {
+       
+        /**
+         * Configurations
+         */
         $urlMatcherFactoryProvider.caseInsensitive(true);
         $urlRouterProvider.otherwise('/');
         $urlRouterProvider.when('/dashboard', '/dashboard/profile');
         $urlRouterProvider.when('/ownerdashboard', '/ownerdashboard/home');
 
+        /**
+         * List of states available
+         * --Global--
+         * @name home : Home.
+         * @name login : Login.
+         * @name register : Register.
+         * @name bid : Bidding.
+         * 
+         * --User's Dashboard--
+         * @name userdashboard : User's dashboard.
+         * @name userdashboard.profile : User's profile.
+         * @name userdashboard.bookings : User's bookings.
+         * @name userdashboard.messages : User's messages.
+         * @name userdashboard.message  : User's specific conversation and it's messages.
+         * @name userdashboard.bids : User's bids.
+         * 
+         * --Admin's Dashboard--
+         * @name admindashboard : Admin's Dashboard.
+         * @name adminanalytics : Admin's Analytics.
+         * 
+         * --Owner's Dashboard--
+         * @name ownerdashboard : Owner's Dashboard Base Page
+         * @name ownerdashboard.home : Owner Dashboard's Home Page
+         * @name ownerdashboard.listedcars : Owner's Listed Cars.
+         * @name ownerdashboard.manipulatecar : Owner's Add/Edit Car Page.
+         * @name ownerdashboard.allmessages : Owner's All Messages.
+         * @name ownerdashboard.message : Owner's Specific Conversation and it's messages.
+         * @name ownerdashboard.analytics : Owner's Analytics Page.
+         */
+
         $stateProvider
+
+            //Home
             .state('home', {
                 url: '/',
                 templateUrl: 'app/views/home/home.view.html',
@@ -29,6 +65,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Login
             .state('login', {
                 url: '/login?redirect&params',
                 templateUrl: 'app/views/auth/login/login.view.html',
@@ -56,6 +94,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Register
             .state('register', {
                 url: '/register',
                 templateUrl: 'app/views/auth/register/register.view.html',
@@ -81,6 +121,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Bidding
             .state('bid', {
                 url: '/bid/:carId',
                 templateUrl: 'app/views/bid/bid.view.html',
@@ -107,6 +149,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //User Dashboard : Base Page
             .state('userdashboard', {
                 url: '/dashboard',
                 templateUrl: 'app/views/dashboard/user/user.dashboard.html',
@@ -132,6 +176,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 },
                 abstract: true
             })
+        
+            //User Dashboard : User's Profile (home page for dashboard)
             .state('userdashboard.profile', {
                 url: '/profile',
                 templateUrl: 'app/views/dashboard/user/profile/profile.view.html',
@@ -156,6 +202,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //User Dashboard : User Bookings
             .state('userdashboard.bookings', {
                 url: '/bookings',
                 templateUrl: 'app/views/dashboard/user/bookings/bookings.view.html',
@@ -180,6 +228,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //User Dashboard : User Messages
             .state('userdashboard.messages', {
                 url: '/messages',
                 templateUrl: 'app/views/dashboard/user/messages/messages.view.html',
@@ -204,6 +254,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //User Dashboard : User message
             .state('userdashboard.message', {
                 url: '/message/:chatId',
                 templateUrl: 'app/views/dashboard/user/messages/message/message.view.html',
@@ -236,6 +288,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //User Dashboard : User's All Bids
             .state('userdashboard.bids', {
                 url: '/bids',
                 templateUrl: 'app/views/dashboard/user/bids/allbids.view.html',
@@ -265,6 +319,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Admin Dashboard
             .state('admindashboard', {
                 url: '/admindashboard',
                 templateUrl: 'app/views/dashboard/admin/admin.view.html',
@@ -292,6 +348,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Admin Analytics
             .state('adminanalytics', {
                 url: '/adminanalytics',
                 templateUrl: 'app/views/dashboard/admin/analytics/analytics.view.html',
@@ -319,6 +377,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     ]
                 }
             })
+        
+            //Owner Dashboard : Base Page
             .state('ownerdashboard', {
                 url: '/ownerdashboard',
                 templateUrl: 'app/views/dashboard/owner/ownerDashboard.view.html',
@@ -341,6 +401,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : Home Page
             .state('ownerdashboard.home', {
                 url: '/home',
                 templateUrl: 'app/views/dashboard/owner/home/home.view.html',
@@ -363,6 +425,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : All Listed Cars
             .state('ownerdashboard.listedcars', {
                 url: '/listedcars',
                 templateUrl: 'app/views/dashboard/owner/listedCars/listedCars.view.html',
@@ -385,6 +449,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : Manipulate Cars(Add/Edit)
             .state('ownerdashboard.manipulatecars', {
                 url: '/car/:carId',
                 templateUrl: 'app/views/dashboard/owner/manipulatecar/manipulatecar.view.html',
@@ -410,6 +476,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : All Messages
             .state('ownerdashboard.allmessages', {
                 url: '/allmessages',
                 templateUrl: 'app/views/dashboard/owner/allchats/allChats.view.html',
@@ -432,6 +500,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : Specific message of the conversations.
             .state('ownerdashboard.message', {
                 url: '/message/:chatId',
                 templateUrl: 'app/views/dashboard/owner/allchats/chat/chat.view.html',
@@ -454,6 +524,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     }]
                 }
             })
+        
+            //Owner Dashboard : Owner Analytics
             .state('ownerdashboard.analytics', {
                 url: '/analytics',
                 templateUrl: 'app/views/dashboard/owner/analytics/analytics.view.html',

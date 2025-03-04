@@ -13,11 +13,6 @@
         <div class="total-card">
             <h3>Total Revenue</h3>
             <p>{{vm.totals.formattedRevenue}}</p>
-            <span class="trend" ng-class="vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue)">
-                <i class="fas"
-                    ng-class="{'fa-arrow-up': vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue) === 'up', 
-                                        'fa-arrow-down': vm.getTrend(vm.totals.totalRevenue, vm.totals.previousRevenue) === 'down'}"></i>
-            </span>
         </div>
         <div class="total-card">
             <h3>Total Bookings</h3>

@@ -1,3 +1,8 @@
+/**
+ * Comparison Directive
+ * @description For Comparing two values.
+ * @requires ngModel
+ */
 mainApp.directive('compareTo', function() {
     return {
         require: 'ngModel',

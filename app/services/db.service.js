@@ -349,7 +349,9 @@ mainApp.service('dbService', function ($q) {
             return deferred.promise;
         },
 
+
         this.getAllItems = function (storeName, limit = 1000) {
+            
             const deferred = $q.defer();
             openDb()
                 .then(() => {
@@ -359,7 +361,6 @@ mainApp.service('dbService', function ($q) {
                         const items = [];
                         let count = 0;
                         const request = store.openCursor();
-
                         request.onsuccess = (event) => {
                             const cursor = event.target.result;
                             if (cursor && count < limit) {
@@ -461,13 +462,16 @@ mainApp.service('dbService', function ($q) {
                 const store = getObjectStore(storeName, "readonly");
                 const index = store.index(indexName);
                 const result = [];
+                //we are getting only those items which lies on or before so this is the cutoff date.
                 const cutoffDate = new Date();
+                //getDate returns the day of the month then subrtract the number of days and set the cutOffDate again to the date after subtraction
                 cutoffDate.setDate(cutoffDate.getDate() - days);
 
                 const request = index.openCursor();
                 request.onsuccess = (event) => {
                     const cursor = event.target.result;
                     if (cursor) {
+                        //now if createdAt is greater than the cutoffdate take it in else contninue
                         const itemDate = new Date(cursor.value.createdAt);
                         if (itemDate >= cutoffDate) {
                             result.push(cursor.value);
@@ -480,45 +484,45 @@ mainApp.service('dbService', function ($q) {
                 request.onerror = (event) => deferred.reject(event.target.error);
                 return deferred.promise;
             });
-        },
-
-        this.updateCarInAllStores = function (updatedCar) {
-            return openDb().then(() => {
-                const deferred = $q.defer();
-                const transaction = db.transaction(["cars", "bookings", "bids"], "readwrite");
-                const carsStore = transaction.objectStore("cars");
-                carsStore.put(updatedCar);
-                const bookingsStore = transaction.objectStore("bookings");
-                const bookingsRequest = bookingsStore.openCursor();
-                bookingsRequest.onsuccess = (event) => {
-                    const cursor = event.target.result;
-                    if (cursor) {
-                        const booking = cursor.value;
-                        if (booking.bid?.car?.carId === updatedCar.carId) {
-                            booking.bid.car = updatedCar;
-                            cursor.update(booking);
-                        }
-                        cursor.continue();
-                    }
-                };
-                const bidsStore = transaction.objectStore("bids");
-                const bidsRequest = bidsStore.openCursor();
-                bidsRequest.onsuccess = (event) => {
-                    const cursor = event.target.result;
-                    if (cursor) {
-                        const bid = cursor.value;
-                        if (bid.car?.carId === updatedCar.carId) {
-                            bid.car = updatedCar;
-                            cursor.update(bid);
-                        }
-                        cursor.continue();
-                    }
-                };
-
-                transaction.oncomplete = () => deferred.resolve(true);
-                transaction.onerror = (event) => deferred.reject(event.target.error);
-
-                return deferred.promise;
-            });
         }
+
+        // this.updateCarInAllStores = function (updatedCar) {
+        //     return openDb().then(() => {
+        //         const deferred = $q.defer();
+        //         const transaction = db.transaction(["cars", "bookings", "bids"], "readwrite");
+        //         const carsStore = transaction.objectStore("cars");
+        //         carsStore.put(updatedCar);
+        //         const bookingsStore = transaction.objectStore("bookings");
+        //         const bookingsRequest = bookingsStore.openCursor();
+        //         bookingsRequest.onsuccess = (event) => {
+        //             const cursor = event.target.result;
+        //             if (cursor) {
+        //                 const booking = cursor.value;
+        //                 if (booking.bid?.car?.carId === updatedCar.carId) {
+        //                     booking.bid.car = updatedCar;
+        //                     cursor.update(booking);
+        //                 }
+        //                 cursor.continue();
+        //             }
+        //         };
+        //         const bidsStore = transaction.objectStore("bids");
+        //         const bidsRequest = bidsStore.openCursor();
+        //         bidsRequest.onsuccess = (event) => {
+        //             const cursor = event.target.result;
+        //             if (cursor) {
+        //                 const bid = cursor.value;
+        //                 if (bid.car?.carId === updatedCar.carId) {
+        //                     bid.car = updatedCar;
+        //                     cursor.update(bid);
+        //                 }
+        //                 cursor.continue();
+        //             }
+        //         };
+
+        //         transaction.oncomplete = () => deferred.resolve(true);
+        //         transaction.onerror = (event) => deferred.reject(event.target.error);
+
+        //         return deferred.promise;
+        //     });
+        // }
 })

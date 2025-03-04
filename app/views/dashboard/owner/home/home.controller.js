@@ -1,5 +1,5 @@
-mainApp.controller('OwnerHomeDashboardController', ['dbService', 'authService', 'bookingService',
-    function (dbService, authService, bookingService) {
+mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService',
+    function (dbService, bidService, authService, bookingService) {
 
         //Variable Declaration
         let vm = this;
@@ -42,11 +42,10 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'authService', 
         //Initialization function
         vm.init = function () {
             authService.getUser()
-            .then(user => vm.getAllData(user.userId))
-            .catch(err => console.log("Owner controller :: Error Getting User :: ", err));
+                .then(user => vm.getAllData(user.userId))
+                .catch(err => console.log("Owner controller :: Error Getting User :: ", err));
         }
 
-        //Get all the bids , bookings of the owner
         vm.getAllData = function (userId) {
             async.parallel([
                 function (callback) {
@@ -67,27 +66,25 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'authService', 
                 else {
                     vm.bookings = results[0];
                     vm.allBids = results[1];
-                    vm.pendingBids = vm.allBids.filter(bid => bid.status === 'pending');
-                    
-                    // Initialize filtered data
+                    vm.pendingBids = vm.allBids.filter(bid => bid.status.toLowerCase() === 'pending');
                     vm.applyFilters();
                 }
             })
         }
 
-        vm.applyFilters = function() {
+        vm.applyFilters = function () {
             // Filter bookings
-            vm.filteredBookings = vm.bookings.filter(booking => 
+            vm.filteredBookings = vm.bookings.filter(booking =>
                 vm.filters.bookingType === 'all' || booking.rentalType === vm.filters.bookingType
             );
 
             // Filter all bids
-            vm.filteredAllBids = vm.allBids.filter(bid => 
+            vm.filteredAllBids = vm.allBids.filter(bid =>
                 vm.filters.bidStatus === 'all' || bid.status === vm.filters.bidStatus
             );
 
             // Filter pending bids
-            vm.filteredPendingBids = vm.pendingBids.filter(bid => 
+            vm.filteredPendingBids = vm.pendingBids.filter(bid =>
                 vm.filters.pendingType === 'all' || bid.rentalType === vm.filters.pendingType
             );
 
@@ -102,19 +99,36 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'authService', 
             vm.pagination.pendingBids.currentPage = 1;
         };
 
-        vm.getPaginatedData = function(data, paginationConfig) {
+        vm.acceptBid = function (bid) {
+            bookingService.createBooking(bid).then(() => {
+                return bidService.updateStatus(bid.bidId, 'accepted');
+            })
+                .then(() => {
+                    console.log("Onwer Dashboard :: Accepted bid");
+                })
+        }
+
+        vm.rejectBid = function (bid) {
+
+            bidService.updateStatus(bid.bidId, 'rejected')
+                .then(() => {
+                    console.log("Owner Dashboard :: Rejected bid");
+                })
+        }
+
+        vm.getPaginatedData = function (data, paginationConfig) {
             const startIndex = (paginationConfig.currentPage - 1) * paginationConfig.itemsPerPage;
             return data.slice(startIndex, startIndex + paginationConfig.itemsPerPage);
         };
 
         // Navigation functions
-        vm.previousPage = function(type) {
+        vm.previousPage = function (type) {
             if (vm.pagination[type].currentPage > 1) {
                 vm.pagination[type].currentPage--;
             }
         };
 
-        vm.nextPage = function(type) {
+        vm.nextPage = function (type) {
             const totalPages = Math.ceil(vm.pagination[type].totalItems / vm.pagination[type].itemsPerPage);
             if (vm.pagination[type].currentPage < totalPages) {
                 vm.pagination[type].currentPage++;
@@ -133,12 +147,11 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'authService', 
             }
         }
 
-        // Add these helper functions to your controller
-        vm.shouldShowPagination = function(type) {
+        vm.shouldShowPagination = function (type) {
             return vm.pagination[type].totalItems > vm.pagination[type].itemsPerPage;
         };
 
-        vm.getTotalPages = function(type) {
+        vm.getTotalPages = function (type) {
             return Math.ceil(vm.pagination[type].totalItems / vm.pagination[type].itemsPerPage);
         };
     }

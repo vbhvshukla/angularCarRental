@@ -1,4 +1,4 @@
-<div class="navbar-container" ng-controller="NavbarController as vm">
+<div class="navbar-container" ng-controller="NavbarController as vm" ng-init="vm.init()">
     <div class="header">
         <div class="logo">
             <a ui-sref="home" ng-if="!vm.isLoggedIn || vm.currentUser.role === 'customer'">
@@ -6,16 +6,11 @@
             </a>
         </div>
         <nav class="nav-links">
-            <a ng-repeat="link in vm.links"
-               ui-sref="{{link.state}}"
-               ui-sref-active="active">
+            <a ng-repeat="link in vm.links" ui-sref="{{link.state}}" ui-sref-active="active">
                 {{link.label}}
             </a>
 
-            <a ng-if="vm.isLoggedIn" 
-               ng-click="vm.logout()" 
-               href="javascript:void(0)"
-               class="logout-link">
+            <a ng-if="vm.isLoggedIn" ng-click="vm.logout()" href="javascript:void(0)" class="logout-link">
                 Logout
             </a>
         </nav>

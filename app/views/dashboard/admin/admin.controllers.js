@@ -6,7 +6,6 @@ mainApp.controller('AdminController', [
     'categoryService',
     'errorService',
     function (
-        
         userService,
         authService,
         bookingService,
@@ -14,7 +13,6 @@ mainApp.controller('AdminController', [
         categoryService,
         errorService,
     ) {
-
         //Variable Declarations
         var vm = this;
         vm.users = [];                                          //Holds users data
@@ -27,13 +25,12 @@ mainApp.controller('AdminController', [
         vm.showUserModal = false;                               //User Modal Boolean
         vm.showCategoryModal = false;                           //Category Modal Boolean
         vm.selectedUser = null;                                 //Holds the selected user's for the modal.
-        vm.newCategory = {};                          //Holds the new category object
+        vm.newCategory = {};                                    //Holds the new category object
 
 
         //Initialization function (Loads all data)
         vm.init = function () {
             vm.loadAllData();
-            console.log(vm.users)
         }
 
         vm.loadAllData = function () {
@@ -171,5 +168,33 @@ mainApp.controller('AdminController', [
             }
         }
 
+        vm.testingRollback = function () {
+            async.series([
+                function (callback) {
+                    categoryService
+                        .createCategory(
+                            {
+                                categoryName: "Rollback Test Category"
+                            }
+                        )
+                        .then((res) => {
+                            callback(null, res);
+                        }
+                        )
+                        .catch((err) => callback(err));
+                },
+                function (callback) {
+                    setTimeout(() => { return callback("err") }, 200)
+                }
+            ], function (err, results) {
+                if (err) {
+                    console.log("If err block :: ", results);
+                    categoryService.deleteCategory(results[0].categoryId).then(() => { console.log("category Deleted") }).catch(err => console.log(err));
+                }
+                else {
+                    console.log(newResult[0].categoryId);
+                }
+            })
+        }
     }
 ])

@@ -1,7 +1,6 @@
-
-mainApp.service('categoryService', function (dbService, schemaValidator,idGenerator) {
+mainApp.service('categoryService', function (dbService, schemaValidator, idGenerator) {
     const STORE_NAME = 'categories';
-    
+
     const categorySchema = {
         categoryId: { type: 'string', required: true, minLength: 2 },
         categoryName: { type: 'string', required: true, minLength: 2, maxLength: 50 },
@@ -18,8 +17,6 @@ mainApp.service('categoryService', function (dbService, schemaValidator,idGenera
     this.createCategory = function (category) {
         if (!category.categoryId) {
             category.categoryId = idGenerator.generate();
-            // category.categoryName = category.name;
-            console.log(category);
         }
         return schemaValidator.validate(category, categorySchema)
             .then(function (validatedCategory) {
