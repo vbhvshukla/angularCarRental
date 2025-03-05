@@ -1,9 +1,27 @@
+/**
+ * Analytics Service
+ * @requires $q,dbService
+ * @description Returns data of all the analytics for owner as well as admin.
+ * Usage : analyticsService.getOwnerAnalytics()  , analyticsService.getAdminAnalytics.
+ */
+
 mainApp.service('analyticsService', [
     '$q', 'dbService',
     function ($q, dbService) {
 
-        //For owner analytics
-        
+        /**
+         * Function : Get Owner Analytics Data
+         * @param {*} ownerId //For which owner.
+         * @param {*} days //How many day's data should be fetched.
+         * @returns {
+         *              total:getTotals() //Count of bookings,bids,cars,
+         *              charts {
+         *                  revenue,bookings,cars,carUtilization,activeRenters,avgRevenueByType,
+         *                  rentalDuration,revenueOverTime,avgRevenueByType,avgBidAmount
+         *              }     
+         *          }
+         */
+
         this.getOwnerAnalytics = function (ownerId, days = 30) {
             return $q.all([
                 dbService.getItemsByTimeRange('bookings', 'ownerId', ownerId, days),
@@ -26,10 +44,10 @@ mainApp.service('analyticsService', [
                         avgBidAmount: getAvgBidAmountPerCar(bids, cars)
                     }
                 };
-            });
+            }).catch(err => console.error(err));
         };
 
-        this.getAdminAnalytics = function(days = 30) {
+        this.getAdminAnalytics = function (days = 30) {
             return $q.all([
                 dbService.getAllItemsByTimeRange('bookings', 'fromTimestamp', days),
                 dbService.getAllItemsByTimeRange('bids', 'fromTimestamp', days),
@@ -136,7 +154,7 @@ mainApp.service('analyticsService', [
             const averages = Object.values(userRevenue).map(({ total, count }) => total / count);
             //Now we have averages for users now we have to calculate avg revenue for all users
             //Get the total of averages and divide it by length of the array.
-            const avgRevenue = averages.length ? 
+            const avgRevenue = averages.length ?
                 averages.reduce((sum, val) => sum + val, 0) / averages.length : 0;
 
             return {
@@ -345,27 +363,27 @@ mainApp.service('analyticsService', [
         }
 
         //Revenue over time
-        function getRevenueOverTime(bookings, period = 'monthly') {            
+        function getRevenueOverTime(bookings, period = 'monthly') {
             const revenue = {};
             bookings.forEach(booking => {
                 if (!booking.totalFare) {
                     console.log('Missing totalFare for booking:', booking);
                     return;
                 }
-        
+
                 const date = new Date(booking.createdAt);
                 let timeKey = getTimeKey(date, period);
-                
+
                 if (!revenue[timeKey]) {
                     revenue[timeKey] = { local: 0, outstation: 0 };
                 }
-                
+
                 const totalFare = parseFloat(booking.totalFare);
                 revenue[timeKey][booking.rentalType] += totalFare;
             });
-        
+
             const timeKeys = Object.keys(revenue).sort((a, b) => new Date(a) - new Date(b));
-            
+
             return {
                 labels: timeKeys,
                 local: timeKeys.map(key => revenue[key].local || 0),
@@ -437,7 +455,7 @@ mainApp.service('analyticsService', [
         //Avg bid amount per car
         function getAvgBidAmountPerCar(bids, cars) {
             const bidAmounts = {};
-            
+
             // Initialize all cars with zero bids
             cars.forEach(car => {
                 bidAmounts[car.carName] = {
@@ -484,7 +502,7 @@ mainApp.service('analyticsService', [
                     const weekNum = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
                     return `Week ${weekNum}, ${date.getFullYear()}`;
 
-                    //Outputs -> Mar 2025
+                //Outputs -> Mar 2025
                 case 'monthly':
                     return date.toLocaleString('default', { month: 'short', year: 'numeric' });
 
@@ -521,7 +539,7 @@ mainApp.service('analyticsService', [
                 const category = car.category.categoryName;
                 //If there's no data in that paritcular category or if the rating of the current car is higher than the
                 //existing highest rated car in that category store it in
-                if (!categoryBestCars[category] || 
+                if (!categoryBestCars[category] ||
                     categoryBestCars[category].avgRating < car.avgRating) {
                     categoryBestCars[category] = {
                         carName: car.carName,

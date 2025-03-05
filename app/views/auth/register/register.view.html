@@ -63,7 +63,7 @@
                 <input type="file" id="verificationFile" name="verificationFile"
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                     onchange="angular.element(this).scope().vm.handleFileSelect(this)" required>
-                <p class="file-info">Please upload a valid identity document (PDF, DOC, DOCX, JPG or PNG, max 5MB).</p>
+                <!-- <p class="file-info">Please upload a valid identity document (PDF, DOC, DOCX, JPG or PNG, max 5MB).</p> -->
                 <p class="error-message" ng-show="vm.userData.role === 'owner' && !vm.verificationFile">
                     Verification document is required for owner registration.
                 </p>

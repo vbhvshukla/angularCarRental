@@ -1,4 +1,4 @@
-<div class="content" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm">
+<div class="ownerdashboardhomecontent" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm">
     <div class="container">
         <h2>Pending Bids</h2>
         <select ng-model="vm.filters.pendingType" ng-change="vm.applyFilters()">
@@ -23,8 +23,8 @@
             <tbody>
                 <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredPendingBids, vm.pagination.pendingBids)">
                     <td>{{bid.car.carName}} </td>
-                    <td>{{bid.bidAmount}}</td>
-                    <td>{{bid.bidBaseFare}}</td>
+                    <td>{{bid.bidAmount | price}}</td>
+                    <td>{{bid.bidBaseFare | price}}</td>
                     <td>{{bid.user.username}}</td>
                     <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
                     <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
@@ -37,7 +37,6 @@
             </tbody>
         </table>
         
-        <!-- Pending Bids Pagination -->
         <div class="pagination" ng-if="vm.shouldShowPagination('pendingBids')">
             <button ng-click="vm.previousPage('pendingBids')" 
                     ng-disabled="vm.pagination.pendingBids.currentPage === 1">
@@ -49,9 +48,7 @@
                 Next
             </button>
         </div>
-        <p id="no-pending-bids" class="hidden">No pending bids.</p>
 
-        <!-- Active Bookings Section -->
         <h2>Active Bookings</h2>
         <select ng-model="vm.filters.bookingType" ng-change="vm.applyFilters()">
             <option value="all">All</option>
@@ -76,8 +73,8 @@
             <tbody>
                 <tr ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings)">
                     <td>{{booking.bid.car.carName}}</td>
-                    <td>{{booking.bid.bidAmount}}</td>
-                    <td>{{vm.getTotalAmount(booking)}}</td>
+                    <td>{{booking.bid.bidAmount | price}}</td>
+                    <td>{{vm.getTotalAmount(booking) | price}}</td>
                     <td>{{booking.bid.user.username}}</td>
                     <td>{{booking.fromTimestamp | date:'MM/dd/yyyy'}}</td>
                     <td>{{booking.toTimestamp | date:'MM/dd/yyyy'}}</td>
@@ -102,7 +99,6 @@
                 Next
             </button>
         </div>
-        <p id="no-bookings" class="hidden">No active bookings.</p>
 
         <h2>All Bids</h2>
         <select ng-model="vm.filters.bidStatus" ng-change="vm.applyFilters()">
@@ -128,8 +124,8 @@
             <tbody>
                 <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids)">
                     <td>{{bid.car.carName}}</td>
-                    <td>{{bid.bidBaseFare}}</td>
-                    <td>{{bid.bidAmount}}</td>
+                    <td>{{bid.bidBaseFare | price}}</td>
+                    <td>{{bid.bidAmount | price}}</td>
                     <td>{{bid.user.username}}</td>
                     <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
                     <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
@@ -139,7 +135,6 @@
             </tbody>
         </table>
 
-        <!-- All Bids Pagination -->
         <div class="pagination" ng-if="vm.shouldShowPagination('allBids')">
             <button ng-click="vm.previousPage('allBids')" 
                     ng-disabled="vm.pagination.allBids.currentPage === 1">
@@ -151,7 +146,5 @@
                 Next
             </button>
         </div>
-        <p id="no-all-bids" class="hidden">No bids found.</p>
-
     </div>
 </div>

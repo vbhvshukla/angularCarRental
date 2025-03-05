@@ -1,16 +1,23 @@
 .main {
   display: flex !important;
-flex-wrap: wrap !important;
-  margin: 20px 0;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  margin: -2px 0 !important;
   gap: 20px !important;
   width: 100%;
 }
 
-.sidebar  {
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 19px;
+}
+
+.sidebar {
   flex: 0 0 25% !important;
   padding: 20px !important;
   background-color: #fff !important;
-  border-radius: 8px!important;
+  border-radius: 2px !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
   max-width: 25%;
 }
@@ -22,12 +29,12 @@ flex-wrap: wrap !important;
 }
 
 .content {
-  flex: 0 0 75% !important;
+  flex: 0 0 73% !important;
   max-width: 74% !important;
   padding: 20px !important;
   background-color: #fff !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)!important;
+  border-radius: 2px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 .form-group {
@@ -97,15 +104,6 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background: linear-gradient(135deg, #2a5298, #1e3c72);
   transform: translateY(-2px);
-}
-
-.content {
-  flex: 0 0 75%;
-  max-width: 73%;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cars-container {
@@ -315,32 +313,36 @@ button[type="submit"]:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .load-more-container {
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 20px;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 20px;
 }
 
 .load-more-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 .load-more-btn:hover {
-    background-color: #2980b9;
+  background-color: #2980b9;
 }
 
 .load-more-btn:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
+  background-color: #bdc3c7;
+  cursor: not-allowed;
 }

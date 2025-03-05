@@ -7,7 +7,7 @@
              class="message">
             <p>{{message.message}}</p>
             <small>{{message.createdAt | date:'short'}}</small>
-            <div ng-if="message.hasAttachment" class="attachment">
+            <div ng-if="message.attachment" class="attachment">
                 <img ng-if="message.attachment" 
                      ng-src="{{message.attachment}}" 
                      alt="Attachment"

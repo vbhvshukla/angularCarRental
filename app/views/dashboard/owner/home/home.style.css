@@ -1,15 +1,18 @@
-.content {
-    flex: 0 0 75%;
-    max-width: 73%;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-height: 450px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.ownerdashboardhomecontent {
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
+tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
 .pagination {
     display: flex;
     align-items: center;
@@ -17,123 +20,125 @@
     gap: 1rem;
     margin: 1rem 0;
     text-align: center;
-}
-tbody tr:hover {
-    background-color: rgba(52, 152, 219, 0.1);
-}
+  }
+  
 
 .pagination button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    background: white;
-    cursor: pointer;
-    border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .pagination button:disabled {
-    background: #f5f5f5;
-    cursor: not-allowed;
-    color: #999;
+  background: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
 }
 
 .pagination button:not(:disabled):hover {
-    background: #f0f0f0;
+  background: #f0f0f0;
 }
 
 .pagination span {
-    color: #666;
+  color: #666;
 }
 
 .status-pending {
-    color: orange;
+  color: orange;
 }
 
 .status-approved {
-    color: green;
+  color: green;
 }
 
 .status-rejected {
-    color: red;
+  color: red;
 }
 
 .chat-button {
-    font-size: 13px;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  font-size: 13px;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .chat-button:hover {
-    background: linear-gradient(135deg, #2a5298, #1e3c72);
+  background: linear-gradient(135deg, #2a5298, #1e3c72);
 }
 
-#status-sort,#rental-type-sort-bookings,#rental-type-sort-pending {
-    margin-left: 10px;
-    padding: 5px;
-    font-size: 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    background-color: white;
-    cursor: pointer;
+#status-sort,
+#rental-type-sort-bookings,
+#rental-type-sort-pending {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
 }
 
 .reject-btn {
-    font-size: 13px;
-    background: linear-gradient(135deg, #d9534f, #c9302c);
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 5px;
-    transition: background 0.3s, transform 0.2s;
+  font-size: 13px;
+  background: linear-gradient(135deg, #d9534f, #c9302c);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .reject-btn:hover {
-    background: linear-gradient(135deg, #c9302c, #d9534f);
-    transform: scale(1.05);
+  background: linear-gradient(135deg, #c9302c, #d9534f);
+  transform: scale(1.05);
 }
 
 .accept-btn {
-    font-size: 13px;
-    background: linear-gradient(135deg, #28a745, #218838);
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 5px;
-    transition: background 0.3s, transform 0.2s;
+  font-size: 13px;
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .accept-btn:hover {
-    background: linear-gradient(135deg, #218838, #28a745);
-    transform: scale(1.05);
+  background: linear-gradient(135deg, #218838, #28a745);
+  transform: scale(1.05);
 }
 
 .action-buttons {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
-.accept-btn, .reject-btn, .extra-charges-btn {
-    font-size: 13px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
+.accept-btn,
+.reject-btn,
+.extra-charges-btn {
+  font-size: 13px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .extra-charges-btn {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
 }
 
 .extra-charges-btn:hover {
-    background: linear-gradient(135deg, #0056b3, #007bff);
-    transform: scale(1.05);
+  background: linear-gradient(135deg, #0056b3, #007bff);
+  transform: scale(1.05);
 }

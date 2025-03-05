@@ -12,7 +12,7 @@
                 <strong>{{msg.fromUser.userId === vm.currentUser.userId ? 'You' : msg.fromUser.username}}:</strong>
                 {{msg.message}}
             </div>
-            <div ng-if="msg.hasAttachment">
+            <div ng-if="msg.attachment">
                 <img ng-if="msg.attachment.startsWith('data:image/')" 
                      ng-src="{{msg.attachment}}"
                      class="chat-attachment"

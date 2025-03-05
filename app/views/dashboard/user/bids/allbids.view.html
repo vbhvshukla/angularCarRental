@@ -1,5 +1,7 @@
-<div class="content" ng-controller="UserBidsController" ng-init="vm.init()">
+<div class="allbids-content" ng-controller="UserBidsController" ng-init="vm.init()">
     <div class="table-container">
+        <h2>Biddings</h2>
+
         <table id="bidding-table">
             <thead>
                 <tr>
@@ -37,11 +39,11 @@
                 <tr ng-repeat="bid in vm.filteredBids">
                     <td>{{bid.car.carName}}</td>
                     <td>{{bid.car.owner.username}}</td>
-                    <td>{{bid.bidAmount | currency}}</td>
+                    <td>{{bid.bidAmount | price}}</td>
                     <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
                     <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
                     <td>{{bid.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
-                    <td>{{bid.bidBaseFare | currency}}</td>
+                    <td>{{bid.bidBaseFare | price}}</td>
                     <td>{{bid.rentalType}}</td>
                     <td>{{bid.status}}</td>
                     <td>

@@ -1,44 +1,70 @@
-mainApp.filter('carFilter', function () {
-    return function (cars, filters) {
-        if (!cars || !filters) return cars;
+mainApp
+    /**
+     * Car Filter
+     */
+    .filter('carFilter', function () {
 
-        return cars.filter(car => {
-            const locationMatch = !filters.location ||
-                filters.location.toLowerCase().split(' ')
-                    .some(word => car.city?.toLowerCase().includes(word));
+        /**
+         * @function : carFilter
+         * @description : This function is used to filter the cars 
+         * based on the input in the search bar.
+         * @param {cars,filters}
+         */
 
-            const categoryMatch = !filters.carCategory ||
-                car.category.categoryName?.toLowerCase() === filters.carCategory.toLowerCase();
+        return function (cars, filters) {
 
-            const priceMatch = !filters.priceRange ||
-                car.rentalOptions.local.pricePerHour <= filters.priceRange ||
-                car.rentalOptions.outstation.pricePerDay <= filters.priceRange;
+            if (!cars || !filters) return cars;
 
-            const carTypeMatch = !filters.carType ||
-                car.carType?.toLowerCase() === filters.carType.toLowerCase();
+            return cars.filter(car => {
 
-            const availabilityMatch = !filters.availability ||
-                (filters.availability.toLowerCase() === "local" && car.isAvailableForLocal) ||
-                (filters.availability.toLowerCase() === "outstation" && car.isAvailableForOutstation);
+                //Match Location
+                const locationMatch = !filters.location ||
+                    filters.location.toLowerCase().split(' ')
+                        .some(word => car.city?.toLowerCase().includes(word));
 
-            const featuresMatch = !filters.features?.length ||
-                filters.features.every(f =>
-                    car.featured?.map(ft => ft.toLowerCase()).includes(f.toLowerCase())
-                );
+                //Category match
+                const categoryMatch = !filters.carCategory ||
+                    car.category.categoryName?.toLowerCase() === filters.carCategory.toLowerCase();
 
-            const ratingMatch = !filters.rating || car.avgRating >= filters.rating;
+                //Price match
+                const priceMatch = !filters.priceRange ||
+                    car.rentalOptions.local.pricePerHour <= filters.priceRange ||
+                    car.rentalOptions.outstation.pricePerDay <= filters.priceRange;
 
-            return locationMatch &&
-                categoryMatch &&
-                priceMatch &&
-                carTypeMatch &&
-                availabilityMatch &&
-                featuresMatch &&
-                ratingMatch;
-        });
-    };
-})
+                //Car Type Match
+                const carTypeMatch = !filters.carType ||
+                    car.carType?.toLowerCase() === filters.carType.toLowerCase();
 
+                //Availibility match(Local/Outstation)
+                const availabilityMatch = !filters.availability ||
+                    (filters.availability.toLowerCase() === "local" && car.isAvailableForLocal) ||
+                    (filters.availability.toLowerCase() === "outstation" && car.isAvailableForOutstation);
+
+                //Feature match
+                const featuresMatch = !filters.features?.length ||
+                    filters.features.every(f =>
+                        car.featured?.map(ft => ft.toLowerCase()).includes(f.toLowerCase())
+                    );
+
+                //Rating match
+                const ratingMatch = !filters.rating || car.avgRating >= filters.rating;
+
+                //Return everything
+                return locationMatch &&
+                    categoryMatch &&
+                    priceMatch &&
+                    carTypeMatch &&
+                    availabilityMatch &&
+                    featuresMatch &&
+                    ratingMatch;
+            });
+        };
+    })
+
+    /**
+     * Star Rating filter
+     * @description basically returns the numeric rating into stars rating.
+     */
     .filter('starRating', function () {
         return function (rating) {
             if (!rating) return '';
@@ -53,11 +79,14 @@ mainApp.filter('carFilter', function () {
         };
     })
 
+    /**
+     * Availibility Filter
+     * @description : Returns the cars which are available to be booked.
+     */
     .filter('availability', function () {
         return function (cars) {
             if (!cars) return [];
             const today = new Date();
-
             return cars.filter(car => {
                 const isBooked = car.availabilities?.some(entry => {
                     const fromDate = new Date(entry.fromTimeStamp);

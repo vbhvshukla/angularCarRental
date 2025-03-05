@@ -1,5 +1,5 @@
 mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerator', function ($q, dbService, errorService, idGenerator) {
-    
+
     //Variable declaration
     var service = this;
     const ITEMS_PER_PAGE = 5;
@@ -11,16 +11,15 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     UpdateBookingStatus,
     GetUserBookings
     CancelBooking
-    SubmitRating
+    SubmitRatingt
     */
 
     service.calculateBaseFare = function (bookingData) {
-        const rentalType = bookingData.bid.rentalType;
+        const rentalType = bookingData.rentalType;
         const car = bookingData.bid.car;
         const from = new Date(bookingData.bid.fromTimestamp);
         const to = new Date(bookingData.bid.toTimestamp);
         const diffTime = Math.abs(to - from);
-
         if (rentalType === 'local') {
             const totalHours = diffTime / (1000 * 60 * 60);
             return car.rentalOptions.local.pricePerHour * totalHours;
@@ -61,7 +60,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
 
     service.createBooking = function (bookingData) {
         let deferred = $q.defer();
-
+        let calculatedBaseFare = service.calculateBaseFare(bookingData);
+        let calculatedTotalAmount = service.calculateTotalAmount(bookingData);
         try {
             if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
                 throw new Error('Missing required booking information');
@@ -98,10 +98,10 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                         user: bookingData.user,
                         car: bookingData.car
                     },
-                    baseFare: service.calculateBaseFare(bookingData),
+                    baseFare: calculatedBaseFare,
                     extraKmCharges: 0,
                     extraHourCharges: 0,
-                    totalFare: service.calculateTotalAmount(bookingData)
+                    totalFare: calculatedTotalAmount
                 };
 
                 const carAvailability = {
@@ -118,9 +118,9 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                     deferred.resolve(booking);
                 });
             }).catch(function (error) {
-                    errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
-                    deferred.reject(error);
-                });
+                errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
+                deferred.reject(error);
+            });
         } catch (error) {
             errorService.handleError('Error creating booking: ' + error.message);
             deferred.reject(error);

@@ -100,12 +100,13 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         };
 
         vm.acceptBid = function (bid) {
+            console.log(bid);
             bookingService.createBooking(bid).then(() => {
                 return bidService.updateStatus(bid.bidId, 'accepted');
             })
                 .then(() => {
                     console.log("Onwer Dashboard :: Accepted bid");
-                })
+                }).catch("Owner Dashboard :: Home Controller :: Error Accepting Bid");
         }
 
         vm.rejectBid = function (bid) {
