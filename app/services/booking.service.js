@@ -270,7 +270,7 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     };
 
     service.addExtras = function (bookingData, extraKm, extraHr, extraDay) {
-        const deferred = $q.defer();
+        let deferred = $q.defer();
         const rentalType = bookingData.rentalType;
         const car = bookingData.bid.car;
         if (rentalType === 'local') {
@@ -282,8 +282,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 extraHourCharges: extraHourCharges,
                 extraKmCharges: extraKmCharges,
                 totalFare: totalFare
-            }).then((res) => { deferred.resolve("Booking Service :: Add Extras Successful!", res) })
-                .catch((err) => { deferred.reject("Booking Service :: Failed to Add Extras", err) })
+            }).then((res) => { deferred.resolve(res) })
+                .catch((err) => { deferred.reject(err) })
         } else if (rentalType === 'outstation') {
             const extraKmCharges = car.rentalOptions.outstation.extraKmRate * extraKm;
             const extraHourCharges = car.rentalOptions.outstation.extraHourlyRate * extraHr;
@@ -294,9 +294,10 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 extraHourCharges: extraHourCharges,
                 extraKmCharges: extraKmCharges,
                 totalFare: totalFare
-            }).then((res) => { deferred.resolve("Booking Service :: Add Extras Successful!", res) })
-                .catch((err) => { deferred.reject("Booking Service :: Failed to Add Extras", err) })
+            }).then((res) => { deferred.resolve(res) })
+                .catch((err) => { deferred.reject(err) })
         }
+        return deferred.promise;
     }
 
     return service;

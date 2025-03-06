@@ -76,12 +76,25 @@ mainApp.controller('AdminController', [
             });
         };
 
-        vm.loadUsers = function () {
-            userService.getAllUsers(vm.currentPage)
-                .then(function (response) {
-                    vm.users = response.data;
-                    vm.totalUsers = response.total;
-                }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
+        vm.loadUsers =  function () {
+            async.parallel([
+                function (callback) {
+                    userService.getAllUsers(vm.currentPage)
+                        .then(function (response) {
+                            callback(null, response);
+                        }).catch(err => callback(err));
+                }
+            ], function (err, result) {
+                if (err) {
+                    errorService.handleError(err);
+                } else {
+                        
+                    vm.users = result[0];
+                    vm.totalUsers = result.total;
+                }
+            })
+
+
         }
 
         vm.loadCars = function () {
@@ -137,9 +150,10 @@ mainApp.controller('AdminController', [
         vm.approveUser = function () {
             userService.approveUser(vm.selectedUser.userId)
                 .then(function () {
-                    vm.loadUsers();
                     vm.closeUserModal();
-                }).catch(err => errorService.handleError("Admin Controller :: Error Approving User :: ", err));
+                    vm.loadUsers();
+                })
+                .catch(err => errorService.handleError("Admin Controller :: Error Approving User :: ", err));
         }
 
         vm.rejectUser = function () {

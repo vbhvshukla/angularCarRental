@@ -1,5 +1,5 @@
-mainApp.controller('UserBidsController', ['bidService', 'authService','chatService',
-    function (bidService, authService,chatService) {
+mainApp.controller('UserBidsController', ['$state','bidService', 'authService','chatService','errorService',
+    function ($state,bidService, authService,chatService,errorService) {
 
         //Var Declarations
         let vm = this;

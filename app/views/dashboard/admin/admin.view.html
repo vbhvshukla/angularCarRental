@@ -1,4 +1,4 @@
-<div class="main" ng-controller="AdminController as vm" , ng-init="vm.init()">
+<div class="admin-main" ng-controller="AdminController as vm" , ng-init="vm.init()">
     <div class="section">
         <h2>Users</h2>
         <table class="table">
@@ -51,11 +51,11 @@
                     <td>{{car.category.categoryName}}</td>
                     <td>{{car.owner.username}}</td>
                     <td>{{car.city}}</td>
-                    <td>Local : {{car.rentalOptions.local.pricePerHour | price}}  </br>
+                    <td>Local : {{car.rentalOptions.local.pricePerHour | price}} </br>
                         Outstation : {{car.rentalOptions.outstation.pricePerDay | price}}</td>
                     <td>{{car.avgRating}}</td>
                     <td>{{car.ratingCount}}</td>
-                    <td>Local : {{car.isAvailableForLocal ? 'Yes' : 'No'}}  </br>
+                    <td>Local : {{car.isAvailableForLocal ? 'Yes' : 'No'}} </br>
                         Outstation : {{car.isAvailableForOutstation ? 'Yes' : 'No'}}
                     </td>
                 </tr>
@@ -94,27 +94,24 @@
             </div>
             <div class="modal-body" ng-if="vm.selectedUser">
                 <div class="user-details">
-                    <p>Username: {{vm.selectedUser.username}}</p> 
+                    <p>Username: {{vm.selectedUser.username}}</p>
                     <p>Email: {{vm.selectedUser.email}}</p>
                     <label for="verificationFile">Verification File : </label>
                     <p><img ng-src={{vm.selectedUser.verificationFile}}></img></p>
                 </div>
                 <div class="approval-buttons">
-                    <button ng-click="vm.approveUser()" 
-                            ng-disabled="vm.selectedUser.isApproved"
-                            class="approve-btn"
-                            title="{{vm.selectedUser.isApproved ? 'User already approved' : 'Approve user'}}">
+                    <button ng-click="vm.approveUser()" ng-disabled="vm.selectedUser.isApproved" class="approve-btn"
+                        title="{{vm.selectedUser.isApproved ? 'User already approved' : 'Approve user'}}">
                         {{vm.selectedUser.isApproved ? 'Approved' : 'Approve'}}
                     </button>
-                    <button ng-click="vm.rejectUser()" 
-                            class="reject-btn">
-                        Reject
+                    <button ng-click="vm.rejectUser()" class="reject-btn">
+                        {{vm.selectedUser.isApproved ? 'Block' : 'Reject'}}
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="modal" ng-if="vm.showCategoryModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -130,7 +127,8 @@
             </div>
         </div>
     </div>
-
+    <!-- I've implemented this rollback mechanism , which first creates a category then I've thrown an error 
+     and it rollbacks (deletes the category that was created.) -->
     <div>
         <button ng-click="vm.testingRollback()">
             Test Rollback

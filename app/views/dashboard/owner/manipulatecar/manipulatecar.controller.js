@@ -1,5 +1,5 @@
 mainApp.controller('ManipulateCarController', [
-    '$scope', '$state', '$q','$stateParams', 'carService', 'categoryService', 'cityService', 'authService', 'errorService',
+    '$scope', '$state', '$q', '$stateParams', 'carService', 'categoryService', 'cityService', 'authService', 'errorService',
     function ($scope, $state, $q, $stateParams, carService, categoryService, cityService, authService, errorService) {
         let vm = this;
 
@@ -27,7 +27,7 @@ mainApp.controller('ManipulateCarController', [
             ratingCount: 0,  // Default for new cars
             images: [],
             featured: [],
-            isDeleted:false,
+            isDeleted: false,
             category: {
                 categoryId: '',
                 categoryName: ''
@@ -53,18 +53,18 @@ mainApp.controller('ManipulateCarController', [
         };
 
         // Initialize controller
-        vm.init = function() {
+        vm.init = function () {
             vm.loading = true;
             const promises = [
                 categoryService.getAllCategories(),
                 cityService.getAllCities(),
                 authService.getUser()
             ];
-        
+
             if (vm.isEditMode) {
                 promises.push(carService.getCarById($stateParams.carId));
             }
-        
+
             $q.all(promises)
                 .then(results => {
                     [vm.categories, vm.cities, vm.currentUser] = results;
@@ -86,11 +86,11 @@ mainApp.controller('ManipulateCarController', [
         };
 
         // Add this function after vm.init
-        vm.handleCategorySelect = function() {
-            const selectedCategory = vm.categories.find(c => 
+        vm.handleCategorySelect = function () {
+            const selectedCategory = vm.categories.find(c =>
                 c.categoryName.toLowerCase() === vm.car.category.categoryName.toLowerCase()
             );
-            
+
             if (selectedCategory) {
                 vm.car.category = {
                     categoryId: selectedCategory.categoryId,
@@ -103,7 +103,7 @@ mainApp.controller('ManipulateCarController', [
         };
 
         // Handle image uploads
-        vm.handleImageUpload = function(files) {
+        vm.handleImageUpload = function (files) {
             vm.imageError = '';
             if (files.length + vm.car.images.length > 10) {
                 vm.imageError = 'Maximum 10 images allowed';
@@ -188,17 +188,17 @@ mainApp.controller('ManipulateCarController', [
             }
 
             // Validate required fields based on rental options
-            if (vm.car.isAvailableForLocal && 
-                (!vm.car.rentalOptions.local.pricePerHour || 
-                 !vm.car.rentalOptions.local.maxKmPerHour)) {
+            if (vm.car.isAvailableForLocal &&
+                (!vm.car.rentalOptions.local.pricePerHour ||
+                    !vm.car.rentalOptions.local.maxKmPerHour)) {
                 errorService.handleError('All local rental fields are required');
                 vm.isSubmitting = false;
                 return;
             }
 
-            if (vm.car.isAvailableForOutstation && 
-                (!vm.car.rentalOptions.outstation.pricePerDay || 
-                 !vm.car.rentalOptions.outstation.pricePerKm)) {
+            if (vm.car.isAvailableForOutstation &&
+                (!vm.car.rentalOptions.outstation.pricePerDay ||
+                    !vm.car.rentalOptions.outstation.pricePerKm)) {
                 errorService.handleError('All outstation rental fields are required');
                 vm.isSubmitting = false;
                 return;
@@ -238,6 +238,12 @@ mainApp.controller('ManipulateCarController', [
                 });
         };
 
+        vm.validateCity = function () {
+            if (vm.car.city) {
+                var isValid = vm.cities.indexOf(vm.car.city) > -1;
+                $scope.carForm.city.$setValidity('validCity', isValid);
+            }
+        };
         // Navigation
         vm.goBack = function () {
             $state.go('ownerdashboard.listedcars');

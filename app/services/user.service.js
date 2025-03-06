@@ -38,6 +38,21 @@ mainApp.service('userService', ['$q', 'dbService', 'authService',
                 }).catch(err=>console.error("User Service :: Error Approving User" , err));
         };
 
+        this.pendindAllUsers = function(){
+           this.getAllUsers().then(function(users){
+            const copyUsers = JSON.parse(JSON.stringify(users));
+            copyUsers.forEach(function(user){
+                user.isApproved = false;
+            })
+
+            return dbService.updateAllItems("users",copyUsers);
+           })
+        }
+
+        // if(true){
+        //     this.pendindAllUsers();
+        // }
+
         this.rejectUser = function (userId) {
             return dbService.getItemByKey('users',userId)
                 .then(user => {

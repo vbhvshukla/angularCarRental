@@ -4,7 +4,7 @@ mainApp.controller('OwnerAnalyticsController', [
         let vm = this;
         vm.chartInstances = {};
         vm.loading = false;
-        vm.selectedDays = 30;
+        vm.selectedDays = "30";
         vm.totals = {};
         vm.charts = {};
 

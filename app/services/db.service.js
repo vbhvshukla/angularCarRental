@@ -297,6 +297,23 @@ mainApp.service('dbService', function ($q) {
             return deferred.promise;
         },
 
+        this.updateAllItems = function (storeName, items) {
+            const deferred = $q.defer();
+            openDb().then(() => {
+                const store = getObjectStore(storeName, "readwrite");
+                for(var i=0;i<items?.length;i++){
+                    var item = items[i];
+                    const request = store.put(item);
+                    request.onsuccess = () => deferred.resolve(item);
+                    request.onerror = (event) => deferred.reject(event.target.error);
+                }
+              
+            }).catch((err) => {
+                deferred.reject(err);
+            })
+            return deferred.promise;
+        },
+
         this.deleteItem = function (storeName, key) {
             const deferred = $q.defer();
             openDb().then(() => {

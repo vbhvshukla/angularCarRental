@@ -1,11 +1,11 @@
-<div class="wrap" ng-controller="AdminAnalyticsController as vm" ng-init="vm.loadAnalyticsData()">
-    <div class="main">
-        <div class="section">
+<div class="analytics-wrap" ng-controller="AdminAnalyticsController as vm" ng-init="vm.loadAnalyticsData()">
+    <div class="analytics-main">
+        <div class="analytics-section">
             <h2>Analytics</h2>
             <div class="filter-container">
                 <label for="time-range">Filter by:</label>
                 <select id="time-range" ng-model="vm.selectedTimeRange" ng-change="vm.loadAnalyticsData()">
-                    <option value="7">Last Week</option>
+                    <option value="7" >Last Week</option>
                     <option value="30" selected>Last Month</option>
                     <option value="365">Last Year</option>
                     <option value="1095">Last 3 Years</option>
@@ -15,14 +15,27 @@
             <div class="cards-container">
                 <div class="card" ng-repeat="card in vm.cards">
                     <h3>{{card.title}}</h3>
-                    <p>{{card.value}}</p>
+                    <p>{{card.value}}</p> 
                 </div>
             </div>
 
             <div class="charts-grid">
                 <div class="chart-container">
                     <h3>Revenue by Category</h3>
+                    <!-- INfo button for showing calculations how its done -->
+                    <button class="admin-info-button" ng-mouseenter="vm.showCalculations=true" ng-mouseleave="vm.showCalculations = false">
+                        <i class="fa fa-info-circle"></i>
+                        <div class="admin-info-tooltip" ng-if="vm.showCalculations">
+                            <h4>How is Revenue by Category being calculated?</h4>
+                            <div class="rate-item">
+                                <span>Formula:</span> Some formula
+                            </div>
+                        </div>
+                    </button>
                     <canvas id="totalRevenuePerCategoryChart"></canvas>
+
+                    
+
                 </div>
 
                 <div class="chart-container">

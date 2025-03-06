@@ -19,7 +19,6 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
 
         //Fetch all the data
         function loadData() {
-
             async.waterfall([
                 function (callback) {
                     authService.getUser()
@@ -43,12 +42,11 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
 
         }
 
-        //File handler
         $scope.handleFileSelect = function (files) {
             vm.selectedFile = files[0];
         };
 
-        //Send Message
+
         vm.sendMessage = function () {
 
             if (!vm.newMessage.trim() && !vm.selectedFile) return;
@@ -79,6 +77,15 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
                 .catch((error) => {
                     console.log("Message controller :: Error in sending message :: ", error);
                 })
+        };
+
+        vm.downloadPdf = function(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
     }
 ]);

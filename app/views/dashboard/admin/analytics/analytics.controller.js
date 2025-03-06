@@ -2,9 +2,10 @@ mainApp.controller('AdminAnalyticsController', [
     '$scope', 'analyticsService',
     function ($scope, analyticsService) {
         var vm = this;
-        vm.selectedTimeRange = 30;
+        vm.selectedTimeRange="30";
         vm.loading = false;
         vm.chartInstances = {};
+        vm.showCalculations = false;
 
         function renderCharts(charts) {
             //If this renderCharts is called again with other values then destory all the chartInstances already created.
@@ -58,8 +59,11 @@ mainApp.controller('AdminAnalyticsController', [
                         beginAtZero: true,
                         ticks: {
                             precision: 0,
-                            callback: function(value) {
+                            callback: function (value) {
                                 if (chartType.includes('revenue')) {
+                                    return '₹' + Math.round(value).toLocaleString();
+                                }
+                                else if (chartType.includes('Revenue')) {
                                     return '₹' + Math.round(value).toLocaleString();
                                 }
                                 return Math.round(value);
@@ -70,7 +74,7 @@ mainApp.controller('AdminAnalyticsController', [
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 const label = context.dataset.label || '';
                                 const value = Math.round(context.parsed.y);
                                 if (chartType.includes('revenue')) {
@@ -90,7 +94,7 @@ mainApp.controller('AdminAnalyticsController', [
                         ...baseOptions.plugins,
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     const label = context.label || '';
                                     //context.parsed is basically the values of the data points
                                     const value = Math.round(context.parsed);
@@ -118,7 +122,7 @@ mainApp.controller('AdminAnalyticsController', [
                 });
         };
 
-        $scope.$on('$destroy', function() {
+        $scope.$on('$destroy', function () {
             Object.values(vm.chartInstances).forEach(chart => chart.destroy());
         });
     }

@@ -76,6 +76,14 @@ mainApp.controller('OwnerChatController', [
             vm.showModal = true;
         };
 
+        vm.downloadPdf = function(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
         vm.closeModal = function() {
             vm.showModal = false;
             vm.modalImage = '';

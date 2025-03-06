@@ -4,7 +4,6 @@
  * @description Returns data of all the analytics for owner as well as admin.
  * Usage : analyticsService.getOwnerAnalytics()  , analyticsService.getAdminAnalytics.
  */
-
 mainApp.service('analyticsService', [
     '$q', 'dbService',
     function ($q, dbService) {
@@ -47,6 +46,19 @@ mainApp.service('analyticsService', [
             }).catch(err => console.error(err));
         };
 
+        /**
+                * Function : Get Admin Analytics Data
+                * @param {*} days //How many day's data should be fetched.
+                * @returns {
+        *              getCardData:getCardData() //Gets the card data like totals of bookings,bids,cars,users
+        *              charts {
+        *                  totalRevenuePerCategory,totalRevenuePerCity,averageRevenuePerUser,bookingsOverTime,
+        *                   carsPerCategory,highestRatedCarCategoryChart,bidsPerCategory,totalBiddedPricePerCategory,carsPerCity,
+        *                   revenueTrends
+        *              }     
+        *          }
+        */
+
         this.getAdminAnalytics = function (days = 30) {
             return $q.all([
                 dbService.getAllItemsByTimeRange('bookings', 'fromTimestamp', days),
@@ -72,6 +84,19 @@ mainApp.service('analyticsService', [
             });
         };
 
+        /**
+         * Get The Card Data - Totals 
+         * @description All the totals of bookings,bids,cars,users
+         * @param {*} bookings 
+         * @param {*} bids 
+         * @param {*} cars 
+         * @param {*} users 
+         * @returns {
+         *              title,
+         *              value
+         *              }
+         */
+
         function getCardData(bookings, bids, cars, users) {
             const topBidders = getTopBidders(bids);
             return [
@@ -83,6 +108,11 @@ mainApp.service('analyticsService', [
             ];
         }
 
+        /**
+         * Get the Top Bidders
+         * @param {*} bids 
+         * @returns 
+         */
         //Get top 3 bidders
         function getTopBidders(bids) {
             const bidderCounts = {};

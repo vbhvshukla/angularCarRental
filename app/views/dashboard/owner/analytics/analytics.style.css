@@ -33,6 +33,16 @@
   margin-bottom: 20px;
 }
 
+.select {
+  width: 100%;
+  min-width: 80%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
 .cards-container {
   display: flex;
   gap: 20px;
@@ -40,7 +50,10 @@
 }
 
 .card {
+  align-self: center;
+  align-content: space-evenly;
   flex: 1;
+  min-height: 190px;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
@@ -88,7 +101,7 @@
   height: 300px !important;
   /* background: white; */
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   /* padding: 10px; */
   transition: transform 0.3s ease-in-out;
 }
@@ -103,7 +116,7 @@
 
 .analytics-section canvas:hover {
   transform: scale(1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); */
   cursor: pointer;
 }
 

@@ -17,12 +17,14 @@
                      ng-src="{{msg.attachment}}"
                      class="chat-attachment"
                      ng-click="vm.showImageModal(msg.attachment)">
-                <div ng-if="!msg.attachment.startsWith('data:image/')">
-                    <strong>Attachment:</strong>
-                    <a ng-href="{{msg.attachment}}" download>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M16 9V7a4 4 0 0 0-8 0v10a2 2 0 0 0 4 0V7a1 1 0 1 1 2 0v10a4 4 0 0 1-8 0V7a6 6 0 1 1 12 0v2h-2z" />
+                
+                <div ng-if="msg.attachment.startsWith('data:application/pdf')" class="pdf-attachment">
+                    <strong>PDF:</strong>
+                    <a href="#" ng-click="vm.downloadPdf(msg.attachment, 'invoice.pdf')" class="pdf-download-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                         </svg>
+                        Download PDF
                     </a>
                 </div>
             </div>

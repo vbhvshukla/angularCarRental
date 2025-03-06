@@ -1,5 +1,5 @@
-mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService',
-    function (dbService, bidService, authService, bookingService, errorService) {
+mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService',
+    function (dbService, bidService, authService, bookingService, errorService, chatService) {
 
         //Variable Declaration
         let vm = this;
@@ -107,9 +107,9 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             }
             vm.isProcessing = true;
 
-            bookingService.createBooking(bid)
-                .then(function (booking) {
-                    return bidService.updateBidStatus(bid.bidId, 'accepted');
+            bidService.updateBidStatus(bid.bidId, 'accepted')
+                .then(function () {
+                    return bookingService.createBooking(bid);
                 })
                 .then(function () {
                     errorService.logSuccess('Bid accepted and booking created successfully');
@@ -173,8 +173,68 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             vm.bookingData = booking;
         }
 
+        // vm.addExtras = function () {
+        //     bookingService.addExtras(vm.bookingData, this.extras.extraKm, this.extras.extraHr, this.extras.extraDay)
+        // }
         vm.addExtras = function () {
-            bookingService.addExtras(vm.bookingData, this.extras.extraKm, this.extras.extraHr, this.extras.extraDay)
-        }
+            console.log("1 -> Global Variables :: ", vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay);
+            bookingService.addExtras(vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay)
+                .then(function (updatedBooking) {
+                    console.log("2 -> Updated Booking", updatedBooking)
+                    return vm.generateAndSendInvoice(updatedBooking);
+                })
+                .then(function () {
+                    console.log("3 -> Generate and Send Invoice")
+                    vm.showAddKmModal = false;
+                    vm.extras = { extraKm: 0, extraHr: 0, extraDay: 0 };
+                    errorService.logSuccess('Extras added and invoice sent successfully');
+                })
+                .catch(function (error) {
+                    errorService.handleError('Failed to process extras: ' + error.message);
+                });
+        };
+
+        vm.generateAndSendInvoice = function (booking) {
+            console.log("4 -> Booking in Generate and Send Invoice", booking);
+            const doc = new jspdf.jsPDF();
+
+            doc.setFontSize(20);
+            doc.text('INVOICE', 105, 20, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.text(`Booking ID: ${booking.bookingId}`, 20, 40);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 50);
+            doc.text(`Car: ${booking.bid.car.carName}`, 20, 60);
+            doc.text(`Rental Type: ${booking.rentalType}`, 20, 70);
+            doc.text(`Duration: ${new Date(booking.fromTimestamp).toLocaleDateString()} to ${new Date(booking.toTimestamp).toLocaleDateString()}`, 20, 80);
+
+            doc.text('Charges Breakdown:', 20, 100);
+            doc.text(`Base Fare: ₹${booking.baseFare}`, 30, 110);
+            doc.text(`Extra KM Charges: ₹${booking.extraKmCharges}`, 30, 120);
+            doc.text(`Extra Hour Charges: ₹${booking.extraHourCharges}`, 30, 130);
+            doc.text(`Total Amount: ₹${booking.totalFare}`, 20, 150);
+
+            const pdfBlob = doc.output('blob');
+            const pdfFile = new File([pdfBlob], `invoice_${booking.bookingId}.pdf`, {
+                type: 'application/pdf'
+            });
+        
+
+            return chatService.getOrCreateChat(
+                booking.bid.car.carId,
+                booking.bid.user,
+                booking.bid.car.owner
+            )
+                .then(function (conversation) {
+                    const message = `Additional charges have been added to your booking (ID: ${booking.bookingId}).`;
+                    return chatService.sendOwnerMessage(
+                        conversation.chatId,
+                        booking.bid.car.owner,
+                        booking.bid.user,
+                        message,
+                        pdfFile
+                    );
+                });
+        };
     }
 ])

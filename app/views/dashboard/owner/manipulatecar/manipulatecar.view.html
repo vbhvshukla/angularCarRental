@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="city">City *</label>
                 <input type="text" id="city" name="city" ng-model="vm.car.city" list="cities-list" required
                     placeholder="Select or type a city">
@@ -61,6 +61,26 @@
                 <div class="error-messages" ng-messages="carForm.city.$error" 
                      ng-if="carForm.city.$touched && carForm.city.$invalid">
                     <span ng-message="required">City is required</span>
+                </div>
+            </div> -->
+            <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" 
+                       id="city" 
+                       name="city" 
+                       ng-model="vm.car.city" 
+                       list="cities-list" 
+                       required
+                       ng-change="vm.validateCity()"
+                       placeholder="Select or type a city">
+                <datalist id="cities-list">
+                    <option ng-repeat="city in vm.cities" value="{{city}}">
+                </datalist>
+                <div class="error-messages" 
+                     ng-messages="carForm.city.$error" 
+                     ng-if="carForm.city.$touched || carForm.city.$invalid">
+                    <span ng-message="required">City is required</span>
+                    <span ng-message="validCity">Please select a valid city from the list</span>
                 </div>
             </div>
 

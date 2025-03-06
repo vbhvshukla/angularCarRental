@@ -100,7 +100,7 @@
             </thead>
             <tbody>
                 <tr
-                    ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings) | orderBy : '-createdAt'">
+                    ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings)  track by booking.bookingId | orderBy : '-createdAt'">
                     <td>{{booking.bid.car.carName}}</td>
                     <td>{{booking.bid.bidAmount | price}}</td>
                     <td>{{vm.getTotalAmount(booking) | price}}</td>
