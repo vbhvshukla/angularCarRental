@@ -1,5 +1,5 @@
 //Use strict mode for angularjs environment.
-'use strict'
+// 'use strict'
 
 const mainApp = angular
     .module(

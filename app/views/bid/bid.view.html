@@ -1,5 +1,5 @@
 <div class="bid-page" ng-controller="BiddingController as vm" ng-init="vm.init()">
-    <div class="main">
+    <div class="bid-main">
         <div ng-if="vm.loading" class="loading-spinner">
             Loading...
         </div>
@@ -11,7 +11,8 @@
 
             <div class="bid-chat-container">
                 <div class="bid-section">
-                    <bid-form car-id="vm.car.carId" car="vm.car" on-bid-submit="vm.handleBidSubmit(bid)">
+                    <bid-form car-id="vm.car.carId" car="vm.car" on-bid-submit="vm.handleBidSubmit(bid)"
+                        is-submitting="vm.isSubmitting">
                     </bid-form>
                 </div>
 

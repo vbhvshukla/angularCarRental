@@ -1,4 +1,4 @@
-mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',function (dbService, schemaValidator, $q, idGenerator) {
+mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerator', function (dbService, schemaValidator, $q, idGenerator) {
     const STORE_NAME = 'cars';
 
     const carSchema = {
@@ -133,7 +133,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
         return schemaValidator.validate(car, carSchema)
             .then(function (validatedCar) {
                 return dbService.addItem(STORE_NAME, validatedCar);
-            }).catch(err=>console.log("Car Service :: Failed to Add Car"));
+            }).catch(err => console.log("Car Service :: Failed to Add Car"));
     };
 
     this.updateCar = function (car) {
@@ -206,7 +206,7 @@ mainApp.service('carService', ['dbService','schemaValidator','$q','idGenerator',
     this.getAvailableCarsWithPagination = function (page = 1, itemsPerPage = 6, filters = {}) {
         const today = new Date();
         const skip = (page - 1) * itemsPerPage;
-        
+
         return $q.all([
             dbService.getAllItems('carAvailibility'),
             dbService.getAllItems('cars')

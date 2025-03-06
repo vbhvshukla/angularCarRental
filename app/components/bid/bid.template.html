@@ -1,10 +1,18 @@
 <div class="bid-form">
     <h3>Place Your Bid</h3>
     <div class="rental-type-buttons">
-        <button type="button" ng-class="{'active': $ctrl.rentalType === 'local'}"
-            ng-click="$ctrl.setRentalType('local')">Local</button>
-        <button type="button" ng-class="{'active': $ctrl.rentalType === 'outstation'}"
-            ng-click="$ctrl.setRentalType('outstation')">Outstation</button>
+        <button type="button" 
+                ng-if="$ctrl.car.isAvailableForLocal"
+                ng-class="{'active': $ctrl.rentalType === 'local'}"
+                ng-click="$ctrl.setRentalType('local')">
+            Local
+        </button>
+        <button type="button" 
+                ng-if="$ctrl.car.isAvailableForOutstation"
+                ng-class="{'active': $ctrl.rentalType === 'outstation'}"
+                ng-click="$ctrl.setRentalType('outstation')">
+            Outstation
+        </button>
     </div>
 
     <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
@@ -41,8 +49,8 @@
             Calculating estimate...
         </div>
 
-        <button type="submit" ng-disabled="bidForm.$invalid || vm.isSubmitting" class="btn btn-primary">
-            {{vm.isSubmitting ? 'Submitting...' : 'Place Bid'}}
+        <button type="submit" ng-disabled="$ctrl.bidForm.$invalid || $ctrl.isSubmitting" class="btn btn-primary">
+            {{$ctrl.isSubmitting ? 'Submitting...' : 'Place Bid'}}
         </button>
     </form>
 </div>

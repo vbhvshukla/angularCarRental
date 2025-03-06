@@ -1,11 +1,11 @@
-/* Bid and Chat Container */
 .bid-chat-container {
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
+  grid-template-columns: 60% 40%;
   gap: 20px;
+  min-height: 400px;
+  width: 100%;
 }
 
-/* Common styles for boxes */
 .bid-form,
 .chatbox,
 .other-bids {
@@ -15,7 +15,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Elements */
+
 .bid-form label,
 .chatbox label {
   display: block;
@@ -106,6 +106,20 @@
   .message {
     max-width: 90%;
   }
+
+  .bid-chat-container {
+    grid-template-columns: 1fr; /* Stack on mobile */
+  }
+
+  .bid-page {
+    padding: 10px;
+  }
+
+  .car-section,
+  .bid-section,
+  .chat-section {
+    padding: 15px;
+  }
 }
 
 /* Utility Classes */
@@ -171,7 +185,6 @@
   display: block;
   margin-top: 10px;
 }
-
 
 .chat-sidebar {
   width: 300px;
@@ -340,7 +353,6 @@
   background-color: #4caf50;
 }
 
-
 .rental-type-buttons {
   display: flex;
   gap: 10px;
@@ -415,7 +427,8 @@
 
 /* Bid Page Layout */
 .bid-page {
-  max-width: 1200px;
+  /* max-width: 1200px; */
+  width: 100%;
   margin: 20px auto;
   padding: 0 20px;
   display: flex;
@@ -532,4 +545,40 @@
   .bid-page .chat-message {
     max-width: 90%;
   }
+}
+
+.bid-page {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.car-section {
+  width: 100%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.bid-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Chat Section */
+.chat-section {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

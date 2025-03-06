@@ -207,5 +207,10 @@ mainApp.service('chatService', ['$q', 'dbService', 'errorService', '$timeout',
                 })
                 .catch(error => errorService.handleError(error, 'ChatService :: Chat Participants Fetch Failed'));
         };
+
+        this.createChatId = function(userId, ownerId, carId) {
+            return `${userId}_${ownerId}_${carId}`;
+        }
+
     }
 ]);

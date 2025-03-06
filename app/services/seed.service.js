@@ -1,5 +1,5 @@
 mainApp.service('seedService', ['$q', 'dbService', 'categoryService', function($q, dbService, categoryService) {
-    'use strict';
+    // 'use strict';
 
     this.seedCars = function() {
         const deferred = $q.defer();

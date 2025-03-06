@@ -349,7 +349,6 @@ mainApp.service('dbService', function ($q) {
             return deferred.promise;
         },
 
-
         this.getAllItems = function (storeName, limit = 1000) {
             
             const deferred = $q.defer();

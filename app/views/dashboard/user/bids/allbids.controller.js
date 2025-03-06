@@ -1,5 +1,5 @@
-mainApp.controller('UserBidsController', ['bidService', 'authService',
-    function (bidService, authService) {
+mainApp.controller('UserBidsController', ['bidService', 'authService','chatService',
+    function (bidService, authService,chatService) {
 
         //Var Declarations
         let vm = this;
@@ -9,6 +9,8 @@ mainApp.controller('UserBidsController', ['bidService', 'authService',
             rentalType: '',
             status: ''
         };
+        vm.chatId = "";
+        
 
         //Initialization
         vm.init = function () {
@@ -69,6 +71,19 @@ mainApp.controller('UserBidsController', ['bidService', 'authService',
                     });
             }
         };
+
+        vm.goToMessagePage = function (bid) {
+            chatService.getOrCreateChat(bid.car.carId, bid.user, bid.car.owner)
+                .then(function(conversation) {
+                    $state.go('userdashboard.message', { 
+                        chatId: conversation.chatId 
+                    });
+                })
+                .catch(function(error) {
+                    errorService.handleError(error, 'Failed to open chat');
+                });
+        };
+
         //Format Date function toLocalDateString (Parameters required -> Date)
         vm.formatDate = function (date) {
             return new Date(date).toLocaleDateString();

@@ -47,6 +47,9 @@
                     <td>{{bid.rentalType}}</td>
                     <td>{{bid.status}}</td>
                     <td>
+                        <button ng-click="vm.goToMessagePage(bid)" class="chat-button">
+                            Chat
+                        </button>
                         <button ng-if="bid.status === 'pending'" ng-click="vm.cancelBid(bid)" class="btn btn-danger">
                             Cancel
                         </button>

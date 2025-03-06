@@ -142,3 +142,105 @@ tbody tr:hover {
   background: linear-gradient(135deg, #0056b3, #007bff);
   transform: scale(1.05);
 }
+
+.extra-modal {  
+  display: flex;  
+  position: fixed;  
+  top: 0;  
+  left: 0;  
+  width: 100%;  
+  height: 100%;  
+  background-color: rgba(0, 0, 0, 0.5);  
+  z-index: 1000;  
+  justify-content: center;  
+  align-items: center;  
+}  
+
+.extra-modal-content {  
+  background-color: #fff;  
+  border-radius: 5px;  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);  
+  width: 50%;  
+  max-width: 600px;  
+}  
+
+.extra-modal-header {  
+  padding: 15px;  
+  border-bottom: 1px solid #eee;  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+}  
+
+.extra-modal-header h2 {  
+  margin: 0;  
+  font-size: 1.5em;  
+}  
+
+.close {  
+  background: none;  
+  border: none;  
+  font-size: 2em;  
+  cursor: pointer;  
+  color: #aaa;  
+  padding: 0;  
+}  
+
+.close:hover {  
+  color: #333;  
+}  
+
+.extra-modal-body {  
+  padding: 20px;  
+}  
+
+.extras-form { 
+  display: flex;  
+  flex-direction: column;  
+  gap: 15px; 
+}  
+
+.extras-form label {  
+  font-weight: bold;  
+  margin-bottom: 5px;  
+}  
+
+.extras-form input[type="number"] {  
+  padding: 8px;  
+  border: 1px solid #ccc;  
+  border-radius: 4px;  
+  font-size: 1em;  
+  width: 100%; 
+  box-sizing: border-box; 
+}  
+
+.extras-form button[type="submit"] {  
+  background-color: #4CAF50;  
+  border: none;  
+  color: white;  
+  padding: 10px 20px;  
+  text-align: center;  
+  text-decoration: none;  
+  display: inline-block;  
+  font-size: 1em;  
+  cursor: pointer;  
+  border-radius: 4px;  
+  align-self: flex-start; 
+}  
+
+.extras-form button[type="submit"]:disabled {  
+  background-color: #ccc;  
+  cursor: not-allowed;  
+}  
+
+.extras-form span {  
+  color: red;  
+  font-size: 0.8em;  
+}  
+
+
+@media (max-width: 768px) {  
+  .extra-modal-content {  
+    width: 90%;
+  }  
+}  

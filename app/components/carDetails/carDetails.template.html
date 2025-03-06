@@ -8,11 +8,9 @@
         <button class="nav-btn prev" ng-click="$ctrl.prevImage()" ng-show="$ctrl.car.images.length > 1">
             <i class="fa fa-chevron-left"></i>
         </button>
-        
-        <img ng-src="{{$ctrl.car.images[$ctrl.currentImageIndex]}}" 
-             alt="{{$ctrl.car.carName}}"
-             class="main-image">
-        
+
+        <img ng-src="{{$ctrl.car.images[$ctrl.currentImageIndex]}}" alt="{{$ctrl.car.carName}}" class="main-image">
+
         <button class="nav-btn next" ng-click="$ctrl.nextImage()" ng-show="$ctrl.car.images.length > 1">
             <i class="fa fa-chevron-right"></i>
         </button>
@@ -48,9 +46,56 @@
         <div class="availability">
             <div class="availability-item" ng-if="$ctrl.car.isAvailableForLocal">
                 <i class="fa fa-check"></i> Available for Local Rentals
+                <button class="info-button" ng-mouseenter="$ctrl.showLocalInfo = true"
+                    ng-mouseleave="$ctrl.showLocalInfo = false">
+                    <i class="fa fa-info-circle"></i>
+                    <div class="info-tooltip" ng-show="$ctrl.showLocalInfo">
+                        <h4>Local Rental Rates</h4>
+                        <div class="rate-item">
+                            <span>Base Rate:</span> ₹{{$ctrl.car.rentalOptions.local.pricePerHour}}/hour
+                        </div>
+                        <div class="rate-item">
+                            <span>Distance Limit:</span> {{$ctrl.car.rentalOptions.local.maxKmPerHour}}km/hour
+                        </div>
+                        <div class="rate-item">
+                            <span>Additional Hourly Rate:</span> ₹{{$ctrl.car.rentalOptions.local.extraHourRate}}/hour
+                        </div>
+                        <div class="rate-item">
+                            <span>Additional KM Rate:</span> ₹{{$ctrl.car.rentalOptions.local.extraKmRate}}/km
+                        </div>
+                    </div>
+                </button>
             </div>
             <div class="availability-item" ng-if="$ctrl.car.isAvailableForOutstation">
                 <i class="fa fa-check"></i> Available for Outstation Rentals
+                <button class="info-button" ng-mouseenter="$ctrl.showOutstationInfo = true"
+                    ng-mouseleave="$ctrl.showOutstationInfo = false">
+                    <i class="fa fa-info-circle"></i>
+                    <div class="info-tooltip" ng-show="$ctrl.showOutstationInfo">
+                        <h4>Outstation Rental Rates</h4>
+                        <div class="rate-item">
+                            <span>Daily Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.pricePerDay}}/day
+                        </div>
+                        <div class="rate-item">
+                            <span>Per KM Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.pricePerKm}}/km
+                        </div>
+                        <div class="rate-item">
+                            <span>Daily KM Limit:</span> {{$ctrl.car.rentalOptions.outstation.maxKmLimitPerDay}}km
+                        </div>
+                        <div class="rate-item">
+                            <span>Min. KM Charge:</span> {{$ctrl.car.rentalOptions.outstation.minimumKmChargeable}}km
+                        </div>
+                        <div class="rate-item">
+                            <span>Extra Day Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.extraDayRate}}/day
+                        </div>
+                        <div class="rate-item">
+                            <span>Extra Hour Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.extraHourlyRate}}/hour
+                        </div>
+                        <div class="rate-item">
+                            <span>Extra KM Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.extraKmRate}}/km
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>

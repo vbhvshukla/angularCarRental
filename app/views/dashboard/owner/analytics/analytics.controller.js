@@ -3,7 +3,6 @@ mainApp.controller('OwnerAnalyticsController', [
     function ($scope, analyticsService, authService, errorService) {
         let vm = this;
         vm.chartInstances = {};
-
         vm.loading = false;
         vm.selectedDays = 30;
         vm.totals = {};

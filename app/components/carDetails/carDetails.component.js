@@ -1,9 +1,9 @@
 mainApp.component('carDetails', {
-   
+
     templateUrl: 'app/components/carDetails/carDetails.template.html',
-   
+
     controller: [
-   
+
         function () {
 
             /**
@@ -14,23 +14,24 @@ mainApp.component('carDetails', {
 
             let $ctrl = this;
             $ctrl.currentImageIndex = 0;
-
+            $ctrl.showLocalInfo = false;
+            $ctrl.showOutstationInfo = false;
             /**
              * Next Image Function
              * @description Toggles the next image in the images array.
              */
-          
+
             $ctrl.nextImage = function () {
                 if ($ctrl.car.images.length > 0) {
                     $ctrl.currentImageIndex = ($ctrl.currentImageIndex + 1) % $ctrl.car.images.length;
                 }
             };
-            
+
             /**
              * Previous Image Function
              * @description Toggles the previous image in the images array.
              */
-            
+
             $ctrl.prevImage = function () {
                 if ($ctrl.car.images.length > 0) {
                     $ctrl.currentImageIndex = ($ctrl.currentImageIndex - 1 + $ctrl.car.images.length) % $ctrl.car.images.length;

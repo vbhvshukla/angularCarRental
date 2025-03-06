@@ -15,19 +15,37 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     */
 
     service.calculateBaseFare = function (bookingData) {
-        const rentalType = bookingData.rentalType;
-        const car = bookingData.bid.car;
-        const from = new Date(bookingData.bid.fromTimestamp);
-        const to = new Date(bookingData.bid.toTimestamp);
-        const diffTime = Math.abs(to - from);
-        if (rentalType === 'local') {
-            const totalHours = diffTime / (1000 * 60 * 60);
-            return car.rentalOptions.local.pricePerHour * totalHours;
-        } else if (rentalType === 'outstation') {
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return car.rentalOptions.outstation.pricePerDay * diffDays;
+        if (bookingData.bid === undefined) {
+            const rentalType = bookingData.rentalType;
+            const car = bookingData.car;
+            const from = new Date(bookingData.fromTimestamp);
+            const to = new Date(bookingData.toTimestamp);
+            const diffTime = Math.abs(to - from);
+            if (rentalType === 'local') {
+                const totalHours = diffTime / (1000 * 60 * 60);
+                return car.rentalOptions.local.pricePerHour * totalHours;
+            } else if (rentalType === 'outstation') {
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return car.rentalOptions.outstation.pricePerDay * diffDays;
+            }
+            return 0;
         }
-        return 0;
+        else {
+            const rentalType = bookingData.rentalType;
+            const car = bookingData.bid.car;
+            const from = new Date(bookingData.bid.fromTimestamp);
+            const to = new Date(bookingData.bid.toTimestamp);
+            const diffTime = Math.abs(to - from);
+            if (rentalType === 'local') {
+                const totalHours = diffTime / (1000 * 60 * 60);
+                return car.rentalOptions.local.pricePerHour * totalHours;
+            } else if (rentalType === 'outstation') {
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return car.rentalOptions.outstation.pricePerDay * diffDays;
+            }
+            return 0;
+        }
+
     };
 
     service.calculateTotalAmount = function (bookingData) {
@@ -105,7 +123,7 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 };
 
                 const carAvailability = {
-                    carId: bookingData.bid.car.carId,
+                    carId: bookingData.car.carId,
                     fromTimestamp: new Date(bookingData.fromTimestamp),
                     toTimestamp: new Date(bookingData.toTimestamp)
                 };
@@ -114,9 +132,9 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                     dbService.addItem('bookings', booking),
                     dbService.addItem('carAvailibility', carAvailability)
                 ]).then(function () {
-                    errorService.success('Booking created successfully!');
+                    errorService.logSuccess('Booking created successfully!');
                     deferred.resolve(booking);
-                });
+                })
             }).catch(function (error) {
                 errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
                 deferred.reject(error);
@@ -143,7 +161,7 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 return dbService.updateItem('bookings', booking);
             })
             .then(function () {
-                errorService.success('Booking status updated successfully!');
+                errorService.logSuccess('Booking status updated successfully!');
                 deferred.resolve();
             })
             .catch(function (error) {
@@ -216,14 +234,14 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 return Promise.all([
                     dbService.updateItem('bookings', booking),
                     dbService.deleteItemByQuery('carAvailability', { carId: booking.bid.car.carId })
-                ]);
+                ]).then(() => { console.log("Done") }).catch((err) => { console.log("Booking Service :: Error Cancelling Booking", err) });
             })
             .then(function () {
-                errorService.success('Booking cancelled successfully!');
+                errorService.logSuccess('Booking cancelled successfully!');
                 deferred.resolve();
             })
             .catch(function (error) {
-                errorService.error('Error cancelling booking', 'error');
+                errorService.handleError('Error cancelling booking', 'error');
                 deferred.reject(error);
             });
 
@@ -240,16 +258,46 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
                 return dbService.updateItem('cars', car);
             })
             .then(function () {
-                errorService.success('Rating submitted successfully!');
+                errorService.logSuccess('Rating submitted successfully!');
                 deferred.resolve();
             })
             .catch(function (error) {
-                errorService.error('Error submitting rating', 'error');
+                errorService.handleError('Error submitting rating', 'error');
                 deferred.reject(error);
             });
 
         return deferred.promise;
     };
+
+    service.addExtras = function (bookingData, extraKm, extraHr, extraDay) {
+        const deferred = $q.defer();
+        const rentalType = bookingData.rentalType;
+        const car = bookingData.bid.car;
+        if (rentalType === 'local') {
+            const extraKmCharges = car.rentalOptions.local.extraKmRate * extraKm;
+            const extraHourCharges = car.rentalOptions.local.extraHourRate * extraHr;
+            const totalFare = bookingData.totalFare + extraHourCharges + extraKmCharges;
+            dbService.updateItem("bookings", {
+                ...bookingData,
+                extraHourCharges: extraHourCharges,
+                extraKmCharges: extraKmCharges,
+                totalFare: totalFare
+            }).then((res) => { deferred.resolve("Booking Service :: Add Extras Successful!", res) })
+                .catch((err) => { deferred.reject("Booking Service :: Failed to Add Extras", err) })
+        } else if (rentalType === 'outstation') {
+            const extraKmCharges = car.rentalOptions.outstation.extraKmRate * extraKm;
+            const extraHourCharges = car.rentalOptions.outstation.extraHourlyRate * extraHr;
+            const extraDayCharges = car.rentalOptions.outstation.extraDayRate * extraDay;
+            const totalFare = bookingData.totalFare + extraHourCharges + extraKmCharges + extraDayCharges;
+            dbService.updateItem("bookings", {
+                ...bookingData,
+                extraHourCharges: extraHourCharges,
+                extraKmCharges: extraKmCharges,
+                totalFare: totalFare
+            }).then((res) => { deferred.resolve("Booking Service :: Add Extras Successful!", res) })
+                .catch((err) => { deferred.reject("Booking Service :: Failed to Add Extras", err) })
+        }
+    }
 
     return service;
 }]);

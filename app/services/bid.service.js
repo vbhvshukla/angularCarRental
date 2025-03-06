@@ -159,7 +159,7 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
         };
 
         this.updateBidStatus = function (bidId, status) {
-            return dbService.getItemById('bids', bidId)
+            return dbService.getItemByKey('bids', bidId)
                 .then(bid => {
                     bid.status = status;
                     return dbService.updateItem('bids', bid);

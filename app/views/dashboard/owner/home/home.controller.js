@@ -1,5 +1,5 @@
-mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService',
-    function (dbService, bidService, authService, bookingService) {
+mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService',
+    function (dbService, bidService, authService, bookingService, errorService) {
 
         //Variable Declaration
         let vm = this;
@@ -23,10 +23,16 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             }
         };
 
+        vm.extras = {
+            extraKm: 0,
+            extraHr: 0,
+            extraDay: 0,
+        }
+        vm.bookingData = null;
         vm.allBids = [];     //Holds all the bids for the owner
         vm.bookings = [];    //Holds all the bookings of owner's cars.
         vm.pendingBids = []; //Holds all the pending bids.
-
+        vm.showAddKmModal = false;
         // Filtered data
         vm.filteredBookings = [];
         vm.filteredAllBids = [];
@@ -73,45 +79,52 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         }
 
         vm.applyFilters = function () {
-            // Filter bookings
             vm.filteredBookings = vm.bookings.filter(booking =>
                 vm.filters.bookingType === 'all' || booking.rentalType === vm.filters.bookingType
             );
 
-            // Filter all bids
             vm.filteredAllBids = vm.allBids.filter(bid =>
                 vm.filters.bidStatus === 'all' || bid.status === vm.filters.bidStatus
             );
 
-            // Filter pending bids
             vm.filteredPendingBids = vm.pendingBids.filter(bid =>
                 vm.filters.pendingType === 'all' || bid.rentalType === vm.filters.pendingType
             );
 
-            // Update pagination
             vm.pagination.bookings.totalItems = vm.filteredBookings.length;
             vm.pagination.allBids.totalItems = vm.filteredAllBids.length;
             vm.pagination.pendingBids.totalItems = vm.filteredPendingBids.length;
 
-            // Reset to first page
             vm.pagination.bookings.currentPage = 1;
             vm.pagination.allBids.currentPage = 1;
             vm.pagination.pendingBids.currentPage = 1;
         };
 
         vm.acceptBid = function (bid) {
-            console.log(bid);
-            bookingService.createBooking(bid).then(() => {
-                return bidService.updateStatus(bid.bidId, 'accepted');
-            })
-                .then(() => {
-                    console.log("Onwer Dashboard :: Accepted bid");
-                }).catch("Owner Dashboard :: Home Controller :: Error Accepting Bid");
+            if (!bid || !bid.bidId) {
+                errorService.handleError('Invalid bid data');
+                return;
+            }
+            vm.isProcessing = true;
+
+            bookingService.createBooking(bid)
+                .then(function (booking) {
+                    return bidService.updateBidStatus(bid.bidId, 'accepted');
+                })
+                .then(function () {
+                    errorService.logSuccess('Bid accepted and booking created successfully');
+                    return vm.getAllData(bid.car.owner.userId);
+                })
+                .catch(function (error) {
+                    errorService.handleError('Failed to accept bid: ' + error.message);
+                })
+                .finally(function () {
+                    vm.isProcessing = false;
+                });
         }
 
         vm.rejectBid = function (bid) {
-
-            bidService.updateStatus(bid.bidId, 'rejected')
+            bidService.updateBidStatus(bid.bidId, 'rejected')
                 .then(() => {
                     console.log("Owner Dashboard :: Rejected bid");
                 })
@@ -122,7 +135,6 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             return data.slice(startIndex, startIndex + paginationConfig.itemsPerPage);
         };
 
-        // Navigation functions
         vm.previousPage = function (type) {
             if (vm.pagination[type].currentPage > 1) {
                 vm.pagination[type].currentPage--;
@@ -139,14 +151,10 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         vm.getTotalAmount = function (booking) {
             return bookingService.calculateTotalAmount(booking);
         }
+
         vm.isBookingOver = function (booking) {
-            if (new Date(booking.toTimestamp) > Date.now()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+            return new Date(booking.toTimestamp) < Date.now();
+        };
 
         vm.shouldShowPagination = function (type) {
             return vm.pagination[type].totalItems > vm.pagination[type].itemsPerPage;
@@ -155,5 +163,18 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         vm.getTotalPages = function (type) {
             return Math.ceil(vm.pagination[type].totalItems / vm.pagination[type].itemsPerPage);
         };
+
+        vm.closeAddKmModal = function () {
+            vm.showAddKmModal = false;
+        }
+
+        vm.openAddKmModal = function (booking) {
+            vm.showAddKmModal = true;
+            vm.bookingData = booking;
+        }
+
+        vm.addExtras = function () {
+            bookingService.addExtras(vm.bookingData, this.extras.extraKm, this.extras.extraHr, this.extras.extraDay)
+        }
     }
 ])

@@ -59,7 +59,7 @@ mainApp.controller('BiddingController', [
 
                 vm.currentUser = user;
                 vm.car = car;
-                console.log(vm.car,vm.currentUser);
+                console.log(vm.car, vm.currentUser);
                 if (!vm.car || !vm.currentUser) {
                     errorService.handleError('BiddingController  :: Missing required :: Init Failed');
                     return $state.go('home');
@@ -72,6 +72,7 @@ mainApp.controller('BiddingController', [
                     })
                     .catch(error => {
                         errorService.handleError(error, 'BiddingController :: Chat Init Failed');
+                        return;
                     }).finally(() => vm.loading = false);
             });
 
@@ -82,24 +83,18 @@ mainApp.controller('BiddingController', [
         vm.handleBidSubmit = function (bid) {
             if (vm.isSubmitting) return;
 
-            vm.isSubmitting = true;
-
             if (!bid || !bid.bidAmount || !bid.startDate || !bid.endDate || !bid.rentalType) {
                 errorService.handleError('Invalid bid data', 'BiddingController :: Bid Validation');
                 return;
             }
 
+            vm.isSubmitting = true;
+
             bidService.submitBid(vm.car.carId, bid, vm.currentUser)
                 .then(() => {
                     errorService.logSuccess('Bid submitted successfully!', 'BiddingController :: Bid');
-                    const message = `New bid placed: ${bid.rentalType} rental from ${new Date(bid.startDate).toLocaleDateString()} to ${new Date(bid.endDate).toLocaleDateString()}`;
-
-                    return chatService.sendMessage(
-                        vm.chatId,
-                        vm.currentUser,
-                        vm.car.owner,
-                        message
-                    );
+                    const message = `New bid placed :: ${vm.car.carName} : ${bid.rentalType} rental from ${new Date(bid.startDate).toLocaleDateString()} to ${new Date(bid.endDate).toLocaleDateString()} Price : ${bid.bidAmount}`;
+                    return chatService.sendMessage(vm.chatId, vm.currentUser, vm.car.owner, message);
                 })
                 .then(() => {
                     $state.go('userdashboard.bids');

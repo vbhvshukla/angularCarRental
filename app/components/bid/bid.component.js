@@ -5,7 +5,7 @@ mainApp.component('bidForm', {
     controller: ['bidService', 'errorService', 'authService',
 
         function (bidService, errorService, authService) {
-            
+
             let $ctrl = this;
 
             /** Initialization function
@@ -121,45 +121,28 @@ mainApp.component('bidForm', {
              */
 
             $ctrl.submitBid = function () {
-
+                if ($ctrl.isSubmitting) return; // Prevent double submission
                 if ($ctrl.bidForm.$invalid || !$ctrl.estimate) {
                     errorService.handleError('BidForm :: Validation :: Please wait for price calculation');
                     return;
                 }
 
-                //The bid amount must be within the range of minBid and maxBid
                 if ($ctrl.bid.bidAmount < $ctrl.estimate.minBid ||
                     $ctrl.bid.bidAmount > $ctrl.estimate.maxBid) {
                     errorService.handleError('BidForm :: Validation  :: Bid amount must be within allowed range');
                     return;
                 }
 
-                //Set loader true
                 $ctrl.isSubmitting = true;
 
-                bidService.submitBid($ctrl.carId, $ctrl.bid, $ctrl.currentUser)
-                    .then(() => {
-                        $ctrl.onBidSubmit({
-                            bid: {
-                                ...$ctrl.bid,
-                                basePrice: $ctrl.estimate.basePrice
-                            }
-                        });
-                        $ctrl.bid = {
-                            startDate: null,
-                            endDate: null,
-                            bidAmount: null,
-                            rentalType: 'local'
-                        };
-                        $ctrl.estimate = null;
-                        $ctrl.showPriceBreakup = false;
-                        if ($ctrl.bidForm) {
-                            $ctrl.bidForm.$setPristine();
-                            $ctrl.bidForm.$setUntouched();
-                        }
-                    })
-                    .catch((error) => errorService.handleError(error, 'BidForm :: Submit Failed'))
-                    .finally(() => { $ctrl.isSubmitting = false });
+                // Create a copy of bid data to prevent reference issues
+                const bidData = {
+                    ...$ctrl.bid,
+                    basePrice: $ctrl.estimate.basePrice
+                };
+
+                // Emit bid data through onBidSubmit
+                $ctrl.onBidSubmit({ bid: bidData });
             };
 
             /** Price Modal Toggling function
@@ -175,10 +158,11 @@ mainApp.component('bidForm', {
     /** Bindings for the component.
      * @description Bindings : One way binding for carId,car.
      */
-    
+
     bindings: {
         carId: '<',
         car: '<',
-        onBidSubmit: '&'
+        onBidSubmit: '&',
+        isSubmitting: '='
     }
 });
