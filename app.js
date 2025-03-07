@@ -5,9 +5,11 @@ const mainApp = angular
     .module(
         'mainApp',
         [
-            'ui.router', //Dependency for UI Router
             'ngAnimate', //Dependency for Angular Animate
             'ngCookies', //Dependency for Angular Cookies
+            'ngSanitize', //Dependency for ngSanitize
+            'ui.router', //Dependency for UI Router
+            'ui.bootstrap', //Dependency for Angular UI Bootstrap
         ]
     )
 

@@ -7,11 +7,14 @@
                     <label for="location">Location:</label>
                     <input type="text" id="location" 
                            ng-model="vm.filters.location"
+                           uib-typeahead="city for city in vm.cities | filter:$viewValue"
+                           typeahead-min-length="1"
+                           class="form-control"
                            placeholder="Enter city or area"
                            list="city-list">
-                    <datalist id="city-list">
+                    <!-- <datalist id="city-list">
                         <option ng-repeat="city in vm.cities" value="{{city}}">
-                    </datalist>
+                    </datalist> -->
                 </div>
                 <div class="form-group">
                     <label for="car-category">Car Category:</label>
@@ -71,7 +74,8 @@
                         <option value="1">1</option>
                     </select>
                 </div>
-                <button type="submit" ng-click="vm.applyFilters()">Filter</button>
+                <button type="submit" ng-click="vm.applyFilters()" uib-tooltip="Apply all filters"
+                tooltip-placement="left"> Filter</button>
             </form>
         </div>
 

@@ -1,8 +1,10 @@
-<div class="car-card" ng-mouseenter="$ctrl.startCarousel()" ng-mouseleave="$ctrl.stopCarousel()">
+<!-- <div class="car-card" ng-mouseenter="$ctrl.startCarousel()" ng-mouseleave="$ctrl.stopCarousel()"> -->
+<div class="car-card">
     <div class="carousel">
-        <div class="carousel-images">
-            <img ng-repeat="image in $ctrl.car.images" ng-src="{{image}}" alt="Car Image {{$index + 1}}"
-                class="carousel-image" ng-class="{'active': $index === $ctrl.currentImageIndex}">
+        <div uib-carousel active="active" no-wrap="false" no-pause="true">
+            <div uib-slide ng-repeat="image in $ctrl.car.images track by $index" index="$index">
+                <img ng-src="{{image}}" alt="Car Image {{$index + 1}}" class="carousel-image">
+            </div>
         </div>
     </div>
     <div class="car-details">
@@ -33,9 +35,7 @@
             </span>
             <span class="city">{{$ctrl.car.city}}</span>
         </div>
-        <button 
-            ng-if="$ctrl.showButton !== false"
-            ng-class="['book-now-btn', $ctrl.buttonClass]" 
+        <button ng-if="$ctrl.showButton !== false" ng-class="['book-now-btn', $ctrl.buttonClass]"
             ng-click="$ctrl.handleButtonClick()">
             {{$ctrl.buttonText || 'Book Now'}}
         </button>

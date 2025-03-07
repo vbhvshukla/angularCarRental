@@ -111,9 +111,8 @@ mainApp.service('analyticsService', [
         /**
          * Get the Top Bidders
          * @param {*} bids 
-         * @returns 
+         * @returns object of top 3 bidders
          */
-        //Get top 3 bidders
         function getTopBidders(bids) {
             const bidderCounts = {};
             bids.forEach(bid => {
@@ -196,6 +195,8 @@ mainApp.service('analyticsService', [
                 }]
             };
         }
+
+
 
         //Get bookings over time
         function getBookingsOverTime(bookings) {
