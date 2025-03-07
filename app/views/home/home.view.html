@@ -8,7 +8,7 @@
                     <input type="text" id="location" 
                            ng-model="vm.filters.location"
                            uib-typeahead="city for city in vm.cities | filter:$viewValue"
-                           typeahead-min-length="1"
+                           typeahead-min-length="2"
                            class="form-control"
                            placeholder="Enter city or area"
                            list="city-list">

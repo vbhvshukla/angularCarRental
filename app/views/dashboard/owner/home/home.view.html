@@ -53,8 +53,8 @@
                     <td>{{bid.bidAmount | price}}</td>
                     <td>{{bid.bidBaseFare | price}}</td>
                     <td>{{bid.user.username}}</td>
-                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
-                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
+                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{bid.rentalType}}</td>
                     <td>
                         <button ng-click="vm.acceptBid(bid)" ng-disabled="vm.isProcessing">
@@ -105,9 +105,9 @@
                     <td>{{booking.bid.bidAmount | price}}</td>
                     <td>{{vm.getTotalAmount(booking) | price}}</td>
                     <td>{{booking.bid.user.username}}</td>
-                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy'}}</td>
-                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy'}}</td>
-                    <td>{{booking.createdAt | date:'MM/dd/yyyy'}}</td>
+                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{booking.rentalType}}</td>
                     <td ng-if="!vm.isBookingOver(booking)">N/A</td>
                     <td>
@@ -163,8 +163,8 @@
                     <td>{{bid.bidBaseFare | price}}</td>
                     <td>{{bid.bidAmount | price}}</td>
                     <td>{{bid.user.username}}</td>
-                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
-                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
+                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{bid.rentalType}}</td>
                     <td>{{bid.status}}</td>
                 </tr>

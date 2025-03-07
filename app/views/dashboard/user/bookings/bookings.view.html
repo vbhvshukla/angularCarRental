@@ -29,9 +29,9 @@
                     <td>{{booking.bid.car.carName}}</td>
                     <td>{{booking.bid.car.owner.username}}</td>
                     <td>{{booking.bid.bidAmount | price}}</td>
-                    <td>{{booking.fromTimestamp | date}}</td>
-                    <td>{{booking.toTimestamp | date}}</td>
-                    <td>{{booking.createdAt | date:'medium'}}</td>
+                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{booking.totalFare | price}}</td>
                     <td>{{booking.status}}</td>
                     <td>

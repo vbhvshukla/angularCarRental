@@ -110,7 +110,7 @@ button[type="submit"]:hover {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 6px;
 }
 
 .car-card {
@@ -161,6 +161,8 @@ button[type="submit"]:hover {
 }
 
 .carousel-indicators li {
+    opacity:0;
+
   border: 1px solid #666;
 }
 
@@ -249,6 +251,8 @@ button[type="submit"]:hover {
 }
 
 .rating-container {
+  padding-top: 8  px;
+  /* padding: 6px; */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -264,7 +268,7 @@ button[type="submit"]:hover {
   opacity: 0.8;
 }
 
-.user-info {
+.home-user-info {
   display: flex;
   align-items: center;
   margin: 10px 0;
@@ -282,7 +286,7 @@ button[type="submit"]:hover {
 }
 
 .price {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: #1c7441;
   font-weight: 400;
 }
