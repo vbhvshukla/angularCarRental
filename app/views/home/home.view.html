@@ -3,40 +3,34 @@
         <div class="sidebar">
             <h3>Search for Cars</h3>
             <form>
+                <!-- Angular-ui-bootstrap's uib-typeahead component -->
                 <div class="form-group">
                     <label for="location">Location:</label>
-                    <input type="text" id="location" 
-                           ng-model="vm.filters.location"
-                           uib-typeahead="city for city in vm.cities | filter:$viewValue"
-                           typeahead-min-length="2"
-                           class="form-control"
-                           placeholder="Enter city or area"
-                           list="city-list">
-                    <!-- <datalist id="city-list">
-                        <option ng-repeat="city in vm.cities" value="{{city}}">
-                    </datalist> -->
+                    <input type="text" id="location" ng-model="vm.filters.location"
+                        uib-typeahead="city for city in vm.cities | filter:$viewValue" typeahead-min-length="2"
+                        class="form-control" placeholder="Enter city or area" list="city-list">
                 </div>
+
                 <div class="form-group">
                     <label for="car-category">Car Category:</label>
                     <select id="car-category" ng-model="vm.filters.carCategory">
                         <option value="">All Category</option>
-                        <option ng-repeat="category in vm.categories" 
-                                value="{{category.categoryId}}">
+                        <option ng-repeat="category in vm.categories" value="{{category.categoryId}}">
                             {{category.categoryName}}
                         </option>
                     </select>
                 </div>
+
                 <h3>Filter by</h3>
+
                 <div class="form-group">
                     <label for="price-range">Price Range: {{vm.filters.priceRange}}</label>
                     <div>
-                        <input type="range" id="price-range" 
-                               ng-model="vm.filters.priceRange"
-                               min="0" max="500" step="50"
-                               ng-model-options="{ debounce: 300 }"
-                               >
+                        <input type="range" id="price-range" ng-model="vm.filters.priceRange" min="0" max="500"
+                            step="50" ng-model-options="{ debounce: 300 }">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label for="car-type">Car Type:</label>
                     <select id="car-type" ng-model="vm.filters.carType">
@@ -45,6 +39,7 @@
                         <option value="manual">Manual</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="availability">Availability:</label>
                     <select id="availability" ng-model="vm.filters.availability">
@@ -53,16 +48,16 @@
                         <option value="outstation">Outstation</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="features">Features:</label>
-                    <input type="text" id="features" 
-                           ng-model="vm.filters.features"
-                           placeholder="e.g., AC, Bluetooth"
-                           list="features-list">
+                    <input type="text" id="features" ng-model="vm.filters.features" placeholder="e.g., AC, Bluetooth"
+                        list="features-list">
                     <datalist id="features-list">
                         <option ng-repeat="feature in vm.features" value="{{feature}}">
                     </datalist>
                 </div>
+
                 <div class="form-group">
                     <label for="rating">Minimum Rating:</label>
                     <select id="rating" ng-model="vm.filters.rating">
@@ -75,26 +70,22 @@
                     </select>
                 </div>
                 <button type="submit" ng-click="vm.applyFilters()" uib-tooltip="Apply all filters"
-                tooltip-placement="left"> Filter</button>
+                    tooltip-placement="left"> Filter</button>
             </form>
         </div>
 
         <div class="content">
             <div class="cars-container">
-                <car-card
-                ng-repeat="car in vm.cars" 
-                car="car"
-                button-text="Book Now"
-                button-class="book-now-btn"
-                on-button-click="vm.goToBooking(car.carId)"
-                show-button="true">
+                <car-card ng-repeat="car in vm.cars" car="car" button-text="Book Now" button-class="book-now-btn"
+                    on-button-click="vm.goToBooking(car.carId)" show-button="true">
                 </car-card>
 
                 <div class="loading-more" ng-if="vm.pagination.loading">
                     <div class="spinner"></div>
                 </div>
 
-                <div class="load-more-container" ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems">
+                <div class="load-more-container"
+                    ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems">
                     <button class="load-more-btn" ng-click="vm.loadMoreCars()">
                         Load More
                     </button>
