@@ -7,7 +7,9 @@ mainApp.component('bidForm', {
         function (bidService, errorService, authService) {
 
             let $ctrl = this;
-
+            $ctrl.isStartOpen = false;
+            $ctrl.isEndOpen = false;
+            
             /** Initialization function
              *@description Initializes the variables , Gets the current logged in user and sets it in @var $ctrl.currentUser
              *@requires authService
@@ -44,6 +46,19 @@ mainApp.component('bidForm', {
                     })
                     .catch(error => errorService.handleError(error, 'BidForm :: User Fetch Failed'));
             };
+
+            $ctrl.openCalendar = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $ctrl.isStartOpen = true;
+            };
+
+            $ctrl.openEndCalendar = function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                $ctrl.isEndOpen = true;
+            }
+
 
             /** Handle Date Change Function
              * @description Handles the calculations upon date changes.

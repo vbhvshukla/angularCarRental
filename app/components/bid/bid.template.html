@@ -1,27 +1,36 @@
 <div class="bid-form">
     <h3>Place Your Bid</h3>
     <div class="rental-type-buttons">
-        <button type="button" 
-                ng-if="$ctrl.car.isAvailableForLocal"
-                ng-class="{'active': $ctrl.rentalType === 'local'}"
-                ng-click="$ctrl.setRentalType('local')">
+        <button type="button" ng-if="$ctrl.car.isAvailableForLocal" ng-class="{'active': $ctrl.rentalType === 'local'}"
+            ng-click="$ctrl.setRentalType('local')">
             Local
         </button>
-        <button type="button" 
-                ng-if="$ctrl.car.isAvailableForOutstation"
-                ng-class="{'active': $ctrl.rentalType === 'outstation'}"
-                ng-click="$ctrl.setRentalType('outstation')">
+        <button type="button" ng-if="$ctrl.car.isAvailableForOutstation"
+            ng-class="{'active': $ctrl.rentalType === 'outstation'}" ng-click="$ctrl.setRentalType('outstation')">
             Outstation
         </button>
     </div>
 
     <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
         <div ng-show="$ctrl.rentalType === 'local'" class="rental-form">
-            <label>Start Date & Time</label>
+            <label>Start Date & Time{{$ctrl.bid.startDate}}</label>
             <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" required>
+            <!-- <div uib-datepicker-popup ng-model="$ctrl.bid.startDate"  datepicker-options="options"></div> -->
+            <!-- <input type="text" class="form-control well well-sm" datetime-picker="dd MMM yyyy HH:mm" dateDisabled=({date:06-03-2025}) ng-model="$ctrl.bid.startDate" is-open="$ctrl.isStartOpen" />
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="$ctrl.openCalendar($event, prop)"><i
+                        class="fa fa-calendar"></i></button>
+            </span> -->
 
             <label>End Date & Time</label>
+            <!-- <div uib-datepicker-popup ng-model="$ctrl.bid.endDate" datepicker-options="options"></div> -->
             <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" required>
+            <!-- <input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="$ctrl.bid.endDate"
+                is-open="$ctrl.isEndOpen" />
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="$ctrl.openEndCalendar($event, prop)"><i
+                        class="fa fa-calendar"></i></button>
+            </span> -->
         </div>
 
         <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form">

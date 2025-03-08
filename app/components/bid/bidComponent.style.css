@@ -92,3 +92,12 @@
   font-size: 0.875rem;
   margin-top: 5px;
 }
+
+/* UIB DATE TIME PICKER CSS */
+.datetime-picker-dropdown {
+  height:400px
+}
+
+.datetime-picker-dropdown > li.date-picker-menu{
+  height:300px !important;
+}

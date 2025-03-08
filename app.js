@@ -10,6 +10,7 @@ const mainApp = angular
             'ngSanitize', //Dependency for ngSanitize
             'ui.router', //Dependency for UI Router
             'ui.bootstrap', //Dependency for Angular UI Bootstrap
+            'ui.bootstrap.datetimepicker'
         ]
     )
 

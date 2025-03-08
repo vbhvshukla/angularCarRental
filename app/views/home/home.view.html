@@ -76,8 +76,8 @@
 
         <div class="content">
             <div class="cars-container">
-                <car-card ng-repeat="car in vm.cars" car="car" button-text="Book Now" button-class="book-now-btn"
-                    on-button-click="vm.goToBooking(car.carId)" show-button="true">
+                <car-card ng-repeat="car in vm.cars | orderBy : '-createdAt'" car="car" button-text="Book Now"
+                    button-class="book-now-btn" on-button-click="vm.goToBooking(car.carId)" show-button="true">
                 </car-card>
 
                 <div class="loading-more" ng-if="vm.pagination.loading">
