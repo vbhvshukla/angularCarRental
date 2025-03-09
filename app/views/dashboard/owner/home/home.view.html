@@ -57,7 +57,7 @@
                     <td>{{bid.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{bid.rentalType}}</td>
                     <td>
-                        <button ng-click="vm.acceptBid(bid)" ng-disabled="vm.isProcessing">
+                        <button ng-click="vm.acceptBid(bid)" ng-disabled="vm.isProcessing && vm.processingBidId === bid.bidId">
                             {{vm.isProcessing ? 'Processing...' : 'Accept'}}
                         </button>
                         <button ng-click="vm.rejectBid(bid)">Reject</button>

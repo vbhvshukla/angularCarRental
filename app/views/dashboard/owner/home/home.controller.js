@@ -101,27 +101,46 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         };
 
         vm.acceptBid = function (bid) {
-            if (!bid || !bid.bidId) {
-                errorService.handleError('Invalid bid data');
+            // Prevent multiple submissions and invalid data
+            if (!bid || !bid.bidId || vm.isProcessing) {
+                errorService.handleError('Invalid bid data or operation in progress');
                 return;
             }
+
+            // Track which bid we're processing
+            vm.processingBidId = bid.bidId;
             vm.isProcessing = true;
 
-            bidService.updateBidStatus(bid.bidId, 'accepted')
-                .then(function () {
+            // First verify bid status
+            dbService.getItemByKey('bids', bid.bidId)
+                .then(function(currentBid) {
+                    if (!currentBid || currentBid.status !== 'pending') {
+                        throw new Error('Bid is no longer pending');
+                    }
+                    // First update bid status
+                    return bidService.updateBidStatus(bid.bidId, 'accepted');
+                })
+                .then(function() {
+                    // Then create booking
                     return bookingService.createBooking(bid);
                 })
-                .then(function () {
+                .then(function() {
                     errorService.logSuccess('Bid accepted and booking created successfully');
                     return vm.getAllData(bid.car.owner.userId);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     errorService.handleError('Failed to accept bid: ' + error.message);
+                    // Try to revert bid status if we failed after updating it
+                    if (vm.isProcessing) {
+                        return bidService.updateBidStatus(bid.bidId, 'pending')
+                            .catch(() => {/* Ignore revert errors */});
+                    }
                 })
-                .finally(function () {
+                .finally(function() {
                     vm.isProcessing = false;
+                    vm.processingBidId = null;
                 });
-        }
+        };
 
         vm.rejectBid = function (bid) {
             bidService.updateBidStatus(bid.bidId, 'rejected')
@@ -149,8 +168,13 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         };
 
         vm.getTotalAmount = function (booking) {
+            // If it's a bid, pass the bid object directly
+            if (booking.bid && !booking.bookingId) {
+                return bookingService.calculateTotalAmount(booking);
+            }
+            // If it's a booking, pass the booking object
             return bookingService.calculateTotalAmount(booking);
-        }
+        };
 
         vm.isBookingOver = function (booking) {
             return new Date(booking.toTimestamp) < Date.now();
@@ -218,7 +242,7 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             const pdfFile = new File([pdfBlob], `invoice_${booking.bookingId}.pdf`, {
                 type: 'application/pdf'
             });
-        
+
 
             return chatService.getOrCreateChat(
                 booking.bid.car.carId,

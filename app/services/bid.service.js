@@ -166,5 +166,13 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
                 })
                 .catch(error => errorService.handleError(error, 'BidService :: Status Update Failed'));
         };
+
+        this.getBidById = function (bidId) {
+            if (!bidId) {
+                return $q.reject(new Error('Bid ID is required'));
+            }
+            return dbService.getItemByKey('bids', bidId)
+                .catch(error => errorService.handleError(error, 'BidService :: Get Bid Failed'));
+        };
     }
 ]);

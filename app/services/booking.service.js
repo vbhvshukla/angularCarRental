@@ -49,10 +49,20 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     };
 
     service.calculateTotalAmount = function (bookingData) {
+        if (!bookingData) return 0;
+
         const baseFare = service.calculateBaseFare(bookingData);
         const extraKmCharges = bookingData.extraKmCharges || 0;
         const extraHourCharges = bookingData.extraHourCharges || 0;
-        return baseFare + extraKmCharges + extraHourCharges;
+        const extraDayCharges = bookingData.extraDayCharges || 0;
+
+        // If it's a bid being passed, use bidAmount instead of calculating
+        if (bookingData.bidId) {
+            return bookingData.bidAmount;
+        }
+
+        // For bookings, calculate total with all charges
+        return baseFare + extraKmCharges + extraHourCharges + extraDayCharges;
     };
 
     function applyFilterConditions(booking, filters) {
@@ -77,72 +87,77 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
     };
 
     service.createBooking = function (bookingData) {
+        // debugger
         let deferred = $q.defer();
         let calculatedBaseFare = service.calculateBaseFare(bookingData);
         let calculatedTotalAmount = service.calculateTotalAmount(bookingData);
-        try {
-            if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
-                throw new Error('Missing required booking information');
-            }
 
-            if (!bookingData.bidId || !bookingData.user || !bookingData.car) {
-                throw new Error('Invalid bid information');
-            }
+        if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
+            throw new Error('Missing required booking information');
+        }
 
-            service.checkCarAvailability(
-                bookingData.car.carId,
-                bookingData.fromTimestamp,
-                bookingData.toTimestamp
-            ).then(function (isAvailable) {
-                if (!isAvailable) {
+        if (!bookingData.bidId || !bookingData.user || !bookingData.car) {
+            throw new Error('Invalid bid information');
+        }
+
+        const booking = {
+            bookingId: idGenerator.generate(),
+            fromTimestamp: bookingData.fromTimestamp,
+            toTimestamp: bookingData.toTimestamp,
+            status: 'confirmed',
+            createdAt: new Date().toISOString(),
+            rentalType: bookingData.rentalType,
+            bid: {
+                bidId: bookingData.bidId,
+                fromTimestamp: bookingData.fromTimestamp,
+                toTimestamp: bookingData.toTimestamp,
+                status: 'accepted',
+                createdAt: bookingData.createdAt,
+                bidAmount: bookingData.bidAmount,
+                rentalType: bookingData.rentalType,
+                bidBaseFare: bookingData.bidBaseFare,
+                user: bookingData.user,
+                car: bookingData.car
+            },
+            baseFare: calculatedBaseFare,
+            extraKmCharges: 0,
+            extraHourCharges: 0,
+            totalFare: calculatedTotalAmount
+        };
+
+        const carAvailability = {
+            availibilityId : idGenerator.generate(),
+            carId: bookingData.car.carId,
+            fromTimestamp: new Date(bookingData.fromTimestamp),
+            toTimestamp: new Date(bookingData.toTimestamp)
+        };
+
+        service.checkCarAvailability(
+            bookingData.car.carId,
+            bookingData.fromTimestamp,
+            bookingData.toTimestamp
+        )
+            .then(function (available) {
+                if (!available) {
                     throw new Error('Car is not available for selected dates');
                 }
-                const booking = {
-                    bookingId: idGenerator.generate(),
-                    fromTimestamp: bookingData.fromTimestamp,
-                    toTimestamp: bookingData.toTimestamp,
-                    status: 'confirmed',
-                    createdAt: new Date().toISOString(),
-                    rentalType: bookingData.rentalType,
-                    bid: {
-                        bidId: bookingData.bidId,
-                        fromTimestamp: bookingData.fromTimestamp,
-                        toTimestamp: bookingData.toTimestamp,
-                        status: 'accepted',
-                        createdAt: bookingData.createdAt,
-                        bidAmount: bookingData.bidAmount,
-                        rentalType: bookingData.rentalType,
-                        bidBaseFare: bookingData.bidBaseFare,
-                        user: bookingData.user,
-                        car: bookingData.car
-                    },
-                    baseFare: calculatedBaseFare,
-                    extraKmCharges: 0,
-                    extraHourCharges: 0,
-                    totalFare: calculatedTotalAmount
-                };
-
-                const carAvailability = {
-                    carId: bookingData.car.carId,
-                    fromTimestamp: new Date(bookingData.fromTimestamp),
-                    toTimestamp: new Date(bookingData.toTimestamp)
-                };
-
-                return $q.all([
-                    dbService.addItem('bookings', booking),
-                    dbService.addItem('carAvailibility', carAvailability)
-                ]).then(function () {
-                    errorService.logSuccess('Booking created successfully!');
-                    deferred.resolve(booking);
-                })
-            }).catch(function (error) {
+                // First add the booking
+                return dbService.addItem('bookings', booking)
+            })
+            .then(function (bookingData) {
+                console.log(bookingData)
+                // Then add car availability
+                return dbService.addItem('carAvailibility', carAvailability);
+            })
+            .then(function () {
+                errorService.logSuccess('Booking created successfully!');
+                deferred.resolve(booking);
+            })
+            .catch(function (error) {
                 errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
                 deferred.reject(error);
             });
-        } catch (error) {
-            errorService.handleError('Error creating booking: ' + error.message);
-            deferred.reject(error);
-        }
+
 
         return deferred.promise;
     };
