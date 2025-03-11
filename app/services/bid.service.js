@@ -1,7 +1,13 @@
 mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
     function ($q, dbService, carService, errorService) {
 
-        //Bid Estimate Calculation (Params Required -> CarId and BidData object)
+        /**
+         * Estimate calculation for bid
+         * @param {*} carId 
+         * @param {*} bidData 
+         * @returns resolved or rejected promise.
+         */
+
         this.calculateEstimate = function (carId, bidData) {
             return carService.getCarById(carId)
                 .then(car => {
@@ -86,7 +92,15 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
                 .catch(error => errorService.handleError('BidService :: Estimate Failed', error));
         };
 
-        //Submit Bid (Params Required -> CarId, BidData Object and UserData Object || Returns bid object)
+        /**
+         * @function submitBid
+         * @description saves the bid in db
+         * @param {*} carId 
+         * @param {*} bidData 
+         * @param {*} userData 
+         * @returns resolved or rejected promise.
+         */
+
         this.submitBid = function (carId, bidData, userData) {
             return carService.getCarById(carId)
                 .then(car => {
@@ -131,7 +145,14 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
                 .catch(error => errorService.handleError(error, 'BidService :: Submit Failed'));
         };
 
-        //Check if a car is available for the selected date (Params Required -> CarId,StartDate,EndDate ||  Returns a boolean)
+        /**
+         * @function checkDateAvailability()
+         * @param {*} carId 
+         * @param {*} startDate 
+         * @param {*} endDate 
+         * @returns boolean.
+         */
+
         this.checkDateAvailability = function (carId, startDate, endDate) {
             return dbService.getAllItemsByIndex('bids', 'carId', carId)
                 .then(bids => {
@@ -146,18 +167,37 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
                 .catch(error => errorService.handleError(error, 'BidService :: Availability Check Failed'));
         };
 
-        //Get all bids of a user (Params Required -> UserId || Returns an array of objects)
+        /**
+         * @function getBidsByUser()
+         * @param {*} userId 
+         * @returns all bids of a user
+         */
+
         this.getBidsByUser = function (userId) {
             return dbService.getAllItemsByIndex('bids', 'userId', userId)
                 .catch(error => errorService.handleError(error, 'BidService :: User Bids Fetch Failed'));
         };
 
-        //Get all bids placed for a car (Params Required -> UserId || Returns an array of objects)
+        /**
+         * @function getBidsByCar
+         * @description Get Bids By CarId
+         * @param {*} carId 
+         * @returns 
+         */
+
         this.getBidsByCar = function (carId) {
             return dbService.getAllItemsByIndex('bids', 'carId', carId)
                 .catch(error => errorService.handleError(error, 'BidService :: Car Bids Fetch Failed'));
         };
 
+        /**
+         * @function updateBidStatus()
+         * @description Update the bid's status
+         * @param {*} bidId 
+         * @param {*} status 
+         * @returns 
+         */
+        
         this.updateBidStatus = function (bidId, status) {
             return dbService.getItemByKey('bids', bidId)
                 .then(bid => {
@@ -166,6 +206,13 @@ mainApp.service('bidService', ['$q', 'dbService', 'carService', 'errorService',
                 })
                 .catch(error => errorService.handleError(error, 'BidService :: Status Update Failed'));
         };
+
+        /**
+         * @function getBidById()
+         * @description Get Bid By it's Id
+         * @param {*} bidId 
+         * @returns 
+         */
 
         this.getBidById = function (bidId) {
             if (!bidId) {

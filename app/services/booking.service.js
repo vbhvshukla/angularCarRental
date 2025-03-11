@@ -1,18 +1,18 @@
 mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerator', function ($q, dbService, errorService, idGenerator) {
 
-    //Variable declaration
+    /**
+     * Variable Declarations
+     */
     var service = this;
     const ITEMS_PER_PAGE = 5;
     const VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'];
 
-    /*Functions available 
-    CreateBooking(used for accepting the bid)
-    CheckCarAvailibility
-    UpdateBookingStatus,
-    GetUserBookings
-    CancelBooking
-    SubmitRatingt
-    */
+    /**
+     * @function calculateBaseFare()
+     * @description Calculates the base fare for a booking.
+     * @param {*} bookingData 
+     * @returns the baseFare.
+     */
 
     service.calculateBaseFare = function (bookingData) {
         if (bookingData.bid === undefined) {
@@ -48,6 +48,13 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
 
     };
 
+    /**
+     * @function calculatedTotalAmount()
+     * @description Calculates the total amount for a booking.
+     * @param {*} bookingData 
+     * @returns the total amount.
+     */
+
     service.calculateTotalAmount = function (bookingData) {
         if (!bookingData) return 0;
 
@@ -64,6 +71,14 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         // For bookings, calculate total with all charges
         return baseFare + extraKmCharges + extraHourCharges + extraDayCharges;
     };
+
+    /**
+     * @function applyFilterConditions()
+     * @description Apply filter conditions according to the booking and filters passed.
+     * @param {*} booking 
+     * @param {*} filters 
+     * @returns bookings
+     */
 
     function applyFilterConditions(booking, filters) {
         if (!filters) return true;
@@ -85,6 +100,13 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
 
         return true;
     };
+
+    /**
+     * @function createBooking()
+     * @description Takes booking data adds it into DB.
+     * @param {*} bookingData 
+     * @returns resolved/rejected promise.
+     */
 
     service.createBooking = function (bookingData) {
         // debugger
@@ -162,6 +184,14 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         return deferred.promise;
     };
 
+    /**
+     * @function updateBookingStatus()
+     * @description Takes the bookingId and updates its status.
+     * @param {*} bookingId 
+     * @param {*} newStatus 
+     * @returns resolved/rejected promise.
+     */
+
     service.updateBookingStatus = function (bookingId, newStatus) {
         var deferred = $q.defer();
 
@@ -186,6 +216,15 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
 
         return deferred.promise;
     };
+
+    /**
+     * @function checkCarAvailability()
+     * @description Takes the car id and timestamps to check if the car is already booked.
+     * @param {*} carId 
+     * @param {*} fromTimestamp 
+     * @param {*} toTimestamp 
+     * @returns resolved or rejected promise.
+     */
 
     service.checkCarAvailability = function (carId, fromTimestamp, toTimestamp) {
         let deferred = $q.defer();
@@ -217,6 +256,15 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         return deferred.promise;
     };
 
+    /**
+     * @function getUserBookings()
+     * @description Takes the userId and gets all the user bookings.
+     * @param {*} userId 
+     * @param {*} page 
+     * @param {*} filters 
+     * @returns resolved or rejected promise.
+     */
+
     service.getUserBookings = function (userId, page, filters) {
         var deferred = $q.defer();
 
@@ -240,6 +288,12 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         return deferred.promise;
     };
 
+    /**
+     * @function cancelBooking()
+     * @description Cancels a booking by id.
+     * @param {*} bookingId 
+     * @returns resolved or rejected promise.
+     */
     service.cancelBooking = function (bookingId) {
         var deferred = $q.defer();
 
@@ -263,6 +317,14 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         return deferred.promise;
     };
 
+    /**
+     * @function submitRating()
+     * @description Submits a rating for a booking.
+     * @param {*} carId 
+     * @param {*} rating 
+     * @returns resolved or rejected promise.
+     */
+
     service.submitRating = function (carId, rating) {
         var deferred = $q.defer();
 
@@ -284,6 +346,15 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
         return deferred.promise;
     };
 
+    /**
+     * @function addExtras
+     * @description Adds extras to a booking.
+     * @param {*} bookingData 
+     * @param {*} extraKm 
+     * @param {*} extraHr 
+     * @param {*} extraDay 
+     * @returns resolved or rejected promise.
+     */
     service.addExtras = function (bookingData, extraKm, extraHr, extraDay) {
         let deferred = $q.defer();
         const rentalType = bookingData.rentalType;

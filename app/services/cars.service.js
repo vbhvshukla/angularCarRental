@@ -1,6 +1,9 @@
 mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerator', function (dbService, schemaValidator, $q, idGenerator) {
     const STORE_NAME = 'cars';
 
+    /**
+     * Car's Schema for validation before updating or adding a car objecte.
+     */
     const carSchema = {
         carId: { type: 'string', required: true, minLength: 2 },
         carName: { type: 'string', required: true, minLength: 2, maxLength: 100 },
@@ -104,25 +107,65 @@ mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerato
         isDeleted: { type: 'boolean', required: true, default: false }
     };
 
+    /**
+     * @function getAllCars()
+     * @description Gets all the cars from the store.
+     * @returns resolved or rejected promise.
+     */
+
     this.getAllCars = function () {
         return dbService.getAllItems(STORE_NAME);
     };
+
+    /**
+     * @function getCarById()
+     * @description Get a particular car by it's id.
+     * @param {*} carId 
+     * @returns resolved or rejected promise.
+     */
 
     this.getCarById = function (carId) {
         return dbService.getItemByKey(STORE_NAME, carId);
     };
 
+    /**
+     * @function getCarsByOwner()
+     * @param {*} ownerId 
+     * @returns resolved or rejected promise.
+     */
+
     this.getCarsByOwner = function (ownerId) {
         return dbService.getAllItemsByIndex(STORE_NAME, 'ownerId', ownerId);
     };
+
+    /**
+     * @function getCarsByCategory()
+     * @description Get Cars By Category
+     * @param {*} categoryId 
+     * @returns resolved or rejected promise.
+     */
 
     this.getCarsByCategory = function (categoryId) {
         return dbService.getAllItemsByIndex(STORE_NAME, 'categoryId', categoryId);
     };
 
+    /**
+     * @function getCarsByCity()
+     * @description Get Cars By City
+     * @param {*} city 
+     * @returns resolved or rejected promise.
+     */
+
     this.getCarsByCity = function (city) {
         return dbService.getAllItemsByIndex(STORE_NAME, 'city', city);
     };
+
+    /**
+     * @function createCar()
+     * @description Create a car in the DB.
+     * @param {*} car 
+     * @returns resolved or rejected promise.
+     */
 
     this.createCar = function (car) {
         if (!car.carId) {
@@ -136,12 +179,24 @@ mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerato
             }).catch(err => console.log("Car Service :: Failed to Add Car"));
     };
 
+    /**
+     * @function updateCar()
+     * @param {*} car 
+     * @returns resolved or rejected promise.
+     */
+
     this.updateCar = function (car) {
         return schemaValidator.validate(car, carSchema)
             .then(function (validatedCar) {
                 return dbService.updateCarInAllStores(validatedCar);
             });
     };
+
+    /**
+     * @function deleteCar()
+     * @param {*} carId 
+     * @returns resolved or rejected promise.
+     */
 
     this.deleteCar = function (carId) {
         return this.getCarById(carId)
@@ -150,6 +205,12 @@ mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerato
                 return this.updateCar(car);
             });
     };
+
+    /**
+     * @function getAvailableCars()
+     * @description Gets all available cars.
+     * @returns resolved or rejected promise.
+     */
 
     this.getAvailableCars = function () {
         const today = new Date();
@@ -175,6 +236,12 @@ mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerato
             });
         });
     };
+
+    /**
+     * @function searchCars()
+     * @param {*} criteria 
+     * @returns resolved or rejected promise.
+     */
 
     this.searchCars = function (criteria) {
         return this.getAllCars()
@@ -203,6 +270,13 @@ mainApp.service('carService', ['dbService', 'schemaValidator', '$q', 'idGenerato
             });
     };
 
+    /**
+     * @function getAvailableCarsWithPagination()
+     * @param {*} page 
+     * @param {*} itemsPerPage 
+     * @param {*} filters 
+     * @returns resolved or rejected promise.
+     */
     this.getAvailableCarsWithPagination = function (page = 1, itemsPerPage = 6, filters = {}) {
         const today = new Date();
         const skip = (page - 1) * itemsPerPage;

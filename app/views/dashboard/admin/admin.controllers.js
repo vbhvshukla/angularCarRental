@@ -5,6 +5,7 @@ mainApp.controller('AdminController', [
     'carService',
     'categoryService',
     'errorService',
+    '$timeout',
     function (
         userService,
         authService,
@@ -12,6 +13,7 @@ mainApp.controller('AdminController', [
         carService,
         categoryService,
         errorService,
+        $timeout
     ) {
         //Variable Declarations
         var vm = this;
@@ -20,13 +22,14 @@ mainApp.controller('AdminController', [
         vm.categories = [];                                     //Holds category data
         vm.currentPage = 1;                                     //Current User page
         vm.currentCarPage = 1;                                  //Current Car Page
+        vm.currentCategoryPage = 1;
+        vm.itemsPerPage = 5;                                    //Items per page        //Current Category Page
         vm.sortField = '';                                      //Sorting fields
         vm.reverseSort = false;                                 //Sorting fields
         vm.showUserModal = false;                               //User Modal Boolean
         vm.showCategoryModal = false;                           //Category Modal Boolean
         vm.selectedUser = null;                                 //Holds the selected user's for the modal.
         vm.newCategory = {};                                    //Holds the new category object
-
 
         //Initialization function (Loads all data)
         vm.init = function () {
@@ -61,6 +64,7 @@ mainApp.controller('AdminController', [
                     categoryService.getAllCategories()
                         .then(function (response) {
                             vm.categories = response;
+                            vm.totalCategories = response.length;
                             callback(null);
                         }).catch(err => {
                             errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err);
@@ -76,25 +80,12 @@ mainApp.controller('AdminController', [
             });
         };
 
-        vm.loadUsers =  function () {
-            async.parallel([
-                function (callback) {
-                    userService.getAllUsers(vm.currentPage)
-                        .then(function (response) {
-                            callback(null, response);
-                        }).catch(err => callback(err));
-                }
-            ], function (err, result) {
-                if (err) {
-                    errorService.handleError(err);
-                } else {
-                        
-                    vm.users = result[0];
-                    vm.totalUsers = result.total;
-                }
-            })
-
-
+        vm.loadUsers = function () {
+            userService.getAllUsers(vm.currentPage)
+                .then(function (response) {
+                    vm.users = response.data;
+                    vm.totalUsers = response.total;
+                }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
         }
 
         vm.loadCars = function () {
@@ -108,7 +99,10 @@ mainApp.controller('AdminController', [
         vm.loadCategories = function () {
             categoryService.getAllCategories()
                 .then(function (response) {
-                    vm.categories = response;
+                   $timeout(function(){
+                    vm.categories = response.data;
+                    vm.totalCategories = response.total;
+                   })
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err));
         }
 
@@ -118,11 +112,15 @@ mainApp.controller('AdminController', [
         }
 
         vm.pageChanged = function () {
-            loadUsers();
+            vm.loadUsers();
         }
 
         vm.carPageChanged = function () {
             vm.loadCars();
+        }
+
+        vm.categoryPageChanged = function () {
+            vm.loadCategories();
         }
 
         vm.showUserApprovalModal = function (user) {
@@ -167,8 +165,10 @@ mainApp.controller('AdminController', [
         vm.createCategory = function () {
             categoryService.createCategory(vm.newCategory)
                 .then(function () {
-                    vm.loadCategories();
-                    vm.closeCategoryModal();
+                    $timeout(function () {
+                        vm.loadCategories();
+                        vm.closeCategoryModal();
+                    });
                 }).catch(err => errorService.handleError("Admin Controller :: Error Adding Categories :: ", err));
         }
 
@@ -177,7 +177,9 @@ mainApp.controller('AdminController', [
             if (confirm('Are you sure you want to delete this category?')) {
                 categoryService.deleteCategory(category.categoryId)
                     .then(function () {
-                        vm.loadCategories();
+                        $timeout(function () {
+                            vm.loadCategories();
+                        });
                     }).catch(err => errorService.handleError("Admin Controller :: Error Deleting Categories :: ", err));
             }
         }

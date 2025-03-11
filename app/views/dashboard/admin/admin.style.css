@@ -1,50 +1,3 @@
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  /* top: 10px; */
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal.ng-hide {
-  opacity: 0;
-}
-.modal-content {
-  background-color: #fff;
-  margin: 0% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 600px;
-  border-radius: 3px;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  padding: 5px;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  font-weight: bold;
-  position: relative;
-  top: -30px;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 th.sortable {
   cursor: pointer;
 }
@@ -71,49 +24,6 @@ th.sortable::after {
   border-radius: 5px;
 }
 
-.user-details {
-  display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.user-details img {
-  display:flex;
-  border-radius: 2px;
-}
-
-.approval-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-}
-
-.approval-buttons button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 0 5px;
-}
-
-.approve-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-.approve-btn:disabled {
-    background-color: #dddddd;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.reject-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
 .pagination-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
@@ -128,40 +38,6 @@ th.sortable::after {
   cursor: not-allowed;
 }
 
-.admin-main {
-  width: 100%;
-  background-color: white ;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 1164px;
-  justify-self: center;
-}
-
-.section {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.section h2 {
-  margin-top: 0;
-}
-
-.button {
-  background-color: #007bff;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.button:hover {
-  background-color: #0056b3;
-}
-
 .button-danger {
   background-color: #dc3545;
 }
@@ -172,14 +48,13 @@ th.sortable::after {
 
 @media screen and (max-width: 600px) {
   .modal-content {
-    width: 100%;
+      width: 100%;
   }
-  .main{
-    width: auto;
+  .main {
+      width: auto;
   }
   .section {
-    width: 600px;
-    overflow-x: scroll;
+      width: 600px;
+      overflow-x: scroll;
   }
-  
 }

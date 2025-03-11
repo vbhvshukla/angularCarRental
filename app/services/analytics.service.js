@@ -4,10 +4,10 @@
  * @description Returns data of all the analytics for owner as well as admin.
  * Usage : analyticsService.getOwnerAnalytics()  , analyticsService.getAdminAnalytics.
  */
+
 mainApp.service('analyticsService', [
     '$q', 'dbService',
     function ($q, dbService) {
-
         /**
          * Function : Get Owner Analytics Data
          * @param {*} ownerId //For which owner.
@@ -113,6 +113,7 @@ mainApp.service('analyticsService', [
          * @param {*} bids 
          * @returns object of top 3 bidders
          */
+
         function getTopBidders(bids) {
             const bidderCounts = {};
             bids.forEach(bid => {
@@ -132,9 +133,15 @@ mainApp.service('analyticsService', [
         }
 
 
-        //Total revenue per category
+        /**
+         * Get Total Revenue per category
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getTotalRevenuePerCategory(bookings) {
             const revenueByCategory = {};
+
             bookings.forEach(booking => {
                 const category = booking.bid.car.category.categoryName;
                 revenueByCategory[category] = (revenueByCategory[category] || 0) + booking.totalFare;
@@ -150,7 +157,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Total Revenue per city
+        /**
+         * Get total revenue per city
+         * @param {*} bookings 
+         * @returns {labels,datasets[{label,data,backgroundColor}]}
+         */
+
         function getTotalRevenuePerCity(bookings) {
             const revenueByCity = {};
             bookings.forEach(booking => {
@@ -168,7 +180,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Average revenue per user
+        /**
+         * Get Average Revenue Per User
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getAverageRevenuePerUser(bookings) {
             const userRevenue = {};
             bookings.forEach(booking => {
@@ -198,7 +215,12 @@ mainApp.service('analyticsService', [
 
 
 
-        //Get bookings over time
+        /**
+         * Get Bookings Over Time
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getBookingsOverTime(bookings) {
             const bookingsByMonth = {};
             bookings.forEach(booking => {
@@ -217,7 +239,14 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Total number of bookings,cars,bids,and total revenue
+        /**
+         * Get Total Number of Bookings,Bids,Cars
+         * @param {} bookings 
+         * @param {*} bids 
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getTotals(bookings, bids, cars) {
             return {
                 totalCars: cars.length,
@@ -227,6 +256,12 @@ mainApp.service('analyticsService', [
             };
         }
 
+        /**
+         * Get Revenue Data
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+        
         function getRevenueData(bookings) {
             const monthlyRevenue = {};
             bookings.forEach(booking => {
@@ -246,7 +281,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Number of bookings as per owner's listed cars.
+        /**
+         * Get Bookings Data
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getBookingsData(bookings) {
             // Group bookings by car
             const bookingsBycar = {};
@@ -265,7 +305,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get count of bids according to there status
+        /**
+         * Get Bids Data (by status)
+         * @param {*} bids 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getBidsData(bids) {
             const bidStatus = { accepted: 0, pending: 0, rejected: 0 };
             bids.forEach(bid => {
@@ -282,7 +327,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get cars per category
+        /**
+         * Get Cars Per Category
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getCarsData(cars) {
             const carCategories = {};
             cars.forEach(car => {
@@ -300,7 +350,14 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get utilization rate -> number of days cars was craated vs the number of days on which it was booked
+        /**
+         * Get Cars Utilization Rate 
+         * @description bookedDays/DaysCreated * 100;
+         * @param {} bookings 
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getCarUtilizationData(bookings, cars) {
             const utilization = {};
             cars.forEach(car => {
@@ -334,18 +391,37 @@ mainApp.service('analyticsService', [
             };
         }
 
+        /**
+         * Gets the days from creation from todays date.
+         * @param {*} createdAt 
+         * @returns Integer
+         */
+
         function getDaysSinceCreation(createdAt) {
             const created = new Date(createdAt);
             const now = new Date();
             return Math.ceil((now - created) / (1000 * 60 * 60 * 24));
         }
 
+        /**
+         * Get Duration In Days from two date ranges.
+         * @param {*} from 
+         * @param {*} to 
+         * @returns returns number of days.
+         */
+
         function getDurationInDays(from, to) {
             //Divide the math.ceil value by the number of milliseconds in a day to get the actual number of days.
             return Math.ceil((new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24));
         }
 
-        //Get most active renters
+
+        /**
+         * Get Most Active Renters
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getMostActiveRenters(bookings) {
             const renters = {};
             bookings.forEach(booking => {
@@ -366,7 +442,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Rental duration by rental types.
+        /**
+         * Get Rental Duration of bookings
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getRentalDuration(bookings) {
             const duration = {
                 local: { total: 0, count: 0 },
@@ -393,7 +474,13 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Revenue over time
+        /**
+         * Get Revenue Over Time
+         * @param {*} bookings 
+         * @param {*} period 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getRevenueOverTime(bookings, period = 'monthly') {
             const revenue = {};
             bookings.forEach(booking => {
@@ -436,7 +523,13 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Avg revenue over time
+        /**
+         * Get Avg Revenue Over Time
+         * @param {*} bookings 
+         * @param {*} period 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getAvgRevenueOverTime(bookings, period = 'monthly') {
             const data = {};
 
@@ -483,7 +576,13 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Avg bid amount per car
+        /**
+         * Average Bid Amounts Per Car
+         * @param {} bids 
+         * @param {*} cars 
+         * @returns 
+         */
+
         function getAvgBidAmountPerCar(bids, cars) {
             const bidAmounts = {};
 
@@ -523,7 +622,13 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get the week/month/year
+        /**
+         * Converts the date into weekly,yearly or monthly according to the period passed
+         * @param {*} date  
+         * @param {*} period [weekly,monthly,yearly] 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getTimeKey(date, period) {
             switch (period) {
                 //formate the date to display week number of the year
@@ -544,7 +649,13 @@ mainApp.service('analyticsService', [
                     return date.toLocaleString('default', { month: 'short', year: 'numeric' });
             }
         }
-        // Number of cars per category
+
+        /**
+         * Get Cars per category
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getCarsPerCategory(cars) {
             const carsByCategory = {};
             cars.forEach(car => {
@@ -562,7 +673,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get highest rated cars by category
+        /**
+         * Get Highest Rated Cars By Category
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getHighestRatedCarsByCategory(cars) {
             const categoryBestCars = {};
             cars.forEach(car => {
@@ -589,7 +705,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Get bids per category
+        /**
+         * Get Bids Per Category
+         * @param {*} bids 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getBidsPerCategory(bids) {
             const bidsByCategory = {};
             bids.forEach(bid => {
@@ -606,7 +727,13 @@ mainApp.service('analyticsService', [
                 }]
             };
         }
-        //Total Bidded Price Per Category
+
+        /**
+         * Total Bidded Price Per Category
+         * @param {*} bids 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getTotalBiddedPricePerCategory(bids) {
             const bidPriceByCategory = {};
             bids.forEach(bid => {
@@ -624,7 +751,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Gets car per city
+        /**
+         * Get Cars Per City
+         * @param {*} cars 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+
         function getCarsPerCity(cars) {
             const carsByCity = {};
             cars.forEach(car => {
@@ -642,7 +774,12 @@ mainApp.service('analyticsService', [
             };
         }
 
-        //Revenue trends (revenue over month)
+        /**
+         * Get Revenue Trends over months
+         * @param {*} bookings 
+         * @returns {labels,dataSets[{label,data,backgroundColor}]}
+         */
+        
         function getRevenueTrends(bookings) {
             const revenueTrends = {};
             bookings.forEach(booking => {

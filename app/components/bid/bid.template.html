@@ -1,65 +1,60 @@
-<div class="bid-form">
-    <h3>Place Your Bid</h3>
-    <div class="rental-type-buttons">
-        <button type="button" ng-if="$ctrl.car.isAvailableForLocal" ng-class="{'active': $ctrl.rentalType === 'local'}"
-            ng-click="$ctrl.setRentalType('local')">
-            Local
-        </button>
-        <button type="button" ng-if="$ctrl.car.isAvailableForOutstation"
-            ng-class="{'active': $ctrl.rentalType === 'outstation'}" ng-click="$ctrl.setRentalType('outstation')">
-            Outstation
-        </button>
-    </div>
+<div class="panel panel-default bid-form" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <div class="panel-body">
 
-    <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
-        <div ng-show="$ctrl.rentalType === 'local'" class="rental-form">
-            <label>Start Date & Time{{$ctrl.bid.startDate}}</label>
-            <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" required>
-            <!-- <div uib-datepicker-popup ng-model="$ctrl.bid.startDate"  datepicker-options="options"></div> -->
-            <!-- <input type="text" class="form-control well well-sm" datetime-picker="dd MMM yyyy HH:mm" dateDisabled=({date:06-03-2025}) ng-model="$ctrl.bid.startDate" is-open="$ctrl.isStartOpen" />
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="$ctrl.openCalendar($event, prop)"><i
-                        class="fa fa-calendar"></i></button>
-            </span> -->
-
-            <label>End Date & Time</label>
-            <!-- <div uib-datepicker-popup ng-model="$ctrl.bid.endDate" datepicker-options="options"></div> -->
-            <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" required>
-            <!-- <input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="$ctrl.bid.endDate"
-                is-open="$ctrl.isEndOpen" />
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="$ctrl.openEndCalendar($event, prop)"><i
-                        class="fa fa-calendar"></i></button>
-            </span> -->
+        <h3>Place Your Bid</h3>
+        <div class="btn-group rental-type-buttons" role="group" style="margin-bottom: 20px;">
+            <button type="button" ng-if="$ctrl.car.isAvailableForLocal"
+                ng-class="{'active': $ctrl.rentalType === 'local'}" ng-click="$ctrl.setRentalType('local')">
+                Local
+            </button>
+            <button type="button" ng-if="$ctrl.car.isAvailableForOutstation"
+                ng-class="{'active': $ctrl.rentalType === 'outstation'}" ng-click="$ctrl.setRentalType('outstation')">
+                Outstation
+            </button>
         </div>
 
-        <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form">
-            <label>Start Date</label>
-            <input type="date" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" required>
-
-            <label>End Date</label>
-            <input type="date" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" required>
-        </div>
-
-        <price-info base-price="$ctrl.basePrice" total-price="$ctrl.totalPrice" show-breakup="$ctrl.showPriceBreakup">
-        </price-info>
-
-        <div class="bid-amount">
-            <label>Your Bid</label>
-            <input type="number" ng-model="$ctrl.bid.bidAmount" min="{{$ctrl.estimate.minBid}}"
-                max="{{$ctrl.estimate.maxBid}}" required>
-            <div class="bid-limits" ng-if="$ctrl.estimate">
-                <small>Minimum bid: ₹{{$ctrl.estimate.minBid}}</small>
-                <small>Maximum bid: ₹{{$ctrl.estimate.maxBid}}</small>
+        <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
+            <div ng-show="$ctrl.rentalType === 'local'" class="rental-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <label style="font-weight: 500; color: #495057;">Start Date & Time{{$ctrl.bid.startDate}}</label>
+                <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()"
+                    class="form-control" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+                <label style="font-weight: 500; color: #495057;">End Date & Time</label>
+                <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()"
+                    class="form-control" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
             </div>
-        </div>
 
-        <div class="loading-indicator" ng-if="$ctrl.isCalculating">
-            Calculating estimate...
-        </div>
+            <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <label style="font-weight: 500; color: #495057;">Start Date</label>
+                <input type="date" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" class="form-control"
+                    required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
 
-        <button type="submit" ng-disabled="$ctrl.bidForm.$invalid || $ctrl.isSubmitting" class="btn btn-primary">
-            {{$ctrl.isSubmitting ? 'Submitting...' : 'Place Bid'}}
-        </button>
-    </form>
+                <label style="font-weight: 500; color: #495057;">End Date</label>
+                <input type="date" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" class="form-control"
+                    required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+            </div>
+
+            <price-info base-price="$ctrl.basePrice" total-price="$ctrl.totalPrice"
+                show-breakup="$ctrl.showPriceBreakup">
+            </price-info>
+
+            <div class="bid-amount" style="margin-top: 20px;">
+                <label style="font-weight: 500; color: #495057;">Your Bid</label>
+                <input type="number" ng-model="$ctrl.bid.bidAmount" min="{{$ctrl.estimate.minBid}}"
+                    max="{{$ctrl.estimate.maxBid}}" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+                <div class="bid-limits" ng-if="$ctrl.estimate" style="display: flex; justify-content: space-between; color: #6c757d; font-size: 0.875rem; margin-top: 5px;">
+                    <small>Minimum bid: ₹{{$ctrl.estimate.minBid}}</small>
+                    <small>Maximum bid: ₹{{$ctrl.estimate.maxBid}}</small>
+                </div>
+            </div>
+
+            <div class="loading-indicator text-center" ng-if="$ctrl.isCalculating" style="margin-top: 20px;">
+                Calculating estimate...
+            </div>
+
+            <button type="submit" ng-disabled="$ctrl.bidForm.$invalid || $ctrl.isSubmitting"
+                class="btn btn-primary btn-block">
+                {{$ctrl.isSubmitting ? 'Submitting...' : 'Place Bid'}}
+            </button>
+        </form>
+    </div>
 </div>

@@ -109,6 +109,7 @@ mainApp.component('bidForm', {
 
                 if (end <= start) {
                     errorService.handleError('End date must be after start date', 'BidForm :: Validation');
+                    alert("End date must be after start date', 'BidForm :: Validation")
                     return;
                 }
 

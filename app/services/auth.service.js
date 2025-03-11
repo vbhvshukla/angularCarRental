@@ -1,8 +1,9 @@
 mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGenerator', 'schemaValidator', 'errorService',
      function  ($q, $state, $cookies, dbService, idGenerator, schemaValidator, errorService) {
 
-        //User Schema defining for validation
-        //(Used in addition and updation of user)
+        /**
+         * User Schema's for validations
+         */
         const userSchema = {
             userId: { type: 'string', required: true },
             username: { type: 'string', required: true, minLength: 3 },
@@ -19,14 +20,20 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             }
         };
 
-        //Returns a boolean depending upon there exists
-        //a userId in the cookie.
+        /**
+         * Checks if a user is authenticated or not.
+         * @returns Boolean
+         */
+
         this.checkAuth = function () {
             return !!$cookies.get('userId');
         };
 
-        //Returns a promise for the user fetched by it's
-        //id stored in the cookie.
+        /**
+         * @function getUser()
+         * @description Get The Current loggeed in User
+         * @returns resolved or rejected promise.
+         */
 
         this.getUser = function () {
             const deferred = $q.defer();
@@ -44,14 +51,24 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             return deferred.promise;
         };
 
-        //Returns role of the user ([admin,customer,owner])
+        /**
+         * @function getUserRole()
+         * @description Get's the currently logged in user's role
+         * @returns resolved or rejected promise.
+         */
+
         this.getUserRole = function () {
             return this.getUser().then(user => user ? user.role : null);
         };
 
-        //Returns a promise with user object upon successful login
-        //Sets the cookie with userId and an expiry of 1 day from the day of logging in.
-        //Dependency -> dbService,CryptoJS,errorService || $cookies,$q
+        /**
+         * @function login()
+         * @description logs in a user with given id password.
+         * @param {*} email 
+         * @param {*} password 
+         * @returns resolved or rejected promise containing user.
+         */
+
         this.login = function (email, password) {
             const deferred = $q.defer();
             dbService.getItemByIndex("users", "email", email)
@@ -80,7 +97,12 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             return deferred.promise;
         };
 
-        //Logout clears cookies and redirects to home
+        /**
+         * @function logout()
+         * @description logs out a user.
+         * @returns resolved or rejected promise.
+         */
+
         this.logout = function () {
             const deferred = $q.defer();
             try {
@@ -96,7 +118,14 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             return deferred.promise;
         };
 
-        //Register Service (Params required -> User Data Object and Verification File)
+        /**
+         * @function register()
+         * @description registers a user in db.
+         * @param {*} userData 
+         * @param {*} verificationFile 
+         * @returns resolved or rejected promise.
+         */
+
         this.register = function (userData, verificationFile) {
             const deferred = $q.defer();
 
@@ -152,7 +181,12 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             return deferred.promise;
         };
 
-        //Seed admin user
+        /**
+         * @function injectAdmin()
+         * @description Inject the admin user runs only once.
+         * @returns resolved or rejected promise.
+         */
+
         this.injectAdmin = function () {
             const deferred = $q.defer();
 
@@ -188,7 +222,15 @@ mainApp.service('authService', ['$q', '$state', '$cookies', 'dbService', 'idGene
             return deferred.promise;
         };
 
-        //Check user roles
+        /**
+         * @function checkAdmin
+         * @function checkOwner
+         * @function checkCustomer
+         * @function checkOwnerApproved
+         * @description check the role of the user.
+         * @returns 
+         */
+        
         this.checkAdmin = () => this.getUserRole().then(role => role === 'admin');
         this.checkOwner = () => this.getUserRole().then(role => role === 'owner');
         this.checkCustomer = () => this.getUserRole().then(role => role === 'customer');

@@ -1,9 +1,12 @@
 mainApp.service('dbService', function ($q) {
     const dbName = "angularCarRental";
-    const dbVersion = 14; // Increment the version number
+    const dbVersion = 14; 
     let db = null;
 
-    // For Version Change - Migrating Data
+    /**
+     * For migration when DB upgradation.
+     */
+
     const users = [];
     const cars = [];
     const bookings = [];
@@ -13,7 +16,10 @@ mainApp.service('dbService', function ($q) {
     const carAvailibility = [];
     const categories = [];
 
-    // Schema for creating IDB
+    /**
+     * Schema for stores.
+     */
+
     const schema = {
         users: {
             store: { keyPath: "userId" },
@@ -79,6 +85,12 @@ mainApp.service('dbService', function ($q) {
             ]
         }
     };
+
+    /**
+     * @function openDb()
+     * @description Opens the database,creates stores if it does not exists and handles migration changes.
+     * @returns resolved db
+     */
 
     function openDb() {
         const deferred = $q.defer();
@@ -177,6 +189,13 @@ mainApp.service('dbService', function ($q) {
         return deferred.promise;
     }
     
+    /**
+     * @function createIndexes()
+     * @description Creates indexes in the store.
+     * @param {*} store 
+     * @param {*} indexes 
+     */
+
     function createIndexes(store, indexes) {
         if (indexes) {
             indexes.forEach((index) => {
@@ -186,6 +205,13 @@ mainApp.service('dbService', function ($q) {
             });
         }
     }
+
+    /**
+     * @function getObjectStore(),
+     * @param {*} storeName 
+     * @param {*} mode 
+     * @returns 
+     */
 
     function getObjectStore(storeName, mode) {
         const transaction = db.transaction([storeName], mode);

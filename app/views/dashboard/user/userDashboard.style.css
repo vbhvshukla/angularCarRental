@@ -131,22 +131,4 @@
   background: #2980b9;
 }
 
-@media (max-width: 768px) {
-  .dashboard-layout {
-    width: 95%; /* Increase width on mobile for better readability */
-    padding: 10px;
-  }
 
-  .dashboard-content {
-    width: 100%;
-  }
-
-  .dashboard-page {
-    margin: 10px auto;
-    padding: 10px;
-  }
-
-  .profile-section {
-    padding: 15px;
-  }
-}

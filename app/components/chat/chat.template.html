@@ -1,46 +1,30 @@
-<div class="chatbox">
-    <h3>Chat with {{$ctrl.toUser.username}}</h3>
-    <div class="chat-messages">
-        <div ng-repeat="message in $ctrl.messages"
-             ng-class="{'sent': $ctrl.isOwnMessage(message), 
-                       'received': !$ctrl.isOwnMessage(message)}"
-             class="message">
-            <p>{{message.message}}</p>
-            <small>{{message.createdAt | date:'short'}}</small>
-            <div ng-if="message.attachment" class="attachment">
-                <img ng-if="message.attachment" 
-                     ng-src="{{message.attachment}}" 
-                     alt="Attachment"
-                     ng-click="$ctrl.viewAttachment(message.attachment)">
-                <span ng-if="!message.attachment">Uploading...</span>
+<div class="panel panel-default chatbox" style="min-height: 400px; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
+    <div class="panel-body">
+        <h3>Chat with {{$ctrl.toUser.username}}</h3>
+        <div class="chat-messages" style="flex: 1; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
+            <p ng-show="!$ctrl.messages">Say Hi to {{$ctrl.toUser.username}}</p>
+            <div ng-repeat="message in $ctrl.messages" ng-class="{'sent': $ctrl.isOwnMessage(message), 'received': !$ctrl.isOwnMessage(message)}" class="message" style="padding: 10px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
+                <p>{{message.message}}</p>
+                <small>{{message.createdAt | date:'short'}}</small>
+                <div ng-if="message.attachment" class="attachment">
+                    <img ng-if="message.attachment" ng-src="{{message.attachment}}" alt="Attachment" ng-click="$ctrl.viewAttachment(message.attachment)">
+                    <span ng-if="!message.attachment">Uploading...</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="chat-input">
-        <input type="text" 
-               ng-model="$ctrl.newMessage" 
-               placeholder="Type a message"
-               ng-keypress="$event.keyCode === 13 && $ctrl.sendMessage()">
+        <div class="chat-input" style="display: flex; gap: 10px; padding: 15px 0 0; border-top: 1px solid #dee2e6;">
+            <input type="text" ng-model="$ctrl.newMessage" placeholder="Type a message" ng-keypress="$event.keyCode === 13 && $ctrl.sendMessage()" style="flex: 1; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
 
-        <label for="chatFileInput" class="chat-file-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M16 9V7a4 4 0 0 0-8 0v10a2 2 0 0 0 4 0V7a1 1 0 1 1 2 0v10a4 4 0 1 1-8 0V7a6 6 0 1 1 12 0v2h-2z"/>
-            </svg>
-        </label>
+            <label for="chatFileInput" class="chat-file-label" style="display: flex; align-items: center; cursor: pointer;">
+                <span class="glyphicon glyphicon-paperclip "></span>
+            </label>
 
-        <input type="file" 
-               id="chatFileInput" 
-               class="chat-file-input"
-               accept="image/*,video/*,application/pdf"
-               onchange="angular.element(this).scope().$ctrl.handleFileSelect(this)">
+            <input type="file" id="chatFileInput" class="chat-file-input" accept="image/*,video/*,application/pdf" onchange="angular.element(this).scope().$ctrl.handleFileSelect(this)" style="display: none;">
 
-        <button ng-click="$ctrl.sendMessage()" 
-                ng-disabled="!$ctrl.newMessage && !$ctrl.selectedFile"
-                class="send-button">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
-            </svg>
-        </button>
+            <button ng-click="$ctrl.sendMessage()" ng-disabled="!$ctrl.newMessage && !$ctrl.selectedFile" class="send-button" style="padding: 8px 12px; border: none; border-radius: 4px; background: #007bff; color: white; cursor: pointer;">
+                <span class="glyphicon glyphicon-send text-primary"></span>
+            </button>
+        </div>
     </div>
 </div>

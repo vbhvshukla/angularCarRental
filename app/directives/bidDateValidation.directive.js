@@ -4,6 +4,7 @@
  * @requires ngModel
  * @returns boolean
  */
+
 mainApp.directive('bidDateValidation', function() {
     return {
         require: 'ngModel',
