@@ -1,4 +1,5 @@
-<div class="panel panel-default bid-form" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div class="panel panel-default bid-form"
+    style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <div class="panel-body">
 
         <h3>Place Your Bid</h3>
@@ -14,16 +15,20 @@
         </div>
 
         <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
-            <div ng-show="$ctrl.rentalType === 'local'" class="rental-form" style="display: flex; flex-direction: column; gap: 15px;">
-                <label style="font-weight: 500; color: #495057;">Start Date & Time{{$ctrl.bid.startDate}}</label>
+            <div ng-show="$ctrl.rentalType === 'local'" class="rental-form"
+                style="display: flex; flex-direction: column; gap: 15px;">
+                <label style="font-weight: 500; color: #495057;">Start Date & Time</label>
                 <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()"
-                    class="form-control" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+                    min="{{$ctrl.minDate}}" class="form-control" required
+                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
                 <label style="font-weight: 500; color: #495057;">End Date & Time</label>
                 <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()"
-                    class="form-control" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+                    class="form-control" required
+                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
             </div>
 
-            <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form" style="display: flex; flex-direction: column; gap: 15px;">
+            <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form"
+                style="display: flex; flex-direction: column; gap: 15px;">
                 <label style="font-weight: 500; color: #495057;">Start Date</label>
                 <input type="date" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" class="form-control"
                     required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
@@ -40,8 +45,10 @@
             <div class="bid-amount" style="margin-top: 20px;">
                 <label style="font-weight: 500; color: #495057;">Your Bid</label>
                 <input type="number" ng-model="$ctrl.bid.bidAmount" min="{{$ctrl.estimate.minBid}}"
-                    max="{{$ctrl.estimate.maxBid}}" required style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-                <div class="bid-limits" ng-if="$ctrl.estimate" style="display: flex; justify-content: space-between; color: #6c757d; font-size: 0.875rem; margin-top: 5px;">
+                    max="{{$ctrl.estimate.maxBid}}" required
+                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+                <div class="bid-limits" ng-if="$ctrl.estimate"
+                    style="display: flex; justify-content: space-between; color: #6c757d; font-size: 0.875rem; margin-top: 5px;">
                     <small>Minimum bid: ₹{{$ctrl.estimate.minBid}}</small>
                     <small>Maximum bid: ₹{{$ctrl.estimate.maxBid}}</small>
                 </div>

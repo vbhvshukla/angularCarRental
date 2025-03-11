@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h2>Add Kms / Hrs</h2>
+    <button type="button" class="close" ng-click="vm.closeAddKmModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <form name="addExtras" ng-submit="vm.addExtras()" class="extras-form"
+        style="display: flex; flex-direction: column; gap: 15px;">
+        <label for="extraKm" style="font-weight: bold; margin-bottom: 5px;">Additional Kilometers Driven</label>
+        <input type="number" name="extrakm" ng-model="vm.extras.extraKm" ng-minlength="0" ng-required
+            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" /><br>
+        <label for="extraHr" style="font-weight: bold; margin-bottom: 5px;">Additional Hours Driven</label>
+        <input type="number" name="extrahr" ng-model="vm.extras.extraHr" ng-minlength="0" ng-required
+            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" />
+        <div ng-if="vm.booking.rentalType === 'outstation'">
+            <label for="extraDay" style="font-weight: bold; margin-bottom: 5px;">Additional Days Driven</label>
+            <input type="number" name="extraday" ng-model="vm.extras.extraDay" ng-minlength="0" ng-required
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" />
+        </div>
+        <span ng-show="addExtras.extrakm.$error.required && addExtras.extrakm.$touched"
+            style="color: red; font-size: 0.8em;">Additional Kilometers is required.</span>
+        <span ng-show="addExtras.extrahr.$error.required && addExtras.extrahr.$touched"
+            style="color: red; font-size: 0.8em;">Additional Hours is required.</span>
+        <button type="submit" ng-disabled="addExtras.$invalid"
+            style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 1em; cursor: pointer; border-radius: 4px; align-self: flex-start;">Submit</button>
+    </form>
+</div>

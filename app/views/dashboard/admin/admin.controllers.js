@@ -5,7 +5,7 @@ mainApp.controller('AdminController', [
     'carService',
     'categoryService',
     'errorService',
-    '$timeout',
+    '$uibModal',
     function (
         userService,
         authService,
@@ -13,7 +13,8 @@ mainApp.controller('AdminController', [
         carService,
         categoryService,
         errorService,
-        $timeout
+        $uibModal
+
     ) {
         //Variable Declarations
         var vm = this;
@@ -99,10 +100,8 @@ mainApp.controller('AdminController', [
         vm.loadCategories = function () {
             categoryService.getAllCategories()
                 .then(function (response) {
-                   $timeout(function(){
                     vm.categories = response.data;
                     vm.totalCategories = response.total;
-                   })
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err));
         }
 
@@ -112,20 +111,36 @@ mainApp.controller('AdminController', [
         }
 
         vm.pageChanged = function () {
-            vm.loadUsers();
+            vm.loadAllData();
         }
 
         vm.carPageChanged = function () {
-            vm.loadCars();
+            vm.loadAllData();
         }
 
         vm.categoryPageChanged = function () {
-            vm.loadCategories();
+            vm.loadAllData();
         }
 
         vm.showUserApprovalModal = function (user) {
             vm.selectedUser = user;
-            vm.showUserModal = true;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'app/components/modals/userApproval/userApprovalModal.template.html',
+                controller: 'UserApprovalModalController',
+                controllerAs: 'vm',
+                backdrop: 'static',
+                resolve: {
+                    selectedUser: function () {
+                        return user;
+                    }
+                }
+            })
+
+            modalInstance.result.then(function () {
+                vm.loadAllData();
+            }, function () {
+                console.log("Modal dismissed")
+            })
         }
 
         vm.closeUserModal = function () {
@@ -135,8 +150,18 @@ mainApp.controller('AdminController', [
         }
 
         vm.showAddCategoryModal = function () {
-            vm.showCategoryModal = true;
-            return true;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'app/components/modals/addCategory/addCategoryModal.template.html',
+                controller: 'AddCategoryModalController',
+                controllerAs: 'vm',
+                backdrop: 'static'
+            });
+
+            modalInstance.result.then(function () {
+                vm.loadAllData();
+            }, function () {
+                console.log('Modal dismissed');
+            })
         }
 
         vm.closeCategoryModal = function () {
@@ -149,7 +174,7 @@ mainApp.controller('AdminController', [
             userService.approveUser(vm.selectedUser.userId)
                 .then(function () {
                     vm.closeUserModal();
-                    vm.loadUsers();
+                    vm.loadAllData();
                 })
                 .catch(err => errorService.handleError("Admin Controller :: Error Approving User :: ", err));
         }
@@ -157,7 +182,8 @@ mainApp.controller('AdminController', [
         vm.rejectUser = function () {
             userService.rejectUser(vm.selectedUser.userId)
                 .then(function () {
-                    vm.loadUsers();
+                    vm.loadAllData();
+
                     vm.closeUserModal();
                 }).catch(err => errorService.handleError("Admin Controller :: Error Rejecting User :: ", err));
         }
@@ -165,10 +191,9 @@ mainApp.controller('AdminController', [
         vm.createCategory = function () {
             categoryService.createCategory(vm.newCategory)
                 .then(function () {
-                    $timeout(function () {
-                        vm.loadCategories();
-                        vm.closeCategoryModal();
-                    });
+                    vm.loadAllData();
+                    vm.closeCategoryModal();
+
                 }).catch(err => errorService.handleError("Admin Controller :: Error Adding Categories :: ", err));
         }
 
@@ -177,9 +202,7 @@ mainApp.controller('AdminController', [
             if (confirm('Are you sure you want to delete this category?')) {
                 categoryService.deleteCategory(category.categoryId)
                     .then(function () {
-                        $timeout(function () {
-                            vm.loadCategories();
-                        });
+                        vm.loadAllData();
                     }).catch(err => errorService.handleError("Admin Controller :: Error Deleting Categories :: ", err));
             }
         }

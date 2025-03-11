@@ -1,5 +1,5 @@
-mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService',
-    function (dbService, bidService, authService, bookingService, errorService, chatService) {
+mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService','$uibModal',
+    function (dbService, bidService, authService, bookingService, errorService, chatService,$uibModal) {
 
         //Variable Declaration
         let vm = this;
@@ -101,42 +101,40 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         };
 
         vm.acceptBid = function (bid) {
-            // Prevent multiple submissions and invalid data
             if (!bid || !bid.bidId || vm.isProcessing) {
                 errorService.handleError('Invalid bid data or operation in progress');
                 return;
             }
 
-            // Track which bid we're processing
+
             vm.processingBidId = bid.bidId;
             vm.isProcessing = true;
 
-            // First verify bid status
             dbService.getItemByKey('bids', bid.bidId)
-                .then(function(currentBid) {
+                .then(function (currentBid) {
                     if (!currentBid || currentBid.status !== 'pending') {
                         throw new Error('Bid is no longer pending');
                     }
-                    // First update bid status
+
                     return bidService.updateBidStatus(bid.bidId, 'accepted');
                 })
-                .then(function() {
-                    // Then create booking
+                .then(function () {
+
                     return bookingService.createBooking(bid);
                 })
-                .then(function() {
+                .then(function () {
                     errorService.logSuccess('Bid accepted and booking created successfully');
                     return vm.getAllData(bid.car.owner.userId);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     errorService.handleError('Failed to accept bid: ' + error.message);
                     // Try to revert bid status if we failed after updating it
                     if (vm.isProcessing) {
                         return bidService.updateBidStatus(bid.bidId, 'pending')
-                            .catch(() => {/* Ignore revert errors */});
+                            .catch(() => {/* Ignore revert errors */ });
                     }
                 })
-                .finally(function() {
+                .finally(function () {
                     vm.isProcessing = false;
                     vm.processingBidId = null;
                 });
@@ -193,13 +191,26 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         }
 
         vm.openAddKmModal = function (booking) {
-            vm.showAddKmModal = true;
+            // vm.showAddKmModal = true;
             vm.bookingData = booking;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'app/components/modals/addKmModal/addKmModal.template.html',
+                controller: 'AddKmModalController',
+                controllerAs: 'vm',
+                backdrop: 'static',
+                resolve: {
+                    booking: function () {
+                        return booking;
+                    }
+                }
+            });
+            modalInstance.result.then(function () {
+                vm.getAllData();
+            }, function () {
+                console.log('Modal dismissed');
+            })
         }
 
-        // vm.addExtras = function () {
-        //     bookingService.addExtras(vm.bookingData, this.extras.extraKm, this.extras.extraHr, this.extras.extraDay)
-        // }
         vm.addExtras = function () {
             console.log("1 -> Global Variables :: ", vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay);
             bookingService.addExtras(vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay)

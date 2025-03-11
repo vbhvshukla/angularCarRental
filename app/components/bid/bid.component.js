@@ -10,6 +10,9 @@ mainApp.component('bidForm', {
             $ctrl.isStartOpen = false;
             $ctrl.isEndOpen = false;
             
+            var today = new Date();
+            $ctrl.minDate = today.toISOString().split('T')[0];
+        
             /** Initialization function
              *@description Initializes the variables , Gets the current logged in user and sets it in @var $ctrl.currentUser
              *@requires authService
@@ -107,9 +110,9 @@ mainApp.component('bidForm', {
                 const start = new Date($ctrl.bid.startDate);
                 const end = new Date($ctrl.bid.endDate);
 
-                if (end <= start) {
-                    errorService.handleError('End date must be after start date', 'BidForm :: Validation');
+                if (end < start) {
                     alert("End date must be after start date', 'BidForm :: Validation")
+                    errorService.handleError('End date must be after start date', 'BidForm :: Validation');
                     return;
                 }
 
