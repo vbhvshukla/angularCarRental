@@ -1,10 +1,13 @@
+/** @file Owner Dashboard's Home Controller */
+
 mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService','$uibModal',
     function (dbService, bidService, authService, bookingService, errorService, chatService,$uibModal) {
 
-        //Variable Declaration
-        let vm = this;
+        /**
+         * Variable declaration
+         */
 
-        // Pagination configuration
+        let vm = this;
         vm.pagination = {
             bookings: {
                 currentPage: 1,
@@ -22,7 +25,6 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                 totalItems: 0
             }
         };
-
         vm.extras = {
             extraKm: 0,
             extraHr: 0,
@@ -33,24 +35,34 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
         vm.bookings = [];    //Holds all the bookings of owner's cars.
         vm.pendingBids = []; //Holds all the pending bids.
         vm.showAddKmModal = false;
-        // Filtered data
         vm.filteredBookings = [];
         vm.filteredAllBids = [];
         vm.filteredPendingBids = [];
-
-        // Filter values
         vm.filters = {
             bookingType: 'all',
             bidStatus: 'all',
             pendingType: 'all'
         };
 
-        //Initialization function
+        /**
+         * Function :: Initialization
+         * @function vm.init()
+         * @description Loads the user.
+         * @requires authService
+         */
+
         vm.init = function () {
             authService.getUser()
                 .then(user => vm.getAllData(user.userId))
                 .catch(err => console.log("Owner controller :: Error Getting User :: ", err));
         }
+
+        /**
+         * Function :: Get All Data
+         * @param {*} userId 
+         * @description Get's all data(bookings,bids) of the current logged in user(fetched by userId)
+         * @requires dbService,async
+         */
 
         vm.getAllData = function (userId) {
             async.parallel([
@@ -58,7 +70,6 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                     dbService.getAllItemsByIndex('bookings', 'ownerId', userId)
                         .then((bookings) => callback(null, bookings))
                         .catch(err => callback(err));
-
                 },
                 function (callback) {
                     dbService.getAllItemsByIndex('bids', 'ownerId', userId)
@@ -77,6 +88,11 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                 }
             })
         }
+
+        /**
+         * Function :: Apply Filters
+         * @description Applies filters to the bids (pending,local,outstation etc)
+         */
 
         vm.applyFilters = function () {
             vm.filteredBookings = vm.bookings.filter(booking =>
@@ -99,6 +115,12 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             vm.pagination.allBids.currentPage = 1;
             vm.pagination.pendingBids.currentPage = 1;
         };
+
+        /**
+         * Function :: Accept bid
+         * @param {*} bid 
+         * @description Creates a booking after accepting bid.
+         */
 
         vm.acceptBid = function (bid) {
             if (!bid || !bid.bidId || vm.isProcessing) {
@@ -140,6 +162,12 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                 });
         };
 
+        /**
+         * Function :: Reject Bid
+         * @param {*} bid 
+         * @description Rejects a bid.
+         */
+
         vm.rejectBid = function (bid) {
             bidService.updateBidStatus(bid.bidId, 'rejected')
                 .then(() => {
@@ -147,23 +175,32 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                 })
         }
 
+        /** Implemented UIB Pagination */
         vm.getPaginatedData = function (data, paginationConfig) {
             const startIndex = (paginationConfig.currentPage - 1) * paginationConfig.itemsPerPage;
             return data.slice(startIndex, startIndex + paginationConfig.itemsPerPage);
         };
 
+        /** Implemented UIB Pagination */
         vm.previousPage = function (type) {
             if (vm.pagination[type].currentPage > 1) {
                 vm.pagination[type].currentPage--;
             }
         };
 
+        /** Implemented UIB Pagination */
         vm.nextPage = function (type) {
             const totalPages = Math.ceil(vm.pagination[type].totalItems / vm.pagination[type].itemsPerPage);
             if (vm.pagination[type].currentPage < totalPages) {
                 vm.pagination[type].currentPage++;
             }
         };
+
+        /**
+         * Function :: Get total amount of the booking
+         * @param {*} booking 
+         * @returns integer
+         */
 
         vm.getTotalAmount = function (booking) {
             // If it's a bid, pass the bid object directly
@@ -174,21 +211,40 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             return bookingService.calculateTotalAmount(booking);
         };
 
+        /**
+         * Function :: Check whether booking is over.
+         * @param {*} booking 
+         * @returns 
+         */
+
         vm.isBookingOver = function (booking) {
             return new Date(booking.toTimestamp) < Date.now();
         };
+
+        /**
+         * Function :: Show pagination only if it's required.
+         * @param {*} type 
+         * @returns boolean
+         */
 
         vm.shouldShowPagination = function (type) {
             return vm.pagination[type].totalItems > vm.pagination[type].itemsPerPage;
         };
 
+        /**
+         * Function :: Get total pages.
+         * @param {*} type 
+         * @returns integer
+         */
+
         vm.getTotalPages = function (type) {
             return Math.ceil(vm.pagination[type].totalItems / vm.pagination[type].itemsPerPage);
         };
 
-        vm.closeAddKmModal = function () {
-            vm.showAddKmModal = false;
-        }
+        /**
+         * Function :: Opens a modal for adding additional data.
+         * @param {*} booking 
+         */
 
         vm.openAddKmModal = function (booking) {
             // vm.showAddKmModal = true;
@@ -211,6 +267,7 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
             })
         }
 
+        /** Implemented UIB Modal No Longer in use */
         vm.addExtras = function () {
             console.log("1 -> Global Variables :: ", vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay);
             bookingService.addExtras(vm.bookingData, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay)
@@ -229,6 +286,7 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                 });
         };
 
+        /** Implemented UIB Modal No Longer in use */
         vm.generateAndSendInvoice = function (booking) {
             console.log("4 -> Booking in Generate and Send Invoice", booking);
             const doc = new jspdf.jsPDF();
@@ -271,5 +329,10 @@ mainApp.controller('OwnerHomeDashboardController', ['dbService', 'bidService', '
                     );
                 });
         };
+
+        /** Implemented UIB Modal No Longer in use */
+        vm.closeAddKmModal = function () {
+            vm.showAddKmModal = false;
+        }
     }
 ])

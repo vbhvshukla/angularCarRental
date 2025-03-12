@@ -1,3 +1,5 @@
+/** @file Add Km Modal Controller */
+
 mainApp.controller('AddKmModalController', [
     '$uibModalInstance',
     'bookingService',
@@ -5,10 +7,21 @@ mainApp.controller('AddKmModalController', [
     'chatService',
     'booking',
     function ($uibModalInstance, bookingService, errorService, chatService, booking) {
+        /**
+         * Variable Declarations
+         */
+
         var vm = this;
         vm.booking = booking;
         console.log(booking);
         vm.extras = { extraKm: 0, extraHr: 0, extraDay: 0 };
+
+        /**
+         * Add extras function
+         * @function vm.addExtras()
+         * @description To add charges based on additional kilometers driven , additional hours and additional days.
+         * @requires bookingService
+         */
 
         vm.addExtras = function () {
             console.log("1 -> Global Variables :: ", vm.booking, vm.extras.extraKm, vm.extras.extraHr, vm.extras.extraDay);
@@ -26,6 +39,14 @@ mainApp.controller('AddKmModalController', [
                     errorService.handleError('Failed to process extras: ' + error.message);
                 });
         };
+
+        /**
+         * Generate and Send Invoice to chat Function
+         * @function vm.generateAndSendInvoice()
+         * @description To generate invoice and send it to the chat.
+         * @param {*} booking 
+         * @returns redirects to the bids page.
+         */
 
         vm.generateAndSendInvoice = function (booking) {
             console.log("4 -> Booking in Generate and Send Invoice", booking);
@@ -69,6 +90,10 @@ mainApp.controller('AddKmModalController', [
                 });
         };
 
+        /**
+         * Close Modal Function
+         */
+        
         vm.closeAddKmModal = function () {
             $uibModalInstance.dismiss('cancel');
         };

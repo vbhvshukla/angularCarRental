@@ -1,15 +1,26 @@
+/** @file Login Controller */
+
 mainApp.controller('LoginController', ['$scope', 'authService', '$state', 'errorService',
     function ($scope, authService, $state, errorService) {
-        var vm = this;
-
-        //Variable declarations
+    
+        /**
+         * Variable Declarations
+         */
+        
+        var vm = this;              //Alias for view model for this controller
         vm.credentials = {          //Holds the user's object of form.
             email: '',
             password: ''
         };
         vm.errorMessage = '';       //Holds the message to be displayed on UI.
 
-        //Login and redirection according to the role
+        /**
+         * Login Function
+         * @function vm.login()
+         * @description logs in a user and redirects according to the user role.
+         * @requires authService
+         */
+
         vm.login = function () {
             if ($scope.loginForm.$valid) {
                 authService.login(vm.credentials.email, vm.credentials.password)

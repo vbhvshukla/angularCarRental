@@ -1,7 +1,9 @@
-mainApp.controller('UserBidsController', ['$state','bidService', 'authService','chatService','errorService',
-    function ($state,bidService, authService,chatService,errorService) {
+/** @file User Dashboard's Bid Page's Controller */
 
-        //Var Declarations
+mainApp.controller('UserBidsController', ['$state', 'bidService', 'authService', 'chatService', 'errorService',
+    function ($state, bidService, authService, chatService, errorService) {
+
+        /** Variable declaration */
         let vm = this;
         vm.bids = {};
         vm.filteredBids = {};
@@ -10,39 +12,54 @@ mainApp.controller('UserBidsController', ['$state','bidService', 'authService','
             status: ''
         };
         vm.chatId = "";
-        
 
-        //Initialization
+
+        /**
+         * Function :: Initialization
+         * @description Initializes the bids of the user.
+         */
+
         vm.init = function () {
             loadUserBids();
         };
 
-        //Load the user -> Get it's bid by it's user id and set the variables accordingly.
+        /**
+         * Function :: Load User's Bids
+         * @function loadUserBids()
+         * @description Get the user logged in -> Fetch it's bids.
+         * @requires async,authService,bidService
+         */
+
         function loadUserBids() {
             async.waterfall([
-                function(callback){
+                function (callback) {
                     authService.getUser()
-                    .then(user=>callback(null,user))
-                    .catch(err=>callback(err));
+                        .then(user => callback(null, user))
+                        .catch(err => callback(err));
                 },
-                function(user,callback){
+                function (user, callback) {
                     bidService.getBidsByUser(user.userId)
-                    .then(bids=>callback(null,{bids}))
-                    .catch(err=>callback(err));
+                        .then(bids => callback(null, { bids }))
+                        .catch(err => callback(err));
                 }
 
-            ],function(err,results){
-                if(err){
+            ], function (err, results) {
+                if (err) {
                     console.error('User Dashboard :: All Bids Controller :: Error Getting Bids :: ', err);
                 }
-                else{
+                else {
                     vm.bids = results.bids;
                     vm.filterBids();
                 }
             })
         }
 
-        //Filter bids (Types : Rental/Status)
+        /**
+         * Function :: Filter Bids(by rental type)
+         * @function filterBids()
+         * @description Filters bids based on rental type.
+         */
+
         vm.filterBids = function () {
             vm.filteredBids = vm.bids.filter(function (bid) {
                 let matchRentalType = true;
@@ -57,7 +74,14 @@ mainApp.controller('UserBidsController', ['$state','bidService', 'authService','
             });
         };
 
-        //Cancel Bids (Parameters required -> Bid Object)
+        /**
+         * Function :: Cancel A Bid
+         * @function vm.cancelBid()
+         * @param {*} bid 
+         * @description Cancel bid
+         * @requires bidService
+         */
+
         vm.cancelBid = function (bid) {
             if (bid.status === 'pending') {
                 bid.status = 'cancelled';
@@ -72,19 +96,31 @@ mainApp.controller('UserBidsController', ['$state','bidService', 'authService','
             }
         };
 
+        /**
+         * Function :: Redirect to Message's Page
+         * @function vm.goToMessagePage()
+         * @param {*} bid 
+         * @requires chatService
+         */
+
         vm.goToMessagePage = function (bid) {
             chatService.getOrCreateChat(bid.car.carId, bid.user, bid.car.owner)
-                .then(function(conversation) {
-                    $state.go('userdashboard.message', { 
-                        chatId: conversation.chatId 
+                .then(function (conversation) {
+                    $state.go('userdashboard.message', {
+                        chatId: conversation.chatId
                     });
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     errorService.handleError(error, 'Failed to open chat');
                 });
         };
 
-        //Format Date function toLocalDateString (Parameters required -> Date)
+        /**
+         * Function :: Format Date to Locale String
+         * @param {*} date 
+         * @function vm.formatDate()
+         */
+
         vm.formatDate = function (date) {
             return new Date(date).toLocaleDateString();
         };

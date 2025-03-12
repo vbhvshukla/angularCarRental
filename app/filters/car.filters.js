@@ -1,9 +1,6 @@
-mainApp
-    /**
-     * Car Filter
-     */
-    .filter('carFilter', function () {
+/** @file Car Filter */
 
+mainApp.filter('carFilter', function () {
         /**
          * @function : carFilter
          * @description : This function is used to filter the cars 
@@ -65,6 +62,7 @@ mainApp
      * Star Rating filter
      * @description basically returns the numeric rating into stars rating.
      */
+
     .filter('starRating', function () {
         return function (rating) {
             if (!rating) return '';
@@ -83,6 +81,7 @@ mainApp
      * Availibility Filter
      * @description : Returns the cars which are available to be booked.
      */
+
     .filter('availability', function () {
         return function (cars) {
             if (!cars) return [];

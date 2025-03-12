@@ -1,10 +1,14 @@
+/** @file Bidding Controller */
+
 mainApp.controller('BiddingController', [
     '$scope', '$state', '$stateParams', 'carService', 'chatService',
     'authService', 'errorService', 'bidService',
     function ($scope, $state, $stateParams, carService, chatService,
         authService, errorService, bidService) {
 
-        //Variable declarations
+        /**
+         * Variable declarations
+         */
 
         let vm = this;                  //Global variable holds all functions of controller
         vm.car = null;                  //Holds the particular car's object.
@@ -13,7 +17,13 @@ mainApp.controller('BiddingController', [
         vm.showPriceInfoModal = false;  //Boolean for displaying or hiding price modal.
         vm.loading = true;              //Boolean for loader.
 
-        //Initialization function
+        /**
+         * Initialization function
+         * @function vm.init()
+         * @description This function is called when the controller is initialized 
+         * initializes the global variables @var vm.car , @var vm.currentUser.
+         * @requires async library
+         */
 
         vm.init = function () {
             vm.loading = true;
@@ -78,7 +88,12 @@ mainApp.controller('BiddingController', [
 
         }
 
-        //Bid submission handler
+        /**
+         * Handling bid submission.
+         * @param {*} bid 
+         * @description performs validations and submits it to the DB.
+         * @requires bidService
+         */
 
         vm.handleBidSubmit = function (bid) {
             if (vm.isSubmitting) return;
@@ -107,7 +122,10 @@ mainApp.controller('BiddingController', [
                 });
         };
 
-        //Price Info Modal Handlers
+
+        /**
+         * Below functions are no longer in use.
+         */
 
         vm.showPriceInfo = function () {
             vm.showPriceInfoModal = true;

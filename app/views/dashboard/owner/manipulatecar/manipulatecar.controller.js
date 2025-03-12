@@ -1,9 +1,11 @@
+/** @file Manipulate Car's Page Controller */
+
 mainApp.controller('ManipulateCarController', [
     '$scope', '$state', '$q', '$stateParams', 'carService', 'categoryService', 'cityService', 'authService', 'errorService',
     function ($scope, $state, $q, $stateParams, carService, categoryService, cityService, authService, errorService) {
-        let vm = this;
 
-        // Initialize variables
+        /** Variable Declaration */
+        let vm = this;
         vm.loading = false;
         vm.isEditMode = !!$stateParams.carId;
         vm.isSubmitting = false;
@@ -12,8 +14,6 @@ mainApp.controller('ManipulateCarController', [
         vm.cities = [];
         vm.currentUser = null;
         vm.newFeature = '';
-
-        // Initialize empty car object
         vm.car = {
             carId: '',  // Will be generated for new cars
             carName: '',
@@ -52,7 +52,12 @@ mainApp.controller('ManipulateCarController', [
             }
         };
 
-        // Initialize controller
+        /**
+         * Function :: Initialization
+         * @description Fetches all the data and sets it in scope.
+         * @requires $q,categoryService,cityService,authService
+         */
+
         vm.init = function () {
             vm.loading = true;
             const promises = [
@@ -85,7 +90,12 @@ mainApp.controller('ManipulateCarController', [
                 });
         };
 
-        // Add this function after vm.init
+        /**
+         * Function :: Handle Category Selection
+         * @function handleCategorySelect()
+         * @description Handle the category selection for the form
+         */
+
         vm.handleCategorySelect = function () {
             const selectedCategory = vm.categories.find(c =>
                 c.categoryName.toLowerCase() === vm.car.category.categoryName.toLowerCase()
@@ -94,7 +104,7 @@ mainApp.controller('ManipulateCarController', [
             if (selectedCategory) {
                 vm.car.category = {
                     categoryId: selectedCategory.categoryId,
-                    categoryName: selectedCategory.categoryName // Use exact case from database
+                    categoryName: selectedCategory.categoryName
                 };
             } else {
                 vm.car.category = { categoryId: '', categoryName: '' };
@@ -102,7 +112,13 @@ mainApp.controller('ManipulateCarController', [
             }
         };
 
-        // Handle image uploads
+        /**
+         * Function :: Handle Image Upload
+         * @function handleImageUpload
+         * @description validates and converts the file into base64 dataURL.
+         * @param {*} files 
+         */
+
         vm.handleImageUpload = function (files) {
             vm.imageError = '';
             if (files.length + vm.car.images.length > 10) {
@@ -114,7 +130,6 @@ mainApp.controller('ManipulateCarController', [
                 if (file.size > 5000000) {
                     return $q.reject('File size exceeds 5MB limit');
                 }
-
                 const deferred = $q.defer();
                 const reader = new FileReader();
                 reader.onload = e => deferred.resolve(e.target.result);
@@ -132,7 +147,11 @@ mainApp.controller('ManipulateCarController', [
                 });
         };
 
-        // Add a feature
+        /**
+         * Function :: Add A Feature(for featured section)
+         * @function addFeature()
+         */
+
         vm.addFeature = function () {
             if (!vm.newFeature || vm.newFeature.trim() === '') {
                 errorService.handleError('Feature cannot be empty');
@@ -152,17 +171,34 @@ mainApp.controller('ManipulateCarController', [
             vm.car.featured.push(vm.newFeature.trim());
             vm.newFeature = '';
         };
-        // Remove a feature
+
+        /**
+         * Function :: Remove a feature from the featured array.
+         * @function removeFeature
+         * @param {*} index 
+         */
+
         vm.removeFeature = function (index) {
             vm.car.featured.splice(index, 1);
         };
 
-        // Remove image
+        /**
+         * Function :: Remove a image from the images array.
+         * @function removeImage
+         * @param {*} index 
+         */
+
         vm.removeImage = function (index) {
             vm.car.images.splice(index, 1);
         };
 
-        // Form submission
+        /**
+         * Function :: Submit Form 
+         * @function submitForm()
+         * @param {*} isValid 
+         * @description Submit's the car (add/edit)
+         */
+
         vm.submitForm = function (isValid) {
             if (!isValid) return;
 
@@ -238,18 +274,28 @@ mainApp.controller('ManipulateCarController', [
                 });
         };
 
+        /**
+         * Function :: Checks if a city entered is valid
+         */
+
         vm.validateCity = function () {
             if (vm.car.city) {
                 var isValid = vm.cities.indexOf(vm.car.city) > -1;
                 $scope.carForm.city.$setValidity('validCity', isValid);
             }
         };
-        // Navigation
+
+        /**
+         * Function :: Return to Parent state
+         */
+
         vm.goBack = function () {
             $state.go('ownerdashboard.listedcars');
         };
 
-        // Cancel
+        /**
+        * Function :: Return to Parent state
+        */
         vm.cancel = function () {
             vm.goBack();
         };

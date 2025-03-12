@@ -1,20 +1,30 @@
 mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authService',
     function ($state, bookingService, authService) {
+        
+        /**Variable Declarations */
         let vm = this;
-
-        //Variable declarations
         vm.bookings = [];
         vm.isLoading = false;
         vm.errorMessage = '';
         vm.currentPage = 1;
         vm.filters = {};
 
-        //Initialization function loads bookings.
+        /**
+         * Function :: Initialization Function
+         * @function vm.init()
+         */
+
         vm.init = function () {
             vm.loadBookings();
         };
 
-        //Load all the bookings
+        /**
+         * Function :: Load Bookings of User
+         * @function vm.loadBookings()
+         * @description Loads user's booking of the current loggedIn user.
+         * @requires async,authService,bookingService
+         */
+
         vm.loadBookings = function () {
             vm.isLoading = true;
             //Get the user and fetch all it's bookings from the userId.
@@ -41,7 +51,12 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authS
             })
         };
 
-        //Cancel booking function
+        /**
+         * Function :: Cancel a booking based on bookingId.
+         * @param {*} bookingId 
+         * @requires bookingService
+         */
+        
         vm.cancelBooking = function (bookingId) {
             if (confirm('Are you sure you want to cancel this booking?')) {
                 bookingService.cancelBooking(bookingId)

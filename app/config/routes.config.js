@@ -1,3 +1,5 @@
+/** @file Routes configuration file */
+
 mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvider',
     function ($stateProvider, $urlMatcherFactoryProvider, $urlRouterProvider) {
        

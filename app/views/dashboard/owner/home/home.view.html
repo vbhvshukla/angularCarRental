@@ -96,16 +96,16 @@
     </div>
     <div class="pagination" ng-if="vm.shouldShowPagination('pendingBids')"
         style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0; text-align: center;">
-        <uib-pagination total-items="vm.pagination.pendingBids.totalItems"
+        <ul uib-pagination total-items="vm.pagination.pendingBids.totalItems"
             ng-model="vm.pagination.pendingBids.currentPage" max-size="5"
             items-per-page="vm.pagination.pendingBids.itemsPerPage" boundary-links="true"
             ng-change="vm.pageChanged('pendingBids')" class="pagination-sm" previous-text="&lsaquo;"
-            next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
+            next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
     </div>
 
     <h3>Active Bookings</h3>
     <select ng-model="vm.filters.bookingType" ng-change="vm.applyFilters()"
-        style="margin-left: 10px; padding: 5px; font-size: 12px; border: 1px solid #bdc3c7; border-radius: 5px; background-color: white; cursor: pointer;">
+        style="margin-left: 10px; width:100px; padding: 5px; font-size: 12px; border: 1px solid #bdc3c7; border-radius: 5px; background-color: white; cursor: pointer;">
         <option value="all">All</option>
         <option value="local">Local</option>
         <option value="outstation">Outstation</option>
@@ -133,7 +133,8 @@
                 </tr>
             </thead>
             <tbody>
-                <td ng-if="vm.filteredBookings.length === 0" style="text-align: center; margin-top: 10px;">No bookings found.</td>
+                <td ng-if="vm.filteredBookings.length === 0" style="text-align: center; margin-top: 10px;">No bookings
+                    found.</td>
                 <tr ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings) track by booking.bookingId | orderBy : '-createdAt'"
                     style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
                     <td>{{booking.bid.car.carName}}</td>
@@ -161,17 +162,17 @@
         </table>
     </div>
 
-    <div class="pagination" ng-if="vm.shouldShowPagination('bookings')"
-    style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0; text-align: center;">
-    <uib-pagination total-items="vm.pagination.bookings.totalItems" ng-model="vm.pagination.bookings.currentPage"
-        max-size="5" items-per-page="vm.pagination.bookings.itemsPerPage" boundary-links="true"
-        ng-change="vm.pageChanged('bookings')" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;"
-        first-text="&laquo;" last-text="&raquo;"></uib-pagination>
-</div>
+    <div class="pagination" ng-if="!vm.shouldShowPagination('bookings')"
+        style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0; text-align: center;">
+        <ul uib-pagination total-items="vm.pagination.bookings.totalItems" ng-model="vm.pagination.bookings.currentPage"
+            max-size="5" items-per-page="vm.pagination.bookings.itemsPerPage" boundary-links="true"
+            ng-change="vm.pageChanged('bookings')" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;"
+            first-text="&laquo;" last-text="&raquo;"></ul>
+    </div>
 
     <h3>All Bids</h3>
     <select ng-model="vm.filters.bidStatus" ng-change="vm.applyFilters()"
-        style="margin-left: 10px; padding: 5px; font-size: 12px; border: 1px solid #bdc3c7; border-radius: 5px; background-color: white; cursor: pointer;">
+        style="margin-left: 10px; padding: 5px; width:100px; font-size: 12px; border: 1px solid #bdc3c7; border-radius: 5px; background-color: white; cursor: pointer;">
         <option value="all">All</option>
         <option value="pending">Pending</option>
         <option value="accepted">Accepted</option>
@@ -198,7 +199,8 @@
                 </tr>
             </thead>
             <tbody>
-                <td ng-if="vm.filteredAllBids.length === 0" style="text-align: center; margin-top: 10px;">No bookings found.</td>
+                <td ng-if="vm.filteredAllBids.length === 0" style="text-align: center; margin-top: 10px;">No bookings
+                    found.</td>
 
                 <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids)"
                     style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
@@ -214,11 +216,10 @@
             </tbody>
         </table>
     </div>
-    <div class="pagination" ng-if="vm.shouldShowPagination('allBids')"
-    style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0; text-align: center;">
-    <uib-pagination total-items="vm.pagination.allBids.totalItems" ng-model="vm.pagination.allBids.currentPage"
-        max-size="5" items-per-page="vm.pagination.allBids.itemsPerPage" boundary-links="true"
-        ng-change="vm.pageChanged('allBids')" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;"
-        first-text="&laquo;" last-text="&raquo;"></uib-pagination>
-</div>
+    <div class="pagination" style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1rem 0; text-align: center;">
+        <ul uib-pagination total-items="vm.pagination.allBids.totalItems" ng-model="vm.pagination.allBids.currentPage"
+            max-size="5" items-per-page="vm.pagination.allBids.itemsPerPage" boundary-links="true"
+            ng-change="vm.pageChanged('allBids')" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;"
+            first-text="&laquo;" last-text="&raquo;"></ul>
+    </div>
 </div>

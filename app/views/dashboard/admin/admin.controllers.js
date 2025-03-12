@@ -1,3 +1,5 @@
+/** @file Admin Dashboard Controller */
+
 mainApp.controller('AdminController', [
     'userService',
     'authService',
@@ -16,7 +18,10 @@ mainApp.controller('AdminController', [
         $uibModal
 
     ) {
-        //Variable Declarations
+        /**
+         * Variable declaration
+         */
+
         var vm = this;
         vm.users = [];                                          //Holds users data
         vm.cars = [];                                           //Holds cars data
@@ -32,10 +37,22 @@ mainApp.controller('AdminController', [
         vm.selectedUser = null;                                 //Holds the selected user's for the modal.
         vm.newCategory = {};                                    //Holds the new category object
 
-        //Initialization function (Loads all data)
+        /**
+         * Function :: Initialization
+         * @function vm.init()
+         * @description Calls loadAllData.
+         */
+
         vm.init = function () {
             vm.loadAllData();
         }
+
+        /**
+         * Function :: Load All Data
+         * @function vm.loadAllData()
+         * @description Loads all required data (users,cars,categories) as per requirement.
+         * @requires userService,carService,categoryService
+         */
 
         vm.loadAllData = function () {
             async.parallel([
@@ -81,6 +98,13 @@ mainApp.controller('AdminController', [
             });
         };
 
+        /**
+         * Function :: Load All Users
+         * @function vm.loadUsers()
+         * @description Loads all users
+         * @requires userService
+         */
+
         vm.loadUsers = function () {
             userService.getAllUsers(vm.currentPage)
                 .then(function (response) {
@@ -88,6 +112,13 @@ mainApp.controller('AdminController', [
                     vm.totalUsers = response.total;
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
         }
+
+        /**
+         * Function :: Load Cars
+         * @function vm.loadCars()
+         * @description Loads all the cars.
+         * @requires carService
+         */
 
         vm.loadCars = function () {
             carService.getAllCars(vm.currentCarPage)
@@ -97,6 +128,12 @@ mainApp.controller('AdminController', [
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Cars :: ", err));
         }
 
+        /**
+         * Function :: Load Categories
+         * @function vm.loadCategories()
+         * @description Loads all categories.
+         * @requires categoryService
+         */
         vm.loadCategories = function () {
             categoryService.getAllCategories()
                 .then(function (response) {
@@ -105,22 +142,23 @@ mainApp.controller('AdminController', [
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Categories :: ", err));
         }
 
+        /**
+         * Function :: Sort 
+         * @param {*} field 
+         */
+
         vm.sortBy = function (field) {
             vm.reverseSort = (vm.sortField === field) ? !vm.reverseSort : false;
             vm.sortField = field;
         }
 
-        vm.pageChanged = function () {
-            vm.loadAllData();
-        }
-
-        vm.carPageChanged = function () {
-            vm.loadAllData();
-        }
-
-        vm.categoryPageChanged = function () {
-            vm.loadAllData();
-        }
+        /**
+         * Function :: Approval Modal
+         * @param {*} user 
+         * @requires $uibModal
+         * @template userApprovalModal.template.html
+         * @description For User Approval Modal Creation.
+         */
 
         vm.showUserApprovalModal = function (user) {
             vm.selectedUser = user;
@@ -143,11 +181,14 @@ mainApp.controller('AdminController', [
             })
         }
 
-        vm.closeUserModal = function () {
-            vm.showUserModal = false;
-            vm.selectedUser = null;
-            return false;
-        }
+
+
+        /**
+        * Function :: Add Category Modal
+        * @requires $uibModal
+        * @template addCategoryModal.template.html
+        * @description For Category Addition
+        */
 
         vm.showAddCategoryModal = function () {
             var modalInstance = $uibModal.open({
@@ -164,11 +205,11 @@ mainApp.controller('AdminController', [
             })
         }
 
-        vm.closeCategoryModal = function () {
-            vm.showCategoryModal = false;
-            vm.newCategory = { name: '' };
-            return false;
-        }
+        /**
+         * Function :: Approve a user
+         * @requires userService
+         * @description approves a user in the DB.
+         */
 
         vm.approveUser = function () {
             userService.approveUser(vm.selectedUser.userId)
@@ -179,6 +220,12 @@ mainApp.controller('AdminController', [
                 .catch(err => errorService.handleError("Admin Controller :: Error Approving User :: ", err));
         }
 
+        /**
+         * Function :: Rejects/Blocks a user
+         * @requires userService
+         * @description rejects/blocks a user in the DB.
+         */
+
         vm.rejectUser = function () {
             userService.rejectUser(vm.selectedUser.userId)
                 .then(function () {
@@ -188,6 +235,12 @@ mainApp.controller('AdminController', [
                 }).catch(err => errorService.handleError("Admin Controller :: Error Rejecting User :: ", err));
         }
 
+        /**
+         * Function :: Add A Category
+         * @requires categoryService
+         * @description Adds a category in the DB.
+         */
+
         vm.createCategory = function () {
             categoryService.createCategory(vm.newCategory)
                 .then(function () {
@@ -196,6 +249,12 @@ mainApp.controller('AdminController', [
 
                 }).catch(err => errorService.handleError("Admin Controller :: Error Adding Categories :: ", err));
         }
+
+        /**
+        * Function :: Delets a category
+        * @requires categoryService
+        * @description Deletes a category from the DB.
+        */
 
         vm.deleteCategory = function (category) {
             console.log(category);
@@ -207,6 +266,13 @@ mainApp.controller('AdminController', [
             }
         }
 
+        /**
+         * Rollback Mechanism
+         * @description Let's suppose we're creating a category and something related to it throws an error,
+         * the created category would be rolledback(deleted in this case).
+         * @requires categoryService
+         */
+        
         vm.testingRollback = function () {
             async.series([
                 function (callback) {
@@ -235,5 +301,35 @@ mainApp.controller('AdminController', [
                 }
             })
         }
+
+        /** Implemented UIB MODAL -  No Longer In Use */
+        vm.closeCategoryModal = function () {
+            vm.showCategoryModal = false;
+            vm.newCategory = { name: '' };
+            return false;
+        }
+
+        /** Implemented UIB MODAL -  No Longer In Use */
+        vm.closeUserModal = function () {
+            vm.showUserModal = false;
+            vm.selectedUser = null;
+            return false;
+        }
+
+        /** Implemented UIB Pagination -  No Longer In Use */
+        vm.pageChanged = function () {
+            vm.loadAllData();
+        }
+
+        /** Implemented UIB Pagination -  No Longer In Use */
+        vm.carPageChanged = function () {
+            vm.loadAllData();
+        }
+
+        /** Implemented UIB Pagination -  No Longer In Use */
+        vm.categoryPageChanged = function () {
+            vm.loadAllData();
+        }
+
     }
 ])

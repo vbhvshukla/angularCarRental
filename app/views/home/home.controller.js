@@ -19,7 +19,7 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
         vm.filters = {
             location: '',
             carCategory: '',
-            priceRange: 250,
+            priceRange: 500,
             carType: '',
             availability: '',
             features: '',

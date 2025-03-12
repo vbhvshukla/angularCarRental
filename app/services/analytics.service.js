@@ -686,8 +686,7 @@ mainApp.service('analyticsService', [
                 const category = car.category.categoryName;
                 //If there's no data in that paritcular category or if the rating of the current car is higher than the
                 //existing highest rated car in that category store it in
-                if (!categoryBestCars[category] ||
-                    categoryBestCars[category].avgRating < car.avgRating) {
+                if (!categoryBestCars[category] ||categoryBestCars[category].avgRating < car.avgRating) {
                     categoryBestCars[category] = {
                         carName: car.carName,
                         avgRating: car.avgRating

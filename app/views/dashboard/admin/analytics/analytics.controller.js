@@ -1,11 +1,49 @@
+/** @file Admin Analytics Controller */
+
 mainApp.controller('AdminAnalyticsController', [
     '$scope', 'analyticsService',
+    /**
+     * Admin Analytics controller
+     *
+     * @param {*} $scope 
+     * @param {*} analyticsService 
+     */
     function ($scope, analyticsService) {
+
+        /**
+         * Variable declarations
+         */
         var vm = this;
-        vm.selectedTimeRange="30";
+        vm.selectedTimeRange = "30";
         vm.loading = false;
         vm.chartInstances = {};
         vm.showCalculations = false;
+
+        /**
+         * Initialization function
+         * @function vm.loadAnalyticsData
+         * @description Loads all the data related to admin
+         * @requires analyticsService
+         */
+
+        vm.loadAnalyticsData = function () {
+            vm.loading = true;
+            analyticsService.getAdminAnalytics(vm.selectedTimeRange)
+                .then(data => {
+                    vm.cards = data.cards;
+                    vm.charts = data.charts;
+                    renderCharts(data.charts);
+                })
+                .finally(() => {
+                    vm.loading = false;
+                });
+        };
+
+
+        /**
+         * Chart rendering function
+         * @param {*} charts 
+         */
 
         function renderCharts(charts) {
             //If this renderCharts is called again with other values then destory all the chartInstances already created.
@@ -49,6 +87,12 @@ mainApp.controller('AdminAnalyticsController', [
                 }
             });
         }
+
+        /**
+         * Custom Chart Options for configuration
+         * @param {*} chartType 
+         * @returns 
+         */
 
         function getChartOptions(chartType) {
             const baseOptions = {
@@ -109,19 +153,10 @@ mainApp.controller('AdminAnalyticsController', [
             return baseOptions;
         }
 
-        vm.loadAnalyticsData = function () {
-            vm.loading = true;
-            analyticsService.getAdminAnalytics(vm.selectedTimeRange)
-                .then(data => {
-                    vm.cards = data.cards;
-                    vm.charts = data.charts;
-                    renderCharts(data.charts);
-                })
-                .finally(() => {
-                    vm.loading = false;
-                });
-        };
-
+        /**
+         * Destroy the chart on Destroy event.
+         */
+        
         $scope.$on('$destroy', function () {
             Object.values(vm.chartInstances).forEach(chart => chart.destroy());
         });
