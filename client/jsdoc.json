@@ -1,0 +1,18 @@
+{
+    "source": {
+      "include": ["src/scripts"],
+      "includePattern": ".+\\.js$",
+      "excludePattern": "(node_modules/|bower_components/|docs/)"
+    },
+    "plugins": ["plugins/markdown"],
+    "opts": {
+      "encoding": "utf8",
+      "destination": "./docs/",
+      "recurse": true,
+      "verbose": true
+    },
+    "templates": {
+      "cleverLinks": true,
+      "monospaceLinks": false
+    }
+  }

@@ -1,0 +1,104 @@
+<div class="container auth-container" ng-controller="RegisterController as vm"
+    style="display: flex; justify-content: center; align-items: center; background-color: white; min-height: 100vh; margin: 0 auto; padding: 20px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 auth-box"
+            style="padding: 30px; width: 350px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); max-width: 100%;">
+            <h2 class="text-center" style="font-size: 1.8rem; color: #2c3e50; margin-bottom: 10px;">Create an Account
+            </h2>
+            <p class="subtext text-center" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">Sign up to
+                start renting or listing cars.</p>
+            <form name="registerForm" ng-submit="vm.register()" novalidate enctype="multipart/form-data">
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="username"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Username:</label>
+                    <input type="text" id="username" name="username" class="form-control"
+                        ng-model="vm.userData.username" ng-minlength="4" ng-maxlength="8" ng-pattern="/^\S+$/" required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="registerForm.username.$dirty && registerForm.username.$invalid"
+                        style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="registerForm.username.$error.required">Username is required.</span>
+                        <span ng-show="registerForm.username.$error.minlength">Username must be at least 4
+                            characters.</span>
+                        <span ng-show="registerForm.username.$error.maxlength">Username cannot exceed 8
+                            characters.</span>
+                        <span ng-show="registerForm.username.$error.pattern">Username cannot contain spaces.</span>
+                    </p>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="password"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Password:</label>
+                    <input type="password" id="password" name="password" class="form-control"
+                        ng-model="vm.userData.password" ng-minlength="8"
+                        ng-pattern="/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/" required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="registerForm.password.$dirty && registerForm.password.$invalid"
+                        style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="registerForm.password.$error.required">Password is required.</span>
+                        <span ng-show="registerForm.password.$error.minlength">Password must be at least 8
+                            characters.</span>
+                        <span ng-show="registerForm.password.$error.pattern">Password must contain uppercase, lowercase,
+                            and numbers.</span>
+                    </p>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="confirmPassword"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Confirm
+                        Password:</label>
+                    <input type="password" id="confirmPassword" class="form-control" name="confirmPassword"
+                        ng-model="vm.userData.confirmPassword" compare-to="vm.userData.password" required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message"
+                        ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid"
+                        style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="registerForm.confirmPassword.$error.required">Please confirm your
+                            password.</span>
+                        <span ng-show="registerForm.confirmPassword.$error.compareTo">Passwords do not match.</span>
+                    </p>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="email"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" ng-model="vm.userData.email"
+                        required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="registerForm.email.$dirty && registerForm.email.$invalid"
+                        style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="registerForm.email.$error.required">Email is required.</span>
+                        <span ng-show="registerForm.email.$error.email">Please enter a valid email address.</span>
+                    </p>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="role"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Register
+                        as:</label>
+                    <select id="role" name="role" ng-model="vm.userData.role" required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                        <option value="customer">Customer</option>
+                        <option value="owner">Owner</option>
+                    </select>
+                </div>
+                <div class="form-group" ng-show="vm.userData.role === 'owner'"
+                    style="margin-bottom: 15px; text-align: left;">
+                    <label for="verificationFile"
+                        style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Upload
+                        Verification Document:</label>
+                    <input type="file" id="verificationFile" name="verificationFile"
+                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                        onchange="angular.element(this).scope().vm.handleFileSelect(this)" required
+                        style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="vm.userData.role === 'owner' && !vm.verificationFile"
+                        style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        Verification document is required for owner registration.
+                    </p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" ng-disabled="registerForm.$invalid"
+                    style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%;">Register</button>
+                <p class="error-message" ng-show="vm.errorMessage"
+                    style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">{{vm.errorMessage}}</p>
+                <p class="switch-page text-center" style="font-size: 0.9rem; margin-top: 10px;">Already have an account?
+                    <a ui-sref="login" style="color: #3498db; text-decoration: none;">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div class="booking-content" ng-init="vm.init()" style="width: 100%; padding: 20px; background-color: #fff !important; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); box-sizing: border-box;">
+    <h2>Bookings</h2>
+    <div ng-if="errorMessage" class="alert alert-danger">
+        {{errorMessage}}
+    </div>
+    <div ng-if="isLoading" class="loading">
+        Loading bookings...
+    </div>
+    <div class="table-container table-responsive">
+        <table id="booking-table" class="table table-hover" style="table-layout: auto; width: 100%; border-collapse: collapse; margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Booking ID</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Car Name</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Owner Name</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Bid Amount</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Start Date</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">End Date</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Created At</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Total Fare</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Status</th>
+                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="booking in vm.bookings" style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
+                    <td>{{booking.bookingId}}</td>
+                    <td>{{booking.bid.car.carName}}</td>
+                    <td>{{booking.bid.car.owner.username}}</td>
+                    <td>{{booking.bid.bidAmount | price}}</td>
+                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
+                    <td>{{booking.totalFare | price}}</td>
+                    <td>{{booking.status}}</td>
+                    <td>
+                        <button ng-if="booking.status !== 'cancelled'" ng-click="vm.cancelBooking(booking.bookingId)" class="action-btn" style="margin: 2px; padding: 6px 10px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; font-weight: 400; transition: background 0.3s ease; white-space: nowrap; background: #a01000; color: white;">Cancel</button>
+                    </td>
+                </tr>
+                <!-- Add no bookings message -->
+                <tr ng-if="bookings.length === 0" style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
+                    <td colspan="10" class="text-center">No bookings found</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  
+</div>

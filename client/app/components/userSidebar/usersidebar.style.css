@@ -1,0 +1,5 @@
+.user-sidebar ul li a.active {
+  background: #3498db;
+  color: #fff;
+  transform: scale(1.05);
+}

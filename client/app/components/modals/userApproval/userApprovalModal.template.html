@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h2>User Approval</h2>
+    <button type="button" class="close" ng-click="vm.closeUserApprovalModal()">&times;</button>
+</div>
+<div class="modal-body" ng-if="vm.selectedUser">
+    <div class="user-details"
+        style="display: flex; flex-direction: column; padding: 10px; border-bottom: 1px solid #ccc;">
+        <p>Username: {{vm.selectedUser.username}}</p>
+        <p>Email: {{vm.selectedUser.email}}</p>
+        <label for="verificationFile">Verification File : </label>
+        <p><img ng-src={{vm.selectedUser.verificationFile}} style="display: flex; border-radius: 2px;"></p>
+    </div>
+    <div class="approval-buttons" style="margin-top: 10px; display: flex; gap: 10px;">
+        <button class="btn btn-success" ng-click="vm.approveUser()" ng-disabled="vm.selectedUser.isApproved"
+            title="{{vm.selectedUser.isApproved ? 'User already approved' : 'Approve user'}}">{{vm.selectedUser.isApproved
+            ? 'Approved' : 'Approve'}}</button>
+        <button class="btn btn-danger" ng-click="vm.rejectUser()">{{vm.selectedUser.isApproved ? 'Block' :
+            'Reject'}}</button>
+    </div>
+</div>

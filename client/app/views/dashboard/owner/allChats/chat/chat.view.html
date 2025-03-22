@@ -1,0 +1,55 @@
+<div class="chatbox" ng-controller="OwnerChatController as vm" ng-init="vm.init()" style="display: flex; min-height: 350px; flex-direction: column; gap: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h3>Chat with {{vm.messages[0].fromUser.userId === vm.currentUser.userId ? vm.messages[0].toUser.username : vm.messages[0].fromUser.username}}</h3>
+
+    <div id="chat-messages" class="chat-messages" style="flex-grow: 1; overflow-y: auto; max-height: 500px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+        <div ng-if="!vm.messages.length" class="no-messages" style="text-align: center; color: #6c757d; padding: 20px;">
+            No messages yet
+        </div>
+        
+        <div ng-repeat="msg in vm.messages" class="chat-message" ng-class="{'message-you': msg.fromUser.userId === vm.currentUser.userId, 'message-other': msg.fromUser.userId !== vm.currentUser.userId}" style="padding: 12px; margin-bottom: 12px; border-radius: 8px; max-width: 80%; word-wrap: break-word;">
+            <div>
+                <strong>{{msg.fromUser.userId === vm.currentUser.userId ? 'You' : msg.fromUser.username}}:</strong>
+                {{msg.message}}
+            </div>
+            <div ng-if="msg.attachment">
+                <img ng-if="msg.attachment.startsWith('data:image/')" ng-src="{{msg.attachment}}" class="chat-attachment" ng-click="vm.showImageModal(msg.attachment)" style="max-width: 200px; max-height: 200px; border-radius: 4px; margin-top: 8px; cursor: pointer;">
+                
+                <div ng-if="msg.attachment.startsWith('data:application/pdf')" class="pdf-attachment" style="margin-top: 8px;">
+                    <strong>PDF:</strong>
+                    <a href="#" ng-click="vm.downloadPdf(msg.attachment, 'invoice.pdf')" class="pdf-download-link" style="color: #3498db; text-decoration: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" style="fill: #3498db; margin-right: 5px;">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Download PDF
+                    </a>
+                </div>
+            </div>
+            <div class="timestamp" style="font-size: 0.75rem; margin-top: 4px; opacity: 0.7;">{{msg.createdAt | date:'medium'}}</div>
+        </div>
+    </div>
+
+    <div class="chat-input" style="display: flex; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px; align-items: center;">
+        <input type="text" ng-model="vm.newMessage" placeholder="Type a message..." ng-keypress="$event.keyCode === 13 && vm.sendMessage()" style="flex-grow: 1; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px;">
+
+        <label for="chat-file-input" class="chat-file-label" style="cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" style="fill: #0d6efd;">
+                <path d="M16 9V7a4 4 0 0 0-8 0v10a2 2 0 0 0 4 0V7a1 1 0 1 1 2 0v10a4 4 0 0 1-8 0V7a6 6 0 1 1 12 0v2h-2z" />
+            </svg>
+        </label>
+        <input type="file" id="chat-file-input" ng-model="vm.fileInput" ng-value="vm.fileInput" class="chat-file-input" accept="image/*,video/*,application/pdf" onchange="angular.element(this).scope().vm.handleFileSelect(this.files)" style="display: none;">
+
+        <button ng-click="vm.sendMessage()" class="send-button" style="background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" style="fill: #007bff;">
+                <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="modal" ng-show="vm.showModal" style="display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+    <div class="modal-content" style="background-color: #fff; border-radius: 8px; padding: 20px; max-width: 90%; max-height: 90%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <span class="close" ng-click="vm.closeModal()" style="cursor: pointer; font-size: 2em; color: #aaa;">&times;</span>
+        <img ng-src="{{vm.modalImage}}" style="width: 100%;">
+    </div>
+</div>

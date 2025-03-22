@@ -1,0 +1,299 @@
+.message.sent {
+  margin-left: auto;
+  background-color: #3498db;
+  color: white;
+}
+
+.message.received {
+  margin-right: auto;
+  background-color: #e9ecef;
+  color: #2c3e50;
+}
+
+/* Buttons */
+
+.bid-form button {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.send-button:hover,
+.bid-form button:hover {
+  background: linear-gradient(135deg, #2a5298, #1e3c72);
+  transform: translateY(-2px);
+}
+/* 
+.price-info {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 300;
+} */
+
+.total-price-container {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  background-color: #e9ecef;
+  max-width: 100%;
+}
+
+.message-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.message-text {
+  flex-grow: 1;
+  word-wrap: break-word;
+}
+
+.timestamp {
+  font-size: 0.85em;
+  color: #888;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.chat-message img {
+  max-width: 100%;
+  max-height: 200px;
+  display: block;
+  margin-top: 10px;
+}
+
+.message-you {
+  background-color: #e5f0fc;
+  text-align: right;
+}
+.message-owner {
+  background-color: #e9ecef;
+  text-align: left;
+}
+.chat-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-input input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.chat-file-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chat-file-label svg {
+  width: 24px;
+  height: 24px;
+  fill: #0d6efd;
+  transition: transform 0.3s ease;
+}
+
+.chat-file-label:hover svg {
+  transform: scale(1.1);
+}
+
+.chat-file-input {
+  display: none !important;
+}
+
+.sent {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+}
+
+.received {
+  background-color: #e9ecef;
+  color: black;
+  text-align: left;
+}
+
+.send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 32px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.send-button svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+.send-button:hover {
+  background-color: #0b5ed7;
+}
+
+.rental-type-buttons button {
+  width: 120px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.info-button svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.bid-page {
+  width: 100%;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bid-page .car-section {
+  gap: 20px;
+}
+
+.bid-page .chat-messages {
+  min-height: 278px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  background: #f8f9fa;
+}
+
+.bid-page .chat-message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.bid-page .message-you {
+  margin-left: auto;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.bid-page .message-owner {
+  margin-right: auto;
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.bid-page .chat-input-container {
+  padding: 15px;
+  background: #fff;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  gap: 10px;
+}
+
+.bid-page .bid-form-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bid-page .modal {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+}
+
+.bid-page .modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bid-page .toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.bid-page {
+  max-width: 1230px;
+  margin: 0px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

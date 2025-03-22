@@ -1,0 +1,104 @@
+<div class="panel panel-default car-details" style="background: white; border-radius: 8px; padding: 20px;">
+    <div class="panel-body">
+        <div class="car-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>{{$ctrl.car.carName}}</h2>
+            <span class="label label-info">{{$ctrl.car.category.categoryName}}</span>
+        </div>
+
+        <div class="car-images" style="position: relative; margin-bottom: 24px;">
+            <div uib-carousel active="active" no-wrap="false" no-pause="true">
+                <div uib-slide ng-repeat="image in $ctrl.car.images track by $index" index="$index">
+                    <img ng-src="{{image}}" alt="Car Image {{$index + 1}}" class="carousel-image" style="width: 100%; height: 200px; object-fit: fit; border-radius: 8px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="car-info" style="padding: 20px 0;">
+            <div class="owner-info" style="display: flex; justify-content: revert-layer; padding: 16px; background: #ffffff; border-radius: 8px; margin-bottom: 24px; flex-direction: column;">
+                <h3>Car Details</h3><br>
+                <div class="info-row" style="display: flex; justify-content: space-between; gap: 24px; margin-bottom: 20px;">
+                    <div class="info-item">
+                        <label style="color: #6c757d; margin-right: 8px;">Type:</label>
+                        <span>{{$ctrl.car.carType}}</span>
+                    </div>
+                    <div class="info-item">
+                        <label style="color: #6c757d; margin-right: 8px;">City:</label>
+                        <span>{{$ctrl.car.city}}</span>
+                    </div>
+                </div>
+                <p>Owner Name : {{$ctrl.car.owner.username}}
+                <div class="rating" style="white-space: nowrap; margin-top: 8px;">
+                    <span class="stars" style="color: #ffd700; letter-spacing: 2px;">★★★★★</span>
+                    <span class="rating-value" style="margin-left: 8px; font-weight: bold;">{{$ctrl.car.owner.avgRating | number:1}}</span>
+                    <span class="rating-count" style="color: #6c757d; font-size: 14px;">({{$ctrl.car.owner.ratingCount}} ratings)</span>
+                </div>
+                </p>
+
+                <div class="description" style="margin-bottom: 24px;">
+                    Description :
+                    <p>{{$ctrl.car.description}}</p>
+                </div>
+                <div class="availability" style="display: flex; justify-content: space-between; gap: 16px;">
+                    <div class="availability-item" ng-if="$ctrl.car.isAvailableForLocal" style="color: #198754; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-check"></i> Available for Local Rentals
+                        <button class="info-button" ng-mouseenter="$ctrl.showLocalInfo = true"
+                            ng-mouseleave="$ctrl.showLocalInfo = false" style="background: none; border: none; padding: 0; margin-left: 8px; cursor: pointer; position: relative; color: #6c757d;">
+                            <i class="fa fa-info-circle"></i>
+                            <div class="info-tooltip" ng-show="$ctrl.showLocalInfo" style="position: absolute; bottom: calc(100% + 10px); right: -10px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 280px; z-index: 1000; text-align: left;">
+                                <h4 style="margin: 0 0 10px; color: #2c3e50; font-size: 14px; font-weight: 600;">Local Rental Rates</h4>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Base Rate:</span> ₹{{$ctrl.car.rentalOptions.local.pricePerHour}}/hour
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Distance Limit:</span> {{$ctrl.car.rentalOptions.local.maxKmPerHour}}km/hour
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Additional Hourly Rate:</span>
+                                    ₹{{$ctrl.car.rentalOptions.local.extraHourRate}}/hour
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Additional KM Rate:</span> ₹{{$ctrl.car.rentalOptions.local.extraKmRate}}/km
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="availability-item" ng-if="$ctrl.car.isAvailableForOutstation" style="color: #198754; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-check"></i> Available for Outstation Rentals
+                        <button class="info-button" ng-mouseenter="$ctrl.showOutstationInfo = true"
+                            ng-mouseleave="$ctrl.showOutstationInfo = false" style="background: none; border: none; padding: 0; margin-left: 8px; cursor: pointer; position: relative; color: #6c757d;">
+                            <i class="fa fa-info-circle"></i>
+                            <div class="info-tooltip" ng-show="$ctrl.showOutstationInfo" style="position: absolute; bottom: calc(100% + 10px); right: -10px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 280px; z-index: 1000; text-align: left;">
+                                <h4 style="margin: 0 0 10px; color: #2c3e50; font-size: 14px; font-weight: 600;">Outstation Rental Rates</h4>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Daily Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.pricePerDay}}/day
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Per KM Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.pricePerKm}}/km
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Daily KM Limit:</span>
+                                    {{$ctrl.car.rentalOptions.outstation.maxKmLimitPerDay}}km
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Min. KM Charge:</span>
+                                    {{$ctrl.car.rentalOptions.outstation.minimumKmChargeable}}km
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Extra Day Rate:</span>
+                                    ₹{{$ctrl.car.rentalOptions.outstation.extraDayRate}}/day
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Extra Hour Rate:</span>
+                                    ₹{{$ctrl.car.rentalOptions.outstation.extraHourlyRate}}/hour
+                                </div>
+                                <div class="rate-item" style="margin: 5px 0; font-size: 13px; color: #4a5568;">
+                                    <span style="font-weight: 500; color: #2d3748; display: inline-block; width: 110px;">Extra KM Rate:</span> ₹{{$ctrl.car.rentalOptions.outstation.extraKmRate}}/km
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

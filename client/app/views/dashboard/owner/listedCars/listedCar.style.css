@@ -1,0 +1,26 @@
+.edit-car-btn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.listedCars-content {
+  flex: 0 0 73% !important;
+  /* max-width: 74% !important; */
+  padding: 20px !important;
+  background-color: #fff !important;
+  border-radius: 2px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+.edit-car-btn:hover {
+  background-color: #1976d2;
+}
+
+.edit-car-btn:active {
+  background-color: #1565c0;
+}

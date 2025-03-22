@@ -1,0 +1,81 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Authentication API",
+      "description": "This is a simple API for authentication",
+      "version": "1.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8000/api/auth"
+      }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "summary": "Register a new user",
+          "description": "This endpoint allows a new user to register by providing their details and a verification file.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "The username of the user"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "description": "The email address of the user"
+                    },
+                    "password": {
+                      "type": "string",
+                      "description": "The password of the user"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": ["customer", "admin", "owner"],
+                      "description": "The role of the user"
+                    },
+                    "verificationFile": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "The verification file to be uploaded"
+                    }
+                  },
+                  "required": ["username", "email", "password", "role", "verificationFile"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User registered successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "token": {
+                        "type": "string",
+                        "description": "JWT token for the registered user"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request, user already exists or invalid input"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      }
+    }
+  }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carental! At Your Service</title>
+    <base href="/">
+    <link rel="icon" type="image/png" sizes="32x32" href="/app/assets/images/favicon.ico">
+
+    <!-- Third-party CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-csp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+
+    <!-- Application CSS -->
+    <link rel="stylesheet" href="app/assets/style/index.style.css">
+    <link rel="stylesheet" href="app/views/home/home.style.css">
+    <link rel="stylesheet" href="app/components/navbar/navbar.style.css">
+    <link rel="stylesheet" href="app/views/auth/login/login.style.css">
+    <link rel="stylesheet" href="app/views/bid/bid.style.css">
+    <link rel="stylesheet" href="app/components/carDetails/carDetails.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/userDashboard.style.css">
+    <link rel="stylesheet" href="app/components/userSidebar/usersidebar.style.css">
+    <link rel="stylesheet" href="app/components/ownerSidebar/ownersidebar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/bids/allbids.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/messages/messages.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/user/messages/message/message.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/admin/admin.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/admin/analytics/analytics.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/ownerDashboard.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/home/home.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/listedCars/listedCar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/manipulatecar/manipulatecar.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/allChats/allChats.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/allChats/chat/chat.style.css">
+    <link rel="stylesheet" href="app/views/dashboard/owner/analytics/analytics.style.css">
+
+    <!-- Core Libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+
+    <!-- Third-party Libraries -->
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.6/async.min.js"
+        integrity="sha512-Ps4UroO9GAII8QTM2IE4KcHjslTEZjoZY6OhztAFKSnnqshNnPR8PQl1usQpGiHQXnyRCwEMZAsVJgGg2z8Kog=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngInfiniteScroll/1.3.4/ng-infinite-scroll.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <!-- Application Scripts -->
+    <script src="app.js"></script>
+
+    <!-- Factories  -->
+    <script src="app/factories/schemaValidator.factory.js"></script>
+    <script src="app/factories/idGenerator.factory.js"></script>
+
+    <!-- Services  -->
+    <script src="app/services/db.service.js"></script>
+    <script src="app/services/cars.service.js"></script>
+    <script src="app/services/category.service.js"></script>
+    <script src="app/services/city.service.js"></script>
+    <script src="app/services/seed.service.js"></script>
+    <script src="app/services/auth.service.js"></script>
+    <script src="app/services/errorService.service.js"></script>
+    <script src="app/services/bid.service.js"></script>
+    <script src="app/services/chat.service.js"></script>
+    <script src="app/services/user.service.js"></script>
+    <script src="app/services/booking.service.js"></script>
+    <script src="app/services/analytics.service.js"></script>
+
+    <!-- Directives  -->
+    <script src="app/directives/rating.directive.js"></script>
+    <script src="app/directives/compareTo.directive.js"></script>
+    <script src="app/directives/bidDateValidation.directive.js"></script>
+    <script src="app/directives/fileInput.directive.js"></script>
+
+    <!-- Controllers  -->
+    <script src="app/components/navbar/navbar.controller.js"></script>
+    <script src="app/views/home/home.controller.js"></script>
+    <script src="app/views/auth/login/login.controller.js"></script>
+    <script src="app/views/auth/register/register.controller.js"></script>
+    <script src="app/views/bid/bid.controller.js"></script>
+    <script src="app/views/dashboard/user/bookings/bookings.controller.js"></script>
+    <script src="app/views/dashboard/user/userDashboard.controller.js"></script>
+    <script src="app/views/dashboard/user/profile/profile.controller.js"></script>
+    <script src="app/views/dashboard/user/bids/allbids.controller.js"></script>
+    <script src="app/views/dashboard/user/messages/messages.controller.js"></script>
+    <script src="app/views/dashboard/user/messages/message/message.controller.js"></script>
+    <script src="app/views/dashboard/admin/admin.controllers.js"></script>
+    <script src="app/views/dashboard/admin/analytics/analytics.controller.js"></script>
+    <script src="app/views/dashboard/owner/ownerDashboard.controller.js"></script>
+    <script src="app/views/dashboard/owner/home/home.controller.js"></script>
+    <script src="app/views/dashboard/owner/listedCars/listedCars.controller.js"></script>
+    <script src="app/views/dashboard/owner/manipulatecar/manipulatecar.controller.js"></script>
+    <script src="app/views/dashboard/owner/allChats/allChats.controller.js"></script>
+    <script src="app/views/dashboard/owner/allChats/chat/chat.controller.js"></script>
+    <script src="app/views/dashboard/owner/analytics/analytics.controller.js"></script>
+    <script src="app/components/modals/addCategory/addCategoryModal.controller.js"></script>
+    <script src="app/components/modals/userApproval/userApprovalModal.controller.js"></script>
+    <script src="app/components/modals/addKmModal/addKmModal.controller.js"></script>
+    <!-- Components -->
+    <script src="app/components/bid/bid.component.js"></script>
+    <script src="app/components/chat/chat.component.js"></script>
+    <script src="app/components/priceModal/priceModal.component.js"></script>
+    <script src="app/components/carDetails/carDetails.component.js"></script>
+    <script src="app/components/carCard/carCard.component.js"></script>
+    <script src="app/components/userSidebar/usersidebar.component.js"></script>
+    <script src="app/components/ownerSidebar/ownersidebar.component.js"></script>
+
+    <!-- Configurations -->
+    <script src="app/config/routes.config.js"></script>
+
+    <!-- Filters -->
+    <script src="app/filters/car.filters.js"></script>
+    <script src="app/filters/price.filters.js"></script>
+
+</head>
+
+<body ng-app="mainApp">
+    <div ng-include="'app/components/navbar/navbar.view.html'" ng-controller="NavbarController as vm"></div>
+    <div ui-view></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="footer text-center bg-primary text-white w-100 rounded shadow">
+                    &copy; 2025 Car Rental. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

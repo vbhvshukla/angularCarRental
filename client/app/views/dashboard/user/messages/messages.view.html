@@ -1,0 +1,15 @@
+<div class="messages-content" ng-controller="UserMessagesController" ng-init="vm.init()" style="padding: 20px; width: 100%; border-radius: 8px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1); min-height: 450px; display: flex; flex-direction: column; justify-content: space-between;">
+    <h2>All Conversations</h2>
+    <div id="message-list" class="message-list" style="white-space: nowrap !important; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px; min-height: 300px;">
+        <p class="no-messages" ng-if="!vm.messages.length" style="text-align: center; font-size: 16px; color: #888; padding: 30px 0;">No conversations</p>
+        <div ng-repeat="message in vm.messages" ng-click="vm.goToMessagePage(message.chatId)" style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; transition: background 0.3s; cursor: pointer;">
+            <img ng-src="{{vm.message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
+            <div class="message-content" style="overflow: hidden; white-space: nowrap; flex-grow: 1;">
+                <div class="name" style="font-weight: bold; color: #2c3e50; margin-bottom: 5px;">{{message.owner.username}}</div>
+                &nbsp;&nbsp;
+                <div class="last-message" style="color: #555; font-size: 14px; margin-bottom: 5px;">{{message.lastMessage}}</div>
+                <div class="timestamp" style="font-size: 0.9em; color: #888;">{{message.lastTimestamp}}</div>
+            </div>
+        </div>
+    </div>
+</div>

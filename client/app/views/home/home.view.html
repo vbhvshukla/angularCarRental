@@ -1,0 +1,116 @@
+<div class="container home-main" ng-controller="HomeController as vm" ng-init="vm.init()"
+    style="gap: 20px !important; background-color: white; width: 76.3%; color: #3c4248;">
+    <div class="row">
+        <div class="col-md-3 sidebar" style="box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) !important;">
+            <h3 style="margin-top: 25px; margin-bottom: 15px; color: #337ab7; font-size: 1.75rem;">Search for Cars</h3>
+            <form>
+                <!-- Angular-ui-bootstrap's uib-typeahead component -->
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" ng-model="vm.filters.location"
+                        uib-typeahead="city for city in vm.cities | filter:$viewValue" typeahead-min-length="2"
+                        class="form-control" placeholder="Enter city or area" list="city-list"
+                        style="width: 100%; padding: 12px; height: 40px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                </div>
+
+                <div class="form-group">
+                    <label for="car-category">Car Category:</label>
+                    <select id="car-category" ng-model="vm.filters.carCategory" class="form-control"
+                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                        <option value="">All Category</option>
+                        <option ng-repeat="category in vm.categories" value="{{category.categoryId}}">
+                            {{category.categoryName}}
+                        </option>
+                    </select>
+                </div>
+
+                <h3>Filter by</h3>
+
+                <div class="form-group">
+                    <label for="price-range">Price Range: {{vm.filters.priceRange}}</label>
+                    <div>
+                        <input type="range" id="price-range" ng-model="vm.filters.priceRange" min="0" max="1000"
+                            step="50" ng-model-options="{ debounce: 300 }" class="form-control"
+                            style="flex: 2; appearance: none; -webkit-appearance: none; height: 2px; background: #ffffff; border-radius: 5px; outline: none; transition: 0.3s;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="car-type">Car Type:</label>
+                    <select id="car-type" ng-model="vm.filters.carType" class="form-control"
+                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                        <option value="">Select Type</option>
+                        <option value="automatic">Automatic</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="availability">Availability:</label>
+                    <select id="availability" ng-model="vm.filters.availability" class="form-control"
+                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                        <option value="">Select Availability</option>
+                        <option value="local">Local</option>
+                        <option value="outstation">Outstation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="features">Features:</label>
+                    <input type="text" id="features" ng-model="vm.filters.features" placeholder="e.g., AC, Bluetooth"
+                        list="features-list" class="form-control"
+                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <datalist id="features-list">
+                        <option ng-repeat="feature in vm.features" value="{{feature}}">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Minimum Rating:</label>
+                    <select id="rating" ng-model="vm.filters.rating" class="form-control"
+                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                        <option value="">Select Rating</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                    </select>
+                </div>
+                <button type="submit" ng-click="vm.applyFilters()" uib-tooltip="Apply all filters"
+                    tooltip-placement="left" class="btn btn-primary btn-block"
+                    style="color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 400; cursor: pointer; transition: all 0.3s; width: 100%;">Filter</button>
+            </form>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="cars-container"
+                        style="margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+                        <car-card ng-repeat="car in vm.cars | orderBy : '-createdAt'" car="car" button-text="Book Now"
+                            button-class="btn btn-primary btn-block" on-button-click="vm.goToBooking(car._id)"
+                            show-button="true">
+                        </car-card>
+
+                        <div class="loading-more text-center" ng-if="vm.pagination.loading"
+                            style="width: 100%; text-align: center; padding: 20px;">
+                            <div class="spinner"
+                                style="display: inline-block; width: 120px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
+                            </div>
+                        </div>
+
+                        <div class="load-more-container text-center"
+                            ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems"
+                            style="margin-top: 0; padding: 20px 0; width: 120px;">
+                            <button class="btn btn-primary" ng-click="vm.loadMoreCars()"
+                                style="background-color: #3498db; width: 120px; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background-color 0.3s ease;">
+                                Load More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

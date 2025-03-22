@@ -1,0 +1,73 @@
+.home-main {
+  gap: 20px !important;
+  background-color: white;
+  width: 76.3%;
+  color: #3c4248;
+}
+
+.carousel-image {
+  min-width: 100%;
+  transition: opacity 0.5s ease;
+  height: 200px;
+  object-fit: contain;
+}
+
+.carousel .carousel-indicators {
+  bottom: 0;
+}
+
+.carousel-indicators li {
+  opacity: 0;
+  border: 1px solid #666;
+}
+
+.carousel-indicators .active {
+  background-color: #666;
+}
+
+.carousel-control {
+  background-image: none !important;
+}
+
+.stars {
+  color: #f1c40f;
+}
+
+.loading-more {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-more .spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .car-card {
+    width: calc(50% - 10px);
+  }
+
+  .main {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

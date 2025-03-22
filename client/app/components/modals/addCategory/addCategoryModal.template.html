@@ -1,0 +1,11 @@
+<div class="modal-header">
+    <h2>Add Category</h2>
+    <button type="button" class="close" ng-click="vm.closeAddCategoryModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <form ng-submit="vm.createCategory()">
+        <label for="category-name">Category Name</label>
+        <input type="text" id="category-name" ng-model="vm.newCategory.categoryName" required class="form-control">
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Add Category</button>
+    </form>
+</div>

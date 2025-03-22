@@ -1,0 +1,25 @@
+<div class="container bid-page" ng-controller="BiddingController as vm" ng-init="vm.init()" style="max-width: 1230px; margin: 0px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px;">
+    <div class="bid-main col-md-12">
+        <div ng-if="vm.loading" class="loading-spinner">
+            Loading...
+        </div>
+
+        <div ng-if="!vm.loading">
+            <div class="car-section" style="width: 100%;height: 80%; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                <car-details car="vm.car"></car-details>
+            </div>
+
+            <div class="bid-chat-container" style="display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px;">
+                <div class="bid-section" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <bid-form car-id="vm.car._id" car="vm.car" on-bid-submit="vm.handleBidSubmit(bid)" is-submitting="vm.isSubmitting">
+                    </bid-form>
+                </div>
+
+                <div class="chat-section" ng-if="vm.chatId" style="display: flex; height: 100%; flex-direction: column; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <chat-box chat-id="vm.chatId" from-user="vm.currentUser" to-user="vm.car.owner">
+                    </chat-box>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,134 @@
+.dashboard-layout {
+  width: 78%;
+  min-height: 100vh;
+  /* background-color: white; */
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 0px;
+  margin: 0px auto;
+  margin-left: 160px;
+}
+
+.dashboard-content {
+  padding: 20px;
+  flex: 0 0 75%;
+  margin: 0;
+  border-left: 1px solid #646464;
+  /* border-block-end-style: dashed; */
+  background-color: white;
+  min-width: 0;
+}
+
+.dashboard-page {
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.profile-section {
+  width: 100%;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.profile-section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 2.25rem;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.form-group input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.rating-info {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  display: flex;
+  gap: 20px;
+}
+
+.verification-file {
+  margin: 20px 0;
+}
+
+.verification-file img {
+  max-width: 200px;
+  border-radius: 4px;
+}
+
+.verification-file a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.password-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.password-section h3 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+

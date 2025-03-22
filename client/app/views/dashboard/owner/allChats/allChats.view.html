@@ -1,0 +1,25 @@
+<div class="allChats-content" ng-controller="OwnerAllChatsController as vm" ng-init="vm.init()" style="width: 100%; padding: 20px; background: #fff; border-radius: 8px;">
+    <h2>All Conversations</h2>
+    <div id="message-list" class="message-list" style="margin-top: 20px;">
+        <div ng-if="vm.loading" class="loading-messages" style="display: flex; justify-content: center; align-items: center; min-height: 200px;">
+            <div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+        
+        <div ng-if="!vm.loading && !vm.conversations.length" class="no-messages" style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 1.1em;">
+            No conversations yet
+        </div>
+
+        <div ng-repeat="chat in vm.conversations | orderBy:'-lastTimestamp'" class="message-item" ng-click="vm.goToChat(chat.chatId)" style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s ease;">
+            <img ng-src="{{chat.user.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="{{chat.user.username}}'s profile" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover;">
+            <div class="message-content" style="flex: 1;">
+                <div class="message-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <span class="username" style="font-weight: 600; color: #2c3e50;">{{chat.user.username}}</span>
+                    <span class="timestamp" style="font-size: 0.85em; color: #7f8c8d;">{{chat.lastTimestamp | date:'MMM d, y h:mm a'}}</span>
+                </div>
+                <div class="last-message" ng-class="{'no-message': !chat.lastMessage}" style="color: #34495e; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px;">
+                    {{chat.lastMessage || 'No messages yet'}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

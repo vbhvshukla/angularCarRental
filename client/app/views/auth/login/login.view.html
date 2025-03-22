@@ -1,0 +1,34 @@
+<div class="container auth-container" ng-controller="LoginController as vm" style="display: flex; justify-content: center; align-items: center; background-color: white; min-height: 100vh; margin: 0 auto; padding: 20px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 auth-box text-center" style="padding: 30px; width: 350px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); max-width: 100%;">
+            <h2 style="font-size: 1.8rem; color: #2c3e50; margin-bottom: 10px;">Welcome Back!</h2>
+            <p class="subtext" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">Login to continue renting cars.</p>
+
+            <form name="loginForm" ng-submit="vm.login()" novalidate>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="email" style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Email:</label>
+                    <input id="email" type="email" name="email" ng-model="vm.credentials.email" placeholder="Enter your email" required style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="loginForm.email.$dirty && loginForm.email.$invalid" style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="loginForm.email.$error.required">Email is required.</span>
+                        <span ng-show="loginForm.email.$error.email">Please enter a valid email.</span>
+                    </p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="password" style="display: block; margin-bottom: 5px; font-weight: 500; color: #34495e;">Password:</label>
+                    <input id="password" type="password" name="password" ng-model="vm.credentials.password" ng-minlength="6" placeholder="Enter your password" required style="width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <p class="error-message" ng-show="loginForm.password.$dirty && loginForm.password.$invalid" style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">
+                        <span ng-show="loginForm.password.$error.required">Password is required.</span>
+                        <span ng-show="loginForm.password.$error.minlength">Password must be at least 6 characters.</span>
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" ng-disabled="loginForm.$invalid" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%;">Login</button>
+
+                <p class="error-message" ng-show="vm.errorMessage" style="color: red; font-size: 0.85rem; display: block; margin-top: 5px;">{{vm.errorMessage}}</p>
+
+                <p class="switch-page" style="font-size: 0.9rem; margin-top: 10px;">Not registered? <a ui-sref="register" style="color: #3498db; text-decoration: none;">Sign up here</a></p>
+            </form>
+        </div>
+    </div>
+</div>

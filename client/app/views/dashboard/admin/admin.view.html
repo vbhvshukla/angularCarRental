@@ -1,0 +1,129 @@
+<div class="admin-main" ng-controller="AdminController as vm" ng-init="vm.init()"
+    style="width: 100%; background-color: white; display: flex; flex-direction: column; gap: 20px; max-width: 1164px; justify-self: center;">
+    <div class="section"
+        style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin-top: 0;">Users</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th ng-click="vm.sortBy('role')" class="sortable" style="cursor: pointer;">Role<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('rating')" class="sortable" style="cursor: pointer;">Rating<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('ratingCount')" class="sortable" style="cursor: pointer;">Rating Count<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('isApproved')" class="sortable" style="cursor: pointer;">Approved<span class="caret"></span></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    ng-repeat="user in vm.users | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentPage - 1) * vm.itemsPerPage">
+                    <td>{{user.username}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.role}}</td>
+                    <td>{{user.avgRating}}</td>
+                    <td>{{user.ratingCount}}</td>
+                    <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
+                    <td>
+                        <button class="btn btn-primary" ng-click="vm.showUserApprovalModal(user)">Manage</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul uib-pagination total-items="vm.totalUsers" ng-model="vm.currentPage" max-size="5" items-per-page="5"
+            class="pagination"></ul>
+    </div>
+
+    <div class="section"
+        style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin-top: 0;">Cars</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Car Name</th>
+                    <th ng-click="vm.sortBy('categoryName')" class="sortable" style="cursor: pointer;">Category<span class="caret"></span></th>
+                    <th>Owner</th>
+                    <th>City</th>
+                    <th ng-click="vm.sortBy('basePrice')" class="sortable" style="cursor: pointer;">Base Price<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('rating')" class="sortable" style="cursor: pointer;">Rating<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('ratingCount')" class="sortable" style="cursor: pointer;">Rating Count<span class="caret"></span></th>
+                    <th ng-click="vm.sortBy('availability')" class="sortable" style="cursor: pointer;">Available<span class="caret"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    ng-repeat="car in vm.cars | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCarPage - 1) * vm.itemsPerPage">
+                    <td>{{car.carName}}</td>
+                    <td>{{car.category.categoryName}}</td>
+                    <td>{{car.owner.username}}</td>
+                    <td>{{car.city}}</td>
+                    <td>Local : {{car.rentalOptions.local.pricePerHour | price}} </br> Outstation :
+                        {{car.rentalOptions.outstation.pricePerDay | price}}</td>
+                    <td>{{car.avgRating}}</td>
+                    <td>{{car.ratingCount}}</td>
+                    <td>Local : {{car.isAvailableForLocal ? 'Yes' : 'No'}} </br> Outstation :
+                        {{car.isAvailableForOutstation ? 'Yes' : 'No'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <ul uib-pagination total-items="vm.totalCars" ng-model="vm.currentCarPage" max-size="5"
+            items-per-page="vm.itemsPerPage" class="pagination"></ul>
+    </div>
+
+    <div class="section"
+        style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin-top: 0;">Categories</h3>
+        <button class="btn btn-info" ng-click="vm.showAddCategoryModal()">Add Category</button>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    ng-repeat="category in vm.categories | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCategoryPage - 1) * vm.itemsPerPage">
+                    <td>{{category.categoryName}}</td>
+                    <td>
+                        <button class="btn btn-danger" ng-click="vm.deleteCategory(category)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul uib-pagination total-items="vm.totalCategories" ng-model="vm.currentCategoryPage" max-size="5"
+            items-per-page="5" class="pagination"></ul>
+        <div style="margin-top: 20px;">
+            <button class="btn btn-warning" ng-click="vm.testingRollback()">Test Rollback</button>
+        </div>
+    </div>
+
+    <!-- <div class="modal" ng-show="vm.showUserModal"
+        style="display: block; position: fixed; z-index: 1; left: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); opacity: 1; transition: opacity 0.3s ease-in-out;">
+        <div class="modal-content"
+            style="background-color: #fff; margin: 0% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 3px;">
+            <div class="modal-header">
+                <h2>User Approval</h2>
+                <button type="button" class="close" ng-click="vm.closeUserModal()"
+                    style="color: #aaa; float: right; font-size: 28px; padding: 5px; align-items: center; width: 40px; height: 40px; font-weight: bold; position: relative; top: -30px;">&times;</button>
+            </div>
+            <div class="modal-body" ng-if="vm.selectedUser">
+                <div class="user-details"
+                    style="display: flex; flex-direction: column; padding: 10px; border-bottom: 1px solid #ccc;">
+                    <p>Username: {{vm.selectedUser.username}}</p>
+                    <p>Email: {{vm.selectedUser.email}}</p>
+                    <label for="verificationFile">Verification File : </label>
+                    <p><img ng-src={{vm.selectedUser.verificationFile}} style="display: flex; border-radius: 2px;"></p>
+                </div>
+                <div class="approval-buttons" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button class="btn btn-success" ng-click="vm.approveUser()" ng-disabled="vm.selectedUser.isApproved"
+                        title="{{vm.selectedUser.isApproved ? 'User already approved' : 'Approve user'}}">{{vm.selectedUser.isApproved
+                        ? 'Approved' : 'Approve'}}</button>
+                    <button class="btn btn-danger" ng-click="vm.rejectUser()">{{vm.selectedUser.isApproved ? 'Block' :
+                        'Reject'}}</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+</div>

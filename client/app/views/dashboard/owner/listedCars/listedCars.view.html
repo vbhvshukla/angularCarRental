@@ -1,0 +1,13 @@
+<div class="listedCars-content" ng-controller="OwnerListedCarsController as vm" ng-init="vm.init()">
+    <h2>Your Cars</h2>
+    <div id="cars-container" class="cars-container">
+        <car-card 
+            ng-repeat="car in vm.cars"
+            car="car"
+            button-text="Edit Car"
+            button-class="edit-button"
+            on-button-click="vm.editCar(car._id)"
+            show-button="true">
+        </car-card>
+    </div>
+</div>
