@@ -35,7 +35,7 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authS
                         .catch(err => callback(err));
                 },
                 function (user, callback) {
-                    bookingService.getUserBookings(user.userId, vm.currentPage, vm.filters)
+                    bookingService.getUserBookings(user._id, vm.currentPage, vm.filters)
                         .then(bookings => callback(null, { bookings }))
                         .catch(err => callback(err));
                 }

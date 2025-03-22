@@ -8,106 +8,143 @@ mainApp.service('bidService', ['$http', '$q', 'carService', 'errorService',
          * @returns resolved or rejected promise.
          */
         this.calculateEstimate = function (carId, bidData) {
-            return $http.post('http://127.0.0.1:8006/api/v1/bid/calculateestimate', { carId, bidData })
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: Estimate Failed', error));
+            const deferred = $q.defer();
+            $http.post('http://127.0.0.1:8006/api/v1/bid/calculateestimate', { carId, bidData })
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: Estimate Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function submitBid
-         * @description saves the bid in the backend
+         * Submit a bid
          * @param {*} carId 
          * @param {*} bidData 
          * @param {*} userData 
          * @returns resolved or rejected promise.
          */
         this.submitBid = function (carId, bidData, userData) {
-            return $http.post('http://127.0.0.1:8006/api/v1/bid/submit', { carId, bidData, userData })
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: Submit Failed', error));
+            const deferred = $q.defer();
+            $http.post('http://127.0.0.1:8006/api/v1/bid/submit', { carId, bidData, userData })
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: Submit Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function checkDateAvailability()
+         * Check date availability
          * @param {*} carId 
          * @param {*} startDate 
          * @param {*} endDate 
-         * @returns boolean.
+         * @returns resolved or rejected promise.
          */
         this.checkDateAvailability = function (carId, startDate, endDate) {
-            return $http.get(`http://127.0.0.1:8006/api/v1/bid/checkavailability?carId=${carId}&startDate=${startDate}&endDate=${endDate}`)
-                .then(response => response.data.isAvailable)
-                .catch(error => errorService.handleError('BidService :: Availability Check Failed', error));
+            const deferred = $q.defer();
+            $http.get(`http://127.0.0.1:8006/api/v1/bid/checkavailability?carId=${carId}&startDate=${startDate}&endDate=${endDate}`)
+                .then(response => deferred.resolve(response.data.isAvailable))
+                .catch(error => {
+                    errorService.handleError('BidService :: Availability Check Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function getBidsByUser()
+         * Get bids by user
          * @param {*} userId 
-         * @returns all bids of a user
+         * @returns resolved or rejected promise.
          */
         this.getBidsByUser = function (userId) {
-            return $http.get(`http://127.0.0.1:8006/api/v1/bid/userbids/${userId}`)
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: User Bids Fetch Failed', error));
+            const deferred = $q.defer();
+            $http.get(`http://127.0.0.1:8006/api/v1/bid/userbids/${userId}`)
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: User Bids Fetch Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function getBidsByCar
-         * @description Get Bids By CarId
+         * Get bids by car
          * @param {*} carId 
-         * @returns 
+         * @returns resolved or rejected promise.
          */
         this.getBidsByCar = function (carId) {
-            return $http.get(`http://127.0.0.1:8006/api/v1/bid/carbids/${carId}`)
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: Car Bids Fetch Failed', error));
+            const deferred = $q.defer();
+            $http.get(`http://127.0.0.1:8006/api/v1/bid/carbids/${carId}`)
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: Car Bids Fetch Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function updateBidStatus()
-         * @description Update the bid's status
+         * Update bid status
          * @param {*} bidId 
          * @param {*} status 
-         * @returns 
+         * @returns resolved or rejected promise.
          */
         this.updateBidStatus = function (bidId, status) {
-            return $http.put(`http://127.0.0.1:8006/api/v1/bid/updatestatus/${bidId}`, { status })
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: Status Update Failed', error));
+            const deferred = $q.defer();
+            $http.put(`http://127.0.0.1:8006/api/v1/bid/updatestatus/${bidId}`, { status })
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: Status Update Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
 
         /**
-         * @function getBidById()
-         * @description Get Bid By its Id
+         * Get bid by ID
          * @param {*} bidId 
-         * @returns 
+         * @returns resolved or rejected promise.
          */
         this.getBidById = function (bidId) {
+            const deferred = $q.defer();
             if (!bidId) {
-                return $q.reject(new Error('Bid ID is required'));
+                deferred.reject(new Error('Bid ID is required'));
+            } else {
+                $http.get(`http://127.0.0.1:8006/api/v1/bid/getbid/${bidId}`)
+                    .then(response => deferred.resolve(response.data))
+                    .catch(error => {
+                        errorService.handleError('BidService :: Get Bid Failed', error);
+                        deferred.reject(error);
+                    });
             }
-            return $http.get(`http://127.0.0.1:8006/api/v1/bid/getbid/${bidId}`)
-                .then(response => response.data)
-                .catch(error => errorService.handleError('BidService :: Get Bid Failed', error));
+            return deferred.promise;
         };
 
         /**
-         * @function getBidsForOwner
-         * @description Get Bids For Owner
+         * Get bids for owner
          * @param {*} ownerId 
          * @param {*} page 
          * @param {*} limit 
          * @param {*} filters 
-         * @returns 
+         * @returns resolved or rejected promise.
          */
         this.getBidsForOwner = function (ownerId, page, limit, filters) {
+            const deferred = $q.defer();
             const params = {
                 page,
                 limit,
                 bidStatus: filters.bidStatus || 'all'
             };
-            return $http.get(`/api/v1/bid/ownerbids/${ownerId}`, { params })
-                .then(response => response.data);
+            $http.get(`http://127.0.0.1:8006/api/v1/bid/ownerbids/${ownerId}`, { params })
+                .then(response => deferred.resolve(response.data))
+                .catch(error => {
+                    errorService.handleError('BidService :: Owner Bids Fetch Failed', error);
+                    deferred.reject(error);
+                });
+            return deferred.promise;
         };
     }
 ]);

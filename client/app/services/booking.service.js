@@ -1,4 +1,4 @@
-mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerator', function ($q, dbService, errorService, idGenerator) {
+mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', 'idGenerator', function ($http, $q, dbService, errorService, idGenerator) {
 
     /**
      * Variable Declarations
@@ -75,75 +75,88 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
 
     /**
      * @function createBooking()
-     * @description Takes booking data adds it into DB.
+     * @description Takes booking data, checks car availability, creates a booking, and updates the car availability collection.
      * @param {*} bookingData 
      * @returns resolved/rejected promise.
      */
-
     service.createBooking = function (bookingData) {
-        let deferred = $q.defer();
+        const deferred = $q.defer();
 
-        // Calculate base fare and total amount
-        let calculatedBaseFare = service.calculateBaseFare(bookingData);
-        let calculatedTotalAmount = service.calculateTotalAmount(bookingData);
+        try {
+            // Calculate base fare and total amount
+            const calculatedBaseFare = service.calculateBaseFare(bookingData);
+            const calculatedTotalAmount = service.calculateTotalAmount(bookingData);
 
-        // Validate booking data
-        if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
-            throw new Error('Missing required booking information');
-        }
+            // Validate booking data
+            if (!bookingData || !bookingData.fromTimestamp || !bookingData.toTimestamp) {
+                throw new Error('Missing required booking information');
+            }
 
-        if (!bookingData.bidId || !bookingData.user || !bookingData.car) {
-            throw new Error('Invalid bid information');
-        }
+            if (!bookingData._id || !bookingData.user || !bookingData.car) {
+                throw new Error('Invalid bid information');
+            }
 
-        // Create booking object
-        const booking = {
-            bookingId: idGenerator.generate(),
-            fromTimestamp: bookingData.fromTimestamp,
-            toTimestamp: bookingData.toTimestamp,
-            status: 'confirmed',
-            createdAt: new Date().toISOString(),
-            rentalType: bookingData.rentalType,
-            bid: {
-                bidId: bookingData.bidId,
+            console.log(bookingData.car.carId, bookingData.fromTimestamp, bookingData.toTimestamp);
+
+            // Create booking object
+            const booking = {
                 fromTimestamp: bookingData.fromTimestamp,
                 toTimestamp: bookingData.toTimestamp,
-                status: 'accepted',
-                createdAt: bookingData.createdAt,
-                bidAmount: bookingData.bidAmount,
                 rentalType: bookingData.rentalType,
-                bidBaseFare: bookingData.bidBaseFare,
-                user: bookingData.user,
-                car: bookingData.car
-            },
-            baseFare: calculatedBaseFare,
-            extraKmCharges: 0,
-            extraHourCharges: 0,
-            totalFare: calculatedTotalAmount
-        };
+                bid: {
+                    _id: bookingData._id,
+                    fromTimestamp: bookingData.fromTimestamp,
+                    toTimestamp: bookingData.toTimestamp,
+                    status: 'accepted',
+                    createdAt: bookingData.createdAt,
+                    bidAmount: bookingData.bidAmount,
+                    rentalType: bookingData.rentalType,
+                    bidBaseFare: bookingData.bidBaseFare,
+                    user: bookingData.user,
+                    car: bookingData.car
+                },
+                baseFare: calculatedBaseFare,
+                extraKmCharges: 0,
+                extraHourCharges: 0,
+                extraDayCharges: 0,
+                totalFare: calculatedTotalAmount
+            };
 
-        // Check car availability
-        service.checkCarAvailability(
-            bookingData.car.carId,
-            bookingData.fromTimestamp,
-            bookingData.toTimestamp
-        )
-            .then(function (available) {
-                if (!available) {
-                    throw new Error('Car is not available for selected dates');
-                }
+            // Check car availability
+            service.checkCarAvailability(
+                bookingData.car.carId,
+                bookingData.fromTimestamp,
+                bookingData.toTimestamp
+            )
+                .then(function (availabilityResponse) {
+                    if (!availabilityResponse.isAvailable) {
+                        throw new Error('Car is not available for selected dates');
+                    }
 
-                // Save booking to the backend
-                return $http.post('/api/v1/booking/create', booking);
-            })
-            .then(function (response) {
-                errorService.logSuccess('Booking created successfully!');
-                deferred.resolve(response.data);
-            })
-            .catch(function (error) {
-                errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
-                deferred.reject(error);
-            });
+                    // Save booking to the backend
+                    return $http.post('http://127.0.0.1:8006/api/v1/booking/create', booking);
+                })
+                .then(function (response) {
+                    const createdBooking = response.data.newBooking;
+
+                    // Update car availability in the backend
+                    return $http.post('http://127.0.0.1:8006/api/v1/caravailability/create', {
+                        carId: bookingData.car.carId,
+                        fromTimestamp: bookingData.fromTimestamp,
+                        toTimestamp: bookingData.toTimestamp
+                    }).then(() => createdBooking);
+                })
+                .then(function (createdBooking) {
+                    errorService.logSuccess('Booking created successfully!');
+                    deferred.resolve(createdBooking);
+                })
+                .catch(function (error) {
+                    errorService.handleError('Booking Service :: Error creating booking: ' + error.message);
+                    deferred.reject(error);
+                });
+        } catch (error) {
+            deferred.reject(error);
+        }
 
         return deferred.promise;
     };
@@ -155,29 +168,48 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
      * @param {*} newStatus 
      * @returns resolved/rejected promise.
      */
-
     service.updateBookingStatus = function (bookingId, newStatus) {
+        const deferred = $q.defer();
+
         if (!VALID_STATUSES.includes(newStatus)) {
-            return $q.reject(new Error('Invalid status'));
+            deferred.reject(new Error('Invalid status'));
+        } else {
+            $http.put(`http://127.0.0.1:8006/api/v1/booking/updatestatus/${bookingId}`, { newStatus })
+                .then(response => deferred.resolve(response))
+                .catch(error => {
+                    errorService.handleError('Booking Service :: Error updating booking status', error);
+                    deferred.reject(error);
+                });
         }
 
-        return $http.put(`/api/v1/booking/updatestatus/${bookingId}`, { newStatus })
-            .then(response => response.data)
-            .catch(error => errorService.handleError('Booking Service :: Error updating booking status', error));
+        return deferred.promise;
     };
 
     /**
-     * @function checkCarAvailability()
-     * @description Takes the car id and timestamps to check if the car is already booked.
+     * @function checkCarAvailability
+     * @description Takes the car ID and timestamps to check if the car is available for the given time range.
      * @param {*} carId 
      * @param {*} fromTimestamp 
      * @param {*} toTimestamp 
      * @returns resolved or rejected promise.
      */
     service.checkCarAvailability = function (carId, fromTimestamp, toTimestamp) {
-        return $http.get(`/api/v1/booking/checkavailability?carId=${carId}&fromTimestamp=${fromTimestamp}&toTimestamp=${toTimestamp}`)
-            .then(response => response.data.isAvailable)
-            .catch(error => errorService.handleError('Booking Service :: Error checking car availability', error));
+        console.log("Check car availability :: ", carId, fromTimestamp, toTimestamp);
+
+        const deferred = $q.defer();
+
+        $http.post('http://127.0.0.1:8006/api/v1/caravailability/check', {
+            carId,
+            fromTimestamp,
+            toTimestamp
+        })
+            .then(response => deferred.resolve(response.data))
+            .catch(error => {
+                errorService.handleError('Booking Service :: Error checking car availability', error);
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
     };
 
     /**
@@ -189,10 +221,17 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
      * @returns resolved or rejected promise.
      */
     service.getUserBookings = function (userId, page = 1, filters = {}) {
+        const deferred = $q.defer();
         const queryParams = new URLSearchParams({ page, ...filters }).toString();
-        return $http.get(`/api/v1/booking/userbookings/${userId}?${queryParams}`)
-            .then(response => response.data)
-            .catch(error => errorService.handleError('Booking Service :: Error fetching user bookings', error));
+
+        $http.get(`http://127.0.0.1:8006/api/v1/booking/userbookings/${userId}?${queryParams}`)
+            .then(response => deferred.resolve(response.data))
+            .catch(error => {
+                errorService.handleError('Booking Service :: Error fetching user bookings', error);
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
     };
 
     /**
@@ -202,9 +241,16 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
      * @returns resolved or rejected promise.
      */
     service.cancelBooking = function (bookingId) {
-        return $http.post(`/api/v1/booking/cancel/${bookingId}`)
-            .then(response => response.data)
-            .catch(error => errorService.handleError('Booking Service :: Error cancelling booking', error));
+        const deferred = $q.defer();
+
+        $http.post(`http://127.0.0.1:8006/api/v1/booking/cancel/${bookingId}`)
+            .then(response => deferred.resolve(response.data))
+            .catch(error => {
+                errorService.handleError('Booking Service :: Error cancelling booking', error);
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
     };
 
     /**
@@ -216,8 +262,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
      */
 
     service.submitRating = function (carId, rating) {
-        return $http.post(`/api/v1/car/rate/${carId}`, { rating })
-            .then(response => response.data)
+        return $http.post(`http://127.0.0.1:8006/api/v1/car/rate/${carId}`, { rating })
+            .then(response => response)
             .catch(error => errorService.handleError('Booking Service :: Error submitting rating', error));
     };
 
@@ -231,8 +277,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
      * @returns resolved or rejected promise.
      */
     service.addExtras = function (bookingId, extras) {
-        return $http.put(`/api/v1/booking/addextras/${bookingId}`, extras)
-            .then(response => response.data)
+        return $http.put(`http://127.0.0.1:8006/api/v1/booking/addextras/${bookingId}`, extras)
+            .then(response => response)
             .catch(error => errorService.handleError('Booking Service :: Error adding extras', error));
     };
 
@@ -251,8 +297,8 @@ mainApp.service('bookingService', ['$q', 'dbService', 'errorService', 'idGenerat
             limit,
             bookingType: filters.bookingType || 'all'
         };
-        return $http.get(`/api/v1/booking/ownerbookings/${ownerId}`, { params })
-            .then(response => response.data);
+        return $http.get(`http://127.0.0.1:8006/api/v1/booking/ownerbookings/${ownerId}`, { params })
+            .then(response => response);
     };
 
     return service;

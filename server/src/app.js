@@ -16,6 +16,7 @@ import bidRoutes from "./routes/bid.routes.js";
 import bookingRoutes from "./routes/booking.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import cityRoutes from "./routes/city.routes.js";
+import availabilityRoutes from "./routes/caravailability.routes.js";
 
 /** For OpenAPI Docs */
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +29,7 @@ const app = express();
 
 //CORS configuration
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || "http://127.0.0.1:5500",
+    origin: "http://127.0.0.1:5500",
     credentials: true
 }));
 
@@ -69,6 +70,7 @@ app.use(`${API_PREFIX}/bid`, bidRoutes);
 app.use(`${API_PREFIX}/booking`, bookingRoutes);
 app.use(`${API_PREFIX}/chat`, chatRoutes);
 app.use(`${API_PREFIX}/city`, cityRoutes);
+app.use(`${API_PREFIX}/caravailability`,availabilityRoutes);
 
 /** OpenAPI documentation*/
 const openapiPath = path.resolve(__dirname, '../docs/openapi.json');

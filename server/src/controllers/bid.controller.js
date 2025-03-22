@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
 
@@ -243,26 +244,57 @@ export const getBidById = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
+// export const getBidsForOwner = async (req, res) => {
+//     try {
+//         const { ownerId } = req.params;
+//         const { page = 1, limit = 10, bidStatus } = req.query;
+
+//         // Build the query
+//         const query = { "car.owner.userId": new mongoose.Types.ObjectId(ownerId) };
+
+//         if (bidStatus && bidStatus !== 'all') {
+//             query.status = bidStatus;
+//         }
+
+//         // Fetch total count and paginated bids
+//         const totalItems = await Bid.countDocuments(query);
+//         const bids = await Bid.find(query)
+//             .skip((page - 1) * limit)
+//             .limit(parseInt(limit));
+//         res.status(200).json({ bids, totalItems });
+//     } catch (error) {
+//         console.error("Bid Controller :: Error fetching bids for owner", error);
+//         res.status(500).json({ msg: "Server Error" });
+//     }
+// };
+
+
 export const getBidsForOwner = async (req, res) => {
     try {
         const { ownerId } = req.params;
         const { page = 1, limit = 10, bidStatus } = req.query;
 
-        // Build the query
-        const query = { "car.owner.userId": ownerId };
-        if (bidStatus && bidStatus !== 'all') {
+        // Parse limit and page as numbers
+        const parsedLimit = parseInt(limit, 10) || 10;
+        const parsedPage = parseInt(page, 10) || 1;
+
+        const query = { "car.owner.userId": new mongoose.Types.ObjectId(ownerId) };
+
+        if (bidStatus && bidStatus !== "all") {
+            const allowedStatuses = ["pending", "accepted", "rejected"];
+            if (!allowedStatuses.includes(bidStatus)) {
+                return res.status(400).json({ msg: "Invalid bid status" });
+            }
             query.status = bidStatus;
         }
-
-        // Fetch total count and paginated bids
         const totalItems = await Bid.countDocuments(query);
         const bids = await Bid.find(query)
-            .skip((page - 1) * limit)
-            .limit(parseInt(limit));
+            .skip((parsedPage - 1) * parsedLimit)
+            .limit(parsedLimit);
 
         res.status(200).json({ bids, totalItems });
     } catch (error) {
         console.error("Bid Controller :: Error fetching bids for owner", error);
-        res.status(500).json({ msg: "Server Error" });
+        res.status(500).json({ msg: "Server Error", details: error.message });
     }
 };

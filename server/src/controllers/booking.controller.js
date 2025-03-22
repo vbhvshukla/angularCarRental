@@ -15,20 +15,53 @@ export const createBooking = async (req, res) => {
             return res.status(400).json({ msg: "Missing required booking information" });
         }
 
-        const car = await Car.findById(bookingData.car.carId);
+        const car = await Car.findById(bookingData.bid.car.carId);
         if (!car) {
             return res.status(404).json({ msg: "Car not found" });
         }
 
-        const calculatedBaseFare = calculateBaseFare(bookingData, car);
-        const calculatedTotalAmount = calculateTotalAmount(bookingData, calculatedBaseFare);
+        const calculatedBaseFare = calculateBaseFare(bookingData.bid, car);
+        const calculatedTotalAmount = calculateTotalAmount(bookingData.bid, calculatedBaseFare);
+
 
         const booking = new Booking({
-            fromTimestamp: bookingData.fromTimestamp,
-            toTimestamp: bookingData.toTimestamp,
+            fromTimestamp: bookingData.bid.fromTimestamp,
+            toTimestamp: bookingData.bid.toTimestamp,
             status: "confirmed",
-            rentalType: bookingData.rentalType,
-            bid: bookingData.bid,
+            rentalType: bookingData.bid.rentalType,
+            bid: {
+                fromTimestamp: bookingData.bid.fromTimestamp,
+                toTimestamp: bookingData.bid.toTimestamp,
+                status: 'accepted',
+                bidAmount: bookingData.bid.bidAmount,
+                bidBaseFare: bookingData.bid.bidBaseFare,
+                rentalType: bookingData.bid.rentalType,
+                user: {
+                    userId: bookingData.bid.user.userId,
+                    username: bookingData.bid.user.username,
+                    email: bookingData.bid.user.email,
+                    role: bookingData.bid.user.role
+                },
+                car: {
+                    carId: bookingData.bid.car.carId,
+                    carName: bookingData.bid.car.carName,
+                    carType: bookingData.bid.car.carType,
+                    city: bookingData.bid.car.city,
+                    createdAt: bookingData.bid.car.createdAt,
+                    isAvailableForLocal: bookingData.bid.car.isAvailableForLocal,
+                    isAvailableForOutstation: bookingData.bid.car.isAvailableForOutstation,
+                    category: {
+                        categoryId: bookingData.bid.car.category.categoryId,
+                        categoryName: bookingData.bid.car.category.categoryName
+                    },
+                    owner: {
+                        userId: bookingData.bid.car.owner.userId,
+                        username: bookingData.bid.car.owner.username,
+                        email: bookingData.bid.car.owner.email,
+                    },
+                    rentalOptions: bookingData.bid.rentalOptions
+                }
+            },
             baseFare: calculatedBaseFare,
             extraKmCharges: 0,
             extraHourCharges: 0,
@@ -36,6 +69,7 @@ export const createBooking = async (req, res) => {
             totalFare: calculatedTotalAmount,
         });
 
+        // console.log(booking);
         const newBooking = await booking.save();
         res.status(201).json({ msg: "Booking created successfully", newBooking });
     } catch (error) {
@@ -134,7 +168,9 @@ export const cancelBooking = async (req, res) => {
  */
 export const checkCarAvailability = async (req, res) => {
     try {
-        const { carId, fromTimestamp, toTimestamp } = req.body;
+        const { carId, fromTimestamp, toTimestamp } = req.query;
+
+        console.log(carId, fromTimestamp, toTimestamp);
 
         const overlappingBookings = await Booking.find({
             "bid.car.carId": carId,
@@ -289,6 +325,5 @@ const calculateTotalAmount = (bookingData, baseFare) => {
     const extraKmCharges = bookingData.extraKmCharges || 0;
     const extraHourCharges = bookingData.extraHourCharges || 0;
     const extraDayCharges = bookingData.extraDayCharges || 0;
-
     return baseFare + extraKmCharges + extraHourCharges + extraDayCharges;
 };

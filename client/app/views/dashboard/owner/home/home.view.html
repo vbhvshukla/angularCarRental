@@ -1,43 +1,5 @@
 <div class="ownerdashboardhomecontent" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm"
     style="width: 100%; padding: 10px; background-color: #fff; border-radius: 8px; min-height: 450px; display: flex; flex-direction: column; justify-content: space-between;">
-
-    <!-- <div class="extra-modal" ng-if="vm.showAddKmModal"
-        style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="extra-modal-content"
-            style="background-color: #fff; border-radius: 5px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); width: 50%; max-width: 600px;">
-            <div class="extra-modal-header"
-                style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="margin: 0; font-size: 1.5em;">Add Kms / Hrs</h2>
-                <button type="button" class="close" ng-click="vm.closeAddKmModal()"
-                    style="background: none; border: none; font-size: 2em; cursor: pointer; color: #aaa; padding: 0;">&times;</button>
-            </div>
-            <div class="extra-modal-body" style="padding: 20px;">
-                <form name="addExtras" ng-submit="vm.addExtras()" class="extras-form"
-                    style="display: flex; flex-direction: column; gap: 15px;">
-                    <label for="extraKm" style="font-weight: bold; margin-bottom: 5px;">Additional Kilometers
-                        Driven</label>
-                    <input type="number" name="extrakm" ng-model="vm.extras.extraKm" ng-minlength="0" ng-required
-                        style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" /><br>
-                    <label for="extraHr" style="font-weight: bold; margin-bottom: 5px;">Additional Hours Driven</label>
-                    <input type="number" name="extrahr" ng-model="vm.extras.extraHr" ng-minlength="0" ng-required
-                        style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" />
-                    <div ng-if="vm.booking.rentalType === 'outstation'">
-                        <label for="extraDay" style="font-weight: bold; margin-bottom: 5px;">Additional Days
-                            Driven</label>
-                        <input type="number" name="extraday" ng-model="vm.extras.extraDay" ng-minlength="0" ng-required
-                            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; width: 100%; box-sizing: border-box;" />
-                    </div>
-                    <span ng-show="myForm.extrakm.$error.required && myForm.extrakm.$touched"
-                        style="color: red; font-size: 0.8em;">Additional Kilometers is required.</span>
-                    <span ng-show="myForm.extrahr.$error.required && myForm.extrahr.$touched"
-                        style="color: red; font-size: 0.8em;">Additional Hours is required.</span>
-                    <button type="submit" ng-disabled="myForm.$invalid"
-                        style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 1em; cursor: pointer; border-radius: 4px; align-self: flex-start;">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div> -->
-
     <h3>Pending Bids</h3>
     <div class="select-container">
         <select ng-model="vm.filters.pendingType" ng-change="vm.applyFilters()"
@@ -139,7 +101,7 @@
                     style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
                     <td>{{booking.bid.car.carName}}</td>
                     <td>{{booking.bid.bidAmount | price}}</td>
-                    <td>{{vm.getTotalAmount(booking) | price}}</td>
+                    <td>{{booking.totalFare | price}}</td>
                     <td>{{booking.bid.user.username}}</td>
                     <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
                     <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>

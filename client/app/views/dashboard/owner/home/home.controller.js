@@ -1,8 +1,8 @@
 /** @file Owner Dashboard's Home Controller */
 
 mainApp.controller('OwnerHomeDashboardController', [
-    'bidService', 'authService', 'bookingService', 'errorService', 'chatService', '$uibModal',
-    function (bidService, authService, bookingService, errorService, chatService, $uibModal) {
+    '$http', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService', '$uibModal', '$q',
+    function ($http, bidService, authService, bookingService, errorService, chatService, $uibModal, $q) {
 
         /**
          * Variable declaration
@@ -51,7 +51,7 @@ mainApp.controller('OwnerHomeDashboardController', [
          */
         vm.init = function () {
             authService.getUser()
-                .then(user => vm.getAllData(user.userId))
+                .then(user => vm.getAllData(user._id))
                 .catch(err => console.error("Owner controller :: Error Getting User :: ", err));
         };
 
@@ -62,33 +62,44 @@ mainApp.controller('OwnerHomeDashboardController', [
          * @requires bookingService, bidService
          */
         vm.getAllData = function (userId) {
-            async.parallel([
-                function (callback) {
-                    bookingService.getBookingsForOwner(userId, vm.pagination.bookings.currentPage, vm.pagination.bookings.itemsPerPage)
-                        .then(result => {
-                            vm.bookings = result.bookings;
-                            vm.pagination.bookings.totalItems = result.totalItems;
-                            callback(null, result.bookings);
-                        })
-                        .catch(err => callback(err));
-                },
-                function (callback) {
-                    bidService.getBidsForOwner(userId, vm.pagination.allBids.currentPage, vm.pagination.allBids.itemsPerPage)
-                        .then(result => {
-                            vm.allBids = result.bids;
-                            vm.pagination.allBids.totalItems = result.totalItems;
-                            vm.pendingBids = vm.allBids.filter(bid => bid.status.toLowerCase() === 'pending');
-                            callback(null, result.bids);
-                        })
-                        .catch(err => callback(err));
-                }
-            ], function (err) {
-                if (err) {
-                    console.error("Owner dashboard :: Error Getting All Data :: ", err);
-                } else {
+            // Create promises for fetching bookings and bids
+            const bookingsPromise = bookingService.getBookingsForOwner(
+                userId,
+                vm.pagination.bookings.currentPage,
+                vm.pagination.bookings.itemsPerPage,
+                vm.filters
+            );
+
+            const bidsPromise = bidService.getBidsForOwner(
+                userId,
+                vm.pagination.allBids.currentPage,
+                vm.pagination.allBids.itemsPerPage,
+                vm.filters
+            );
+
+            // Use $q.all to execute both promises in parallel
+            $q.all([bookingsPromise, bidsPromise])
+                .then(([bookingsResult, bidsResult]) => {
+                    // Handle bookings result
+                    vm.bookings = bookingsResult.data.bookings || [];
+                    vm.pagination.bookings.totalItems = bookingsResult.data.totalItems || 0;
+                    // console.log(bidsResult)
+                    // Handle bids result
+                    vm.allBids = bidsResult.bids || [];
+                    // console.log(vm.allBids)
+                    vm.pagination.allBids.totalItems = bidsResult.totalItems || 0;
+
+                    // Filter pending bids
+                    vm.pendingBids = vm.allBids.filter(bid => bid.status.toLowerCase() === "pending");
+
+                    // Apply filters after fetching data
                     vm.applyFilters();
-                }
-            });
+                })
+                .catch(err => {
+                    console.error("Owner dashboard :: Error Getting All Data :: ", err);
+                    vm.errorMessage = "Failed to fetch data. Please try again.";
+                    errorService.handleError(vm.errorMessage);
+                });
         };
 
         /**
@@ -115,15 +126,15 @@ mainApp.controller('OwnerHomeDashboardController', [
          * @description Creates a booking after accepting a bid.
          */
         vm.acceptBid = function (bid) {
-            if (!bid || !bid.bidId || vm.isProcessing) {
+            if (!bid || !bid._id || vm.isProcessing) {
                 errorService.handleError('Invalid bid data or operation in progress');
                 return;
             }
 
-            vm.processingBidId = bid.bidId;
+            vm.processingBidId = bid._id;
             vm.isProcessing = true;
 
-            bidService.updateBidStatus(bid.bidId, 'accepted')
+            bidService.updateBidStatus(bid._id, 'accepted')
                 .then(() => bookingService.createBooking(bid))
                 .then(() => {
                     errorService.logSuccess('Bid accepted and booking created successfully');
@@ -132,7 +143,7 @@ mainApp.controller('OwnerHomeDashboardController', [
                 .catch(error => {
                     errorService.handleError('Failed to accept bid: ' + error.message);
                     if (vm.isProcessing) {
-                        return bidService.updateBidStatus(bid.bidId, 'pending')
+                        return bidService.updateBidStatus(bid._id, 'pending')
                             .catch(() => { /* Ignore revert errors */ });
                     }
                 })
@@ -148,7 +159,7 @@ mainApp.controller('OwnerHomeDashboardController', [
          * @description Rejects a bid.
          */
         vm.rejectBid = function (bid) {
-            bidService.updateBidStatus(bid.bidId, 'rejected')
+            bidService.updateBidStatus(bid._id, 'rejected')
                 .then(() => {
                     console.log("Owner Dashboard :: Rejected bid");
                     vm.getAllData(bid.car.owner.userId);
@@ -179,6 +190,18 @@ mainApp.controller('OwnerHomeDashboardController', [
             }, function () {
                 console.log('Modal dismissed');
             });
+        };
+
+        /**
+         * Function :: Get Paginated Data
+         * @param {*} data 
+         * @param {*} pagination 
+         * @description Returns paginated data based on the current page and items per page.
+         */
+        vm.getPaginatedData = function (data, pagination) {
+            const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
+            const endIndex = startIndex + pagination.itemsPerPage;
+            return data.slice(startIndex, endIndex);
         };
     }
 ]);
