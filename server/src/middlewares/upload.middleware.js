@@ -4,7 +4,6 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import { v4 as uuidv4 } from "uuid";
 
-dotenv.config({ path: ".env" })
 
 aws.config.update({
     secretAccessKey: process.env.AWS_SECRET_KEY,
