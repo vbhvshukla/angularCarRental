@@ -1,19 +1,20 @@
 import nodemailer from "nodemailer";
 
+const user = process.env.EMAIL_USER;
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
+    user: user,
     pass: process.env.EMAIL_PASS,
   },
 });
 
-const sendEmail = async (email, name, bidAmount) => {
+export const sendEmail = async (email, subject, message) => {
   const mailOptions = {
-    from: '"Car Rental App" <no-reply@carrental.com>',
+    from: user,
     to: email,
-    subject: "Bid Created Successfully",
-    text: `Hi ${name},\n\nYour bid of $${bidAmount} has been successfully placed.\n\nThanks,\nCar Rental Team`,
+    subject: subject,
+    text: message,
   };
 
   await transporter.sendMail(mailOptions);
