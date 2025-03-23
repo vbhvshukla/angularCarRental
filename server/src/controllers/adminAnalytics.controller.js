@@ -213,3 +213,22 @@ export const topPerformingOwners = async(req,res)=>{
         
     }
 }
+
+export const carsPerCategory = async (req, res) => {
+    try {
+        const carsByCategory = await Car.aggregate([
+            {
+                $group: {
+                    _id: "$category", // Group by category
+                    totalCars: { $sum: 1 } // Count total cars per category
+                }
+            },
+            { $sort: { totalCars: -1 } } // Sort by totalCars in descending order
+        ]);
+
+        res.status(200).json(carsByCategory);
+    } catch (error) {
+        console.error("Error fetching cars per category:", error);
+        res.status(500).json({ msg: "Error fetching cars per category", error: error.message });
+    }
+};
