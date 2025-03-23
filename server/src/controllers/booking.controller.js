@@ -59,7 +59,7 @@ export const createBooking = async (req, res) => {
                         username: bookingData.bid.car.owner.username,
                         email: bookingData.bid.car.owner.email,
                     },
-                    rentalOptions: bookingData.bid.rentalOptions
+                    rentalOptions: bookingData.bid.car.rentalOptions
                 }
             },
             baseFare: calculatedBaseFare,

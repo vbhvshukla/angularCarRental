@@ -31,7 +31,7 @@ const getUserById = async (req, res) => {
 const getAllUsers = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
-        const users = await User.find()
+        const users = await User.find({ role: { $ne: 'admin' } })
             .select("-password")
             .skip((page - 1) * limit)
             .limit(limit);
@@ -122,4 +122,4 @@ const validatePassword = async (req, res) => {
     }
 };
 
-export { getUserById,validatePassword, getAllUsers, approveUser, rejectUser, updatePassword };
+export { getUserById, validatePassword, getAllUsers, approveUser, rejectUser, updatePassword };

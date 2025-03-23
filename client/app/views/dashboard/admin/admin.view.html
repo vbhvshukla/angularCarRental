@@ -21,9 +21,9 @@
                     <td>{{user.username}}</td>
                     <td>{{user.email}}</td>
                     <td>{{user.role}}</td>
-                    <td>{{user.avgRating}}</td>
-                    <td>{{user.ratingCount}}</td>
-                    <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
+                    <td>{{user.rating.avgRating}}</td>
+                    <td>{{user.rating.ratingCount}}</td>
+                    <td>{{user.rating.isApproved ? 'Yes' : 'No'}}</td>
                     <td>
                         <button class="btn btn-primary" ng-click="vm.showUserApprovalModal(user)">Manage</button>
                     </td>
@@ -59,8 +59,8 @@
                     <td>{{car.city}}</td>
                     <td>Local : {{car.rentalOptions.local.pricePerHour | price}} </br> Outstation :
                         {{car.rentalOptions.outstation.pricePerDay | price}}</td>
-                    <td>{{car.avgRating}}</td>
-                    <td>{{car.ratingCount}}</td>
+                    <td>{{car.rating.avgRating}}</td>
+                    <td>{{car.rating.ratingCount}}</td>
                     <td>Local : {{car.isAvailableForLocal ? 'Yes' : 'No'}} </br> Outstation :
                         {{car.isAvailableForOutstation ? 'Yes' : 'No'}}</td>
                 </tr>

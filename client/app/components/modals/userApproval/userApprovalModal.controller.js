@@ -13,6 +13,7 @@ mainApp.controller('UserApprovalModalController', [
         var vm = this;
         vm.selectedUser = selectedUser;
 
+        console.log(vm.selectedUser);
         /**
          * Approve User Function
          * @function vm.approveUser()
@@ -21,7 +22,7 @@ mainApp.controller('UserApprovalModalController', [
          */
 
         vm.approveUser = function () {
-            userService.approveUser(vm.selectedUser.userId)
+            userService.approveUser(vm.selectedUser._id)
                 .then(function () {
                     $uibModalInstance.close();
                 }).catch(err => errorService.handleError("UserApprovalModalController :: Error Approving User :: ", err));
@@ -35,7 +36,7 @@ mainApp.controller('UserApprovalModalController', [
          */
 
         vm.rejectUser = function () {
-            userService.rejectUser(vm.selectedUser.userId)
+            userService.rejectUser(vm.selectedUser._id)
                 .then(function () {
                     $uibModalInstance.close();
                 }).catch(err => errorService.handleError("UserApprovalModalController :: Error Rejecting User :: ", err));

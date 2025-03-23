@@ -17,6 +17,7 @@ import bookingRoutes from "./routes/booking.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import cityRoutes from "./routes/city.routes.js";
 import availabilityRoutes from "./routes/caravailability.routes.js";
+import ownerAnalyticsRoutes from "./routes/ownerAnalytics.routes.js";
 
 /** For OpenAPI Docs */
 const __filename = fileURLToPath(import.meta.url);
@@ -70,7 +71,8 @@ app.use(`${API_PREFIX}/bid`, bidRoutes);
 app.use(`${API_PREFIX}/booking`, bookingRoutes);
 app.use(`${API_PREFIX}/chat`, chatRoutes);
 app.use(`${API_PREFIX}/city`, cityRoutes);
-app.use(`${API_PREFIX}/caravailability`,availabilityRoutes);
+app.use(`${API_PREFIX}/caravailability`, availabilityRoutes);
+app.use(`${API_PREFIX}/owneranalytics`, ownerAnalyticsRoutes);
 
 /** OpenAPI documentation*/
 const openapiPath = path.resolve(__dirname, '../docs/openapi.json');

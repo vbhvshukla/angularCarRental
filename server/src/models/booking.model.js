@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {bidSchema } from "./bid.model.js";
+import { bidSchema } from "./bid.model.js";
 
 const bookingSchema = new mongoose.Schema(
     {
@@ -44,8 +44,9 @@ const bookingSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps:true
+        timestamps: true
     }
 )
+bookingSchema.index({ "bid.car.owner.userId": 1, totalFare: 1 ,createdAt:1});
 
 export const Booking = mongoose.model("Booking", bookingSchema);

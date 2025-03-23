@@ -21,7 +21,7 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
          * @returns resolved or rejected promise.
          */
         this.getAllUsers = function () {
-            return $http.get(`${BASE_URL}/all`)
+            return $http.get(`${BASE_URL}`)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'UserService :: Fetch All Users Failed'));
         };
