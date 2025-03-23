@@ -123,6 +123,6 @@ const bidSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-
+bidSchema.index({ "car.owner.userId": 1, createdAt: 1 });
 export const Bid = mongoose.model("Bid", bidSchema);
 export {bidSchema}

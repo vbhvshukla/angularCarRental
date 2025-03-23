@@ -180,7 +180,9 @@ export const deleteCar = async (req, res) => {
  */
 export const getAvailableCars = async (req, res) => {
     try {
-        const { page = 1, limit = "10", location, category, priceRange, availability, rentalType } = req.body;
+        console.log(req.query);
+        const { page = 1, limit = 10, location, carCategory, priceRange, carType, availability, features, rating } = req.query;
+
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
@@ -195,15 +197,15 @@ export const getAvailableCars = async (req, res) => {
 
         // Add filters to the query
         if (location) query.city = location;
-        if (category) query["category._id"] = category;
+        if (carCategory) query["category._id"] = carCategory;
         if (priceRange) query.price = { $lte: parseInt(priceRange) };
+        if (carType) query.carType = carType;
         if (availability) query.availability = availability;
-        if (rentalType) {
-            query[`isAvailableFor${rentalType.charAt(0).toUpperCase() + rentalType.slice(1)}`] = true;
-        }
+        if (features) query.features = { $regex: features, $options: "i" }; // Partial match
+        if (rating) query["rating.avgRating"] = { $gte: parseInt(rating) };
 
         // Pagination
-        const skip = (parseInt(pageNumber) - 1) * parseInt(limitNumber);
+        const skip = (pageNumber - 1) * limitNumber;
         const cars = await Car.aggregate([
             { $match: query },
             {
@@ -213,6 +215,7 @@ export const getAvailableCars = async (req, res) => {
                 }
             }
         ]);
+
         const total = cars[0]?.total[0]?.count || 0;
 
         res.status(200).json({ cars: cars[0]?.cars || [], total });

@@ -8,141 +8,11 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.totals = {};
         vm.charts = {};
 
-        vm.lineChartOptions = {
-            responsive: true,
-            scales: {
-                y: { 
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            try {
-                                const label = this.chart.data.datasets[0].label || '';
-                                if (label.toLowerCase().includes('revenue')) {
-                                    return '₹' + value.toLocaleString();
-                                }
-                                return Math.floor(value) + ' days';
-                            } catch (e) {
-                                return value;
-                            }
-                        },
-                        stepSize: 1000
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.raw;
-                            if (label.toLowerCase().includes('revenue')) {
-                                return label + ': ₹' + value.toLocaleString();
-                            }
-                            return label + ': ' + Math.floor(value) + ' days';
-                        }
-                    }
-                }
-            }
-        };
-
-        vm.pieChartOptions = {
-            responsive: true,
-            legend: { position: 'bottom' }
-        };
-
-        vm.barChartOptions = {
-            responsive: true,
-            scales: {
-                y: { 
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        precision: 0, 
-                        callback: value => Math.floor(value)
-                    }
-                }
-            }
-        };
-
-        vm.stackedBarOptions = {
-            responsive: true,
-            scales: {
-                x: { 
-                    stacked: true,
-                    grid: {
-                        display: false
-                    }
-                },
-                y: {  
-                    stacked: true,
-                    beginAtZero: true,
-                    ticks: {
-                        callback: value => '₹' + value.toLocaleString(),
-                        stepSize: 500
-                    },
-                    title: {
-                        display: true,
-                        text: 'Revenue (₹)'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.raw;
-                            return label + ': ₹' + value.toLocaleString();
-                        }
-                    }
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        };
-
-        vm.chartOptions = {
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        callback: value => '₹' + value.toLocaleString(),
-                        maxTicksLimit: 10
-                    },
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Revenue (₹)'
-                    }
-                }],
-                xAxes: [{
-                    gridLines: {
-                        display: false
-                    },
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Time Period'
-                    }
-                }]
-            },
-            tooltips: {
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        const label = data.datasets[tooltipItem.datasetIndex].label || '';
-                        const value = tooltipItem.yLabel;
-                        return label + ': ₹' + value.toLocaleString();
-                    }
-                }
-            }
-        };
-
+        // Chart options
         vm.revenueChartOptions = {
             responsive: true,
             scales: {
-                y: {  
+                y: {
                     beginAtZero: true,
                     ticks: {
                         callback: value => '₹' + value.toLocaleString(),
@@ -157,16 +27,16 @@ mainApp.controller('OwnerAnalyticsController', [
                     grid: {
                         display: false
                     },
-                    title: { 
+                    title: {
                         display: true,
                         text: 'Time Period'
                     }
                 }
             },
-            plugins: { 
+            plugins: {
                 tooltip: {
                     callbacks: {
-                        label: function(context) { 
+                        label: function (context) {
                             const label = context.dataset.label || '';
                             const value = context.raw;
                             return label + ': ₹' + value.toLocaleString();
@@ -176,15 +46,18 @@ mainApp.controller('OwnerAnalyticsController', [
             }
         };
 
-        vm.colorSchemes = {
-            revenue: ['#3498db', '#e67e22'],       
-            bookings: ['#2ecc71'],
-            bids: ['#27ae60', '#f1c40f', '#e74c3c'],
-            cars: ['#9b59b6'],
-            rentalTypes: ['#3498db', '#e67e22'],
-            utilization: ['#2c3e50'],
-            renters: ['#f1c40f'],                  
-            duration: ['#8e44ad', '#2c3e50']       
+        vm.barChartOptions = {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                        callback: value => Math.floor(value)
+                    }
+                }
+            }
         };
 
         vm.init = function () {
@@ -193,12 +66,16 @@ mainApp.controller('OwnerAnalyticsController', [
             authService.getUser()
                 .then(user => {
                     vm.currentUser = user;
-                    return analyticsService.getOwnerAnalytics(user.userId, vm.selectedDays);
+                    return analyticsService.getOwnerAnalytics(user._id, vm.selectedDays);
                 })
                 .then(data => {
                     vm.totals = data.totals;
                     vm.charts = data.charts;
+
+                    // Format revenue for display
                     vm.totals.formattedRevenue = '₹' + vm.totals.totalRevenue.toLocaleString();
+
+                    // Render charts
                     renderCharts(data.charts);
                 })
                 .catch(error => {
@@ -211,7 +88,7 @@ mainApp.controller('OwnerAnalyticsController', [
 
         function createChart(canvasId, type, data, options) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            
+
             if (vm.chartInstances[canvasId]) {
                 vm.chartInstances[canvasId].destroy();
             }
@@ -224,17 +101,71 @@ mainApp.controller('OwnerAnalyticsController', [
         }
 
         function renderCharts(data) {
-            createChart('monthlyRevenueChart', 'line', data.revenue, vm.revenueChartOptions);
-            createChart('bookingsPerCarChart', 'bar', data.bookings, vm.barChartOptions);
-            createChart('carUtilizationChart', 'bar', data.carUtilization, vm.barChartOptions);
-            createChart('activeRentersChart', 'bar', data.activeRenters, vm.barChartOptions);
-            createChart('avgRevenueChart', 'line', data.avgRevenueByType, vm.revenueChartOptions);
-            createChart('revenueByTypeChart', 'bar', {labels: data.revenueOverTime.labels,datasets: data.revenueOverTime.datasets}, vm.stackedBarOptions);
-            createChart('avgRevenueTrendsChart', 'line', data.avgRevenueOverTime, vm.revenueChartOptions);
-            createChart('avgBidAmountChart', 'bar', data.avgBidAmount, vm.revenueChartOptions);
+            console.log(data);
+            // Monthly Revenue Chart
+            createChart('monthlyRevenueChart', 'line', {
+                labels: data.revenue.map(item => item.month),
+                datasets: [
+                    {
+                        label: 'Local Revenue',
+                        data: data.revenue.map(item => item.totalLocalRevenue),
+                        backgroundColor: '#3498db',
+                        borderColor: '#3498db',
+                        fill: false
+                    },
+                    {
+                        label: 'Outstation Revenue',
+                        data: data.revenue.map(item => item.totalOutstationRevenue),
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#e74c3c',
+                        fill: false
+                    }
+                ]
+            }, vm.revenueChartOptions);
+
+            // Bookings Per Car Chart
+            createChart('bookingsPerCarChart', 'bar', {
+                labels: data.bookings.map(item => item.carName),
+                datasets: [
+                    {
+                        label: 'Bookings',
+                        data: data.bookings.map(item => item.totalBookings),
+                        backgroundColor: '#2ecc71'
+                    }
+                ]
+            }, vm.barChartOptions);
+
+            // Rental Duration Chart
+            createChart('rentalDurationChart', 'bar', {
+                labels: data.rentalDuration.map(item => item.carName),
+                datasets: [
+                    {
+                        label: 'Local Duration (Hours)',
+                        data: data.rentalDuration.map(item => item.totalLocalDurationInHours),
+                        backgroundColor: '#8e44ad'
+                    },
+                    {
+                        label: 'Outstation Duration (Days)',
+                        data: data.rentalDuration.map(item => item.totalOutstationDurationInDays),
+                        backgroundColor: '#e67e22'
+                    }
+                ]
+            }, vm.barChartOptions);
+
+            // Bid Amount Per Car Chart
+            createChart('bidAmountChart', 'bar', {
+                labels: data.bidAmounts.map(item => item.carName),
+                datasets: [
+                    {
+                        label: 'Bid Amount',
+                        data: data.bidAmounts.map(item => item.bidAmount),
+                        backgroundColor: '#f1c40f'
+                    }
+                ]
+            }, vm.barChartOptions);
         }
 
-        vm.updateTimeRange = function() {      
+        vm.updateTimeRange = function () {
             vm.loading = true;
             authService.getUser()
                 .then(user => analyticsService.getOwnerAnalytics(user.userId, vm.selectedDays))
@@ -248,19 +179,7 @@ mainApp.controller('OwnerAnalyticsController', [
                 .finally(() => vm.loading = false);
         };
 
-        vm.getChartColors = function (type) {
-            return vm.colorSchemes[type] || ['#95a5a6'];
-        };
-
-        vm.formatUtilization = function (value) {
-            return value.toFixed(1) + '%';
-        };
-
-        vm.formatDate = function (date) {
-            return new Date(date).toLocaleDateString();
-        };
-
-        $scope.$on('$destroy', function() {
+        $scope.$on('$destroy', function () {
             Object.values(vm.chartInstances).forEach(chart => chart.destroy());
         });
     }

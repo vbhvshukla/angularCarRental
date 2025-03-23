@@ -34,7 +34,7 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
      * @returns resolved or rejected promise.
      */
     this.getCarsByOwner = function (ownerId) {
-        console.log("Car Service :: Owner Id",ownerId);
+        console.log("Car Service :: Owner Id", ownerId);
         const deferred = $q.defer();
         $http.get(`${BASE_URL}/owner/${ownerId}`)
             .then(response => {
@@ -94,8 +94,9 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
         const params = {
             page: currentPage,
             limit: itemsPerPage,
-            ...filters // Include any filters passed
+            ...filters // Include filters as query parameters
         };
+        console.log(filters)
         $http.get(`${BASE_URL}/available`, { params })
             .then(response => deferred.resolve(response.data))
             .catch(error => deferred.reject(error));
@@ -109,7 +110,7 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
      * @returns resolved or rejected promise.
      */
     this.updateCar = function (carId, carData) {
-        console.log("CLIENT :: Car Service :: Update Car :: Car Data  ",carId)
+        console.log("CLIENT :: Car Service :: Update Car :: Car Data  ", carId)
         const deferred = $q.defer();
         $http.put(`${BASE_URL}/update/${carId._id}`, carId, {
             headers: { 'Content-Type': 'application/json' }

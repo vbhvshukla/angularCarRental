@@ -70,10 +70,8 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             if (vm.pagination.loading || vm.cars.length >= vm.pagination.totalItems) {
                 return;
             }
-
             vm.pagination.loading = true;
             vm.pagination.currentPage++;
-
             carService.getAvailableCarsWithPagination(
                 vm.pagination.currentPage,
                 vm.pagination.itemsPerPage,
@@ -102,7 +100,8 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
         vm.applyFilters = function () {
             vm.pagination.currentPage = 1;
             vm.pagination.loading = true;
-
+            console.log(vm.filters)
+            // Pass filters to the backend
             carService.getAvailableCarsWithPagination(
                 vm.pagination.currentPage,
                 vm.pagination.itemsPerPage,
@@ -116,8 +115,5 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
                 vm.pagination.loading = false;
             });
         };
-
-        // Initialize the controller
-        vm.init();
     }
 ]);

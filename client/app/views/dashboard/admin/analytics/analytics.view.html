@@ -25,10 +25,8 @@
             <div class="charts-grid" style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
                 <div class="chart-container"
                     style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Revenue by Category <i class="fa fa-info-circle" uib-tooltip="RevenueByCategory[category] = (Exisitng Revenue || 0) + Booking's total fare in the category.
-                        " tooltip-placement="right"></i></h3>
-                    <canvas id="totalRevenuePerCategoryChart"
-                        style="width: 100%; height: 100%; max-height: 350px;"></canvas>
+                    <h3>Top Performing Owners</h3>
+                    <canvas id="topOwnersChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
                 </div>
 
                 <div class="chart-container"
@@ -41,11 +39,9 @@
 
                 <div class="chart-container"
                     style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Average Revenue per User <i class="fa fa-info-circle"
-                            uib-tooltip="(Total Revenue of a User / Total Booking Count) * 100%"
+                    <h3>Revenue Trends <i class="fa fa-info-circle" uib-tooltip="Revenue of Bookings Per Month"
                             tooltip-placement="right"></i></h3>
-                    <canvas id="averageRevenuePerUserChart"
-                        style="width: 100%; height: 100%; max-height: 350px;"></canvas>
+                    <canvas id="revenueTrendsChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
                 </div>
 
                 <div class="chart-container"
@@ -60,44 +56,6 @@
                     <h3>Cars by Category <i class="fa fa-info-circle" uib-tooltip="Number of cars per category"
                             tooltip-placement="right"></i></h3>
                     <canvas id="carsPerCategoryChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Top Rated Cars by Category <i class="fa fa-info-circle"
-                            uib-tooltip="Get car per category , If it already exists compare the Average Rating."
-                            tooltip-placement="right"></i></h3>
-                    <canvas id="highestRatedCarCategoryChart"
-                        style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Bids by Category <i class="fa fa-info-circle" uib-tooltip="Number of Bids Count Per Category"
-                            tooltip-placement="right"></i></h3>
-                    <canvas id="bidsPerCategoryChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Total Bid Amount by Category <i class="fa fa-info-circle"
-                            uib-tooltip="BidAmount[Category]+=Total Bid Amount" tooltip-placement="right"></i></h3>
-                    <canvas id="totalBiddedPricePerCategoryChart"
-                        style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Cars by City
-                        <i class="fa fa-info-circle" uib-tooltip="Count of cars per city" tooltip-placement="right"></i>
-                    </h3>
-                    <canvas id="carsPerCityChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 400px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Revenue Trends <i class="fa fa-info-circle" uib-tooltip="Revenue of Bookings Per Month" tooltip-placement="right"></i></h3>
-                    <canvas id="revenueTrendsChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
                 </div>
             </div>
         </div>

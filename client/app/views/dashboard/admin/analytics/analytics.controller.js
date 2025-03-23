@@ -17,7 +17,9 @@ mainApp.controller('AdminAnalyticsController', [
         vm.selectedTimeRange = "30";
         vm.loading = false;
         vm.chartInstances = {};
-        vm.showCalculations = false;
+        vm.cards = [];
+        vm.charts = {};
+        vm.topOwners = [];
 
         /**
          * Initialization function
@@ -30,9 +32,26 @@ mainApp.controller('AdminAnalyticsController', [
             vm.loading = true;
             analyticsService.getAdminAnalytics(vm.selectedTimeRange)
                 .then(data => {
-                    vm.cards = data.cards;
-                    vm.charts = data.charts;
+                    // Map totals to cards
+                    vm.cards = [
+                        { title: "Total Users", value: data.cards.totalUsers },
+                        { title: "Total Bookings", value: data.cards.totalBookings },
+                        { title: "Total Bids", value: data.cards.totalBids },
+                        { title: "Total Cars", value: data.cards.totalCars }
+                    ];
+
+                    // Map top-performing owners
+                    vm.topOwners = data.charts.topOwners.map(owner => ({
+                        ownerId: owner._id,
+                        totalRevenue: owner.totalRevenue,
+                        totalBookings: owner.totalBookings
+                    }));
+
+                    // Render charts
                     renderCharts(data.charts);
+                })
+                .catch(error => {
+                    console.error("Error loading admin analytics:", error);
                 })
                 .finally(() => {
                     vm.loading = false;
@@ -46,46 +65,217 @@ mainApp.controller('AdminAnalyticsController', [
          */
 
         function renderCharts(charts) {
-            //If this renderCharts is called again with other values then destory all the chartInstances already created.
-            Object.entries(vm.chartInstances).forEach(([, chart]) => {
-                chart.destroy();
+            // Destroy existing charts
+            Object.keys(vm.chartInstances).forEach(chartKey => {
+                if (vm.chartInstances[chartKey]) {
+                    vm.chartInstances[chartKey].destroy();
+                    delete vm.chartInstances[chartKey]; // Remove the reference to the destroyed chart
+                }
             });
+        
+            // Top Performing Owners Chart (Polar Area Chart)
+            if (charts.topOwners) {
+                const ownerLabels = charts.topOwners.map(owner => `Owner ${owner._id}`);
+                const ownerRevenues = charts.topOwners.map(owner => owner.totalRevenue);
 
-            if (charts.totalRevenuePerCategory) {
-                vm.chartInstances.totalRevenuePerCategoryChart = new Chart(
-                    document.getElementById('totalRevenuePerCategoryChart'),
+                vm.chartInstances.topOwnersChart = new Chart(
+                    document.getElementById('topOwnersChart'),
+                    {
+                        type: 'polarArea',
+                        data: {
+                            labels: ownerLabels,
+                            datasets: [{
+                                label: 'Total Revenue',
+                                data: ownerRevenues,
+                                backgroundColor: [
+                                    '#3498db',
+                                    '#e74c3c',
+                                    '#2ecc71',
+                                    '#f1c40f',
+                                    '#8e44ad'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const label = context.label || '';
+                                            const value = context.raw;
+                                            return `${label}: ₹${value.toLocaleString()}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            }
+
+            // Cars Per Category Chart (Polar Area Chart)
+            if (charts.carsPerCategory) {
+                const categories = charts.carsPerCategory.map(item => item._id.categoryName); // Extract category names
+                const carCounts = charts.carsPerCategory.map(item => item.totalCars); // Extract total cars
+
+                vm.chartInstances.carsPerCategoryChart = new Chart(
+                    document.getElementById('carsPerCategoryChart'),
+                    {
+                        type: 'polarArea', // Changed to Polar Area Chart
+                        data: {
+                            labels: categories, // Category names as labels
+                            datasets: [{
+                                data: carCounts, // Total cars as data
+                                backgroundColor: [
+                                    '#3498db',
+                                    '#e74c3c',
+                                    '#2ecc71',
+                                    '#f1c40f',
+                                    '#8e44ad'
+                                ] // Colors for each category
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const label = context.label || '';
+                                            const value = context.raw;
+                                            return `${label}: ${value} cars`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            }
+
+            // Revenue by City Chart
+            if (charts.revenueByCity) {
+                const cityLabels = [...new Set(charts.revenueByCity.map(item => item._id.city))];
+                const cityData = cityLabels.map(city =>
+                    charts.revenueByCity
+                        .filter(item => item._id.city === city)
+                        .reduce((sum, item) => sum + item.totalRevenue, 0)
+                );
+
+                vm.chartInstances.totalRevenuePerCityChart = new Chart(
+                    document.getElementById('totalRevenuePerCityChart'),
                     {
                         type: 'bar',
-                        data: charts.totalRevenuePerCategory,
+                        data: {
+                            labels: cityLabels,
+                            datasets: [{
+                                label: 'Revenue',
+                                data: cityData,
+                                backgroundColor: '#3498db'
+                            }]
+                        },
                         options: getChartOptions('revenue')
                     }
                 );
             }
 
-            const chartConfigs = {
-                totalRevenuePerCity: { id: 'totalRevenuePerCityChart', type: 'bar' },
-                averageRevenuePerUser: { id: 'averageRevenuePerUserChart', type: 'bar' },
-                bookingsOverTime: { id: 'bookingsOverTimeChart', type: 'line' },
-                carsPerCategory: { id: 'carsPerCategoryChart', type: 'pie' },
-                highestRatedCarCategoryWise: { id: 'highestRatedCarCategoryChart', type: 'bar' },
-                bidsPerCategory: { id: 'bidsPerCategoryChart', type: 'bar' },
-                totalBiddedPricePerCategory: { id: 'totalBiddedPricePerCategoryChart', type: 'bar' },
-                carsPerCity: { id: 'carsPerCityChart', type: 'pie' },
-                revenueTrends: { id: 'revenueTrendsChart', type: 'line' }
-            };
+            // Revenue by Rental Type Chart
+            if (charts.revenueByRentalType) {
+                const dates = [...new Set(charts.revenueByRentalType.map(item => item._id.date))];
+                const localRevenue = dates.map(date =>
+                    charts.revenueByRentalType
+                        .filter(item => item._id.date === date && item._id.rentalType === 'local')
+                        .reduce((sum, item) => sum + item.totalRevenue, 0)
+                );
+                const outstationRevenue = dates.map(date =>
+                    charts.revenueByRentalType
+                        .filter(item => item._id.date === date && item._id.rentalType === 'outstation')
+                        .reduce((sum, item) => sum + item.totalRevenue, 0)
+                );
 
-            Object.entries(chartConfigs).forEach(([key, config]) => {
-                if (charts[key]) {
-                    vm.chartInstances[config.id] = new Chart(
-                        document.getElementById(config.id),
-                        {
-                            type: config.type,
-                            data: charts[key],
-                            options: getChartOptions(key)
+                vm.chartInstances.revenueTrendsChart = new Chart(
+                    document.getElementById('revenueTrendsChart'),
+                    {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [
+                                {
+                                    label: 'Local Revenue',
+                                    data: localRevenue,
+                                    borderColor: '#3498db',
+                                    fill: false
+                                },
+                                {
+                                    label: 'Outstation Revenue',
+                                    data: outstationRevenue,
+                                    borderColor: '#e74c3c',
+                                    fill: false
+                                }
+                            ]
+                        },
+                        options: getChartOptions('revenue')
+                    }
+                );
+            }
+
+            // Booking Trends Chart
+            if (charts.bookingTrends) {
+                const dates = charts.bookingTrends.map(item => item._id);
+                const bookings = charts.bookingTrends.map(item => item.totalBookings);
+
+                vm.chartInstances.bookingsOverTimeChart = new Chart(
+                    document.getElementById('bookingsOverTimeChart'),
+                    {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                label: 'Bookings',
+                                data: bookings,
+                                borderColor: '#2ecc71',
+                                fill: false
+                            }]
+                        },
+                        options: getChartOptions('bookings')
+                    }
+                );
+            }
+
+            // Cars Per Category Chart
+            if (charts.carsPerCategory) {
+                const categories = charts.carsPerCategory.map(item => item._id.categoryName); // Extract category names
+                const carCounts = charts.carsPerCategory.map(item => item.totalCars); // Extract total cars
+
+                vm.chartInstances.carsPerCategoryChart = new Chart(
+                    document.getElementById('carsPerCategoryChart'),
+                    {
+                        type: 'pie', // Pie chart
+                        data: {
+                            labels: categories, // Category names as labels
+                            datasets: [{
+                                data: carCounts, // Total cars as data
+                                backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#8e44ad'] // Colors for each category
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const label = context.label || '';
+                                            const value = context.raw;
+                                            return `${label}: ${value} cars`;
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    );
-                }
-            });
+                    }
+                );
+            }
         }
 
         /**
@@ -95,32 +285,15 @@ mainApp.controller('AdminAnalyticsController', [
          */
 
         function getChartOptions(chartType) {
-            const baseOptions = {
+            return {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0,
-                            callback: function (value) {
-                                if (chartType.includes('revenue')) {
-                                    return '₹' + Math.round(value).toLocaleString();
-                                }
-                                else if (chartType.includes('Revenue')) {
-                                    return '₹' + Math.round(value).toLocaleString();
-                                }
-                                return Math.round(value);
-                            }
-                        }
-                    }
-                },
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
                                 const label = context.dataset.label || '';
-                                const value = Math.round(context.parsed.y);
+                                const value = context.raw;
                                 if (chartType.includes('revenue')) {
                                     return `${label}: ₹${value.toLocaleString()}`;
                                 }
@@ -128,35 +301,22 @@ mainApp.controller('AdminAnalyticsController', [
                             }
                         }
                     }
-                }
-            };
-
-            if (chartType === 'carsPerCategory' || chartType === 'carsPerCity') {
-                return {
-                    ...baseOptions,
-                    plugins: {
-                        ...baseOptions.plugins,
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    //context.parsed is basically the values of the data points
-                                    const value = Math.round(context.parsed);
-                                    return `${label}: ${value}`;
-                                }
-                            }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => chartType.includes('revenue') ? `₹${value.toLocaleString()}` : value
                         }
                     }
-                };
-            }
-
-            return baseOptions;
+                }
+            };
         }
 
         /**
          * Destroy the chart on Destroy event.
          */
-        
+
         $scope.$on('$destroy', function () {
             Object.values(vm.chartInstances).forEach(chart => chart.destroy());
         });

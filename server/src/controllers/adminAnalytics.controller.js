@@ -29,20 +29,12 @@ export const getTotals = async (req, res) => {
                 {
                     $limit: 3
                 },
-                {
-                    $project: {
-                        _id: 0,
-                        userId: "$user._id",
-                        username: "$user.username",
-                        totalBids: 1
-                    }
-                }
             ]
         )
         res.status(200).json({
             totalUsers,
             totalBookings,
-            totalBiddings,
+            totalBids,
             totalCars,
             topBidders
         });
@@ -74,7 +66,7 @@ export const revenueByCity = async (req, res) => {
                 {
                     $group: {
                         _id: {
-                            city: "$city",
+                            city: "$bid.car.city",
                             date: {
                                 $dateToString: {
                                     format: "%Y-%m-%d",
@@ -119,16 +111,11 @@ export const revenueByRentalType = async (req, res) => {
             },
             {
                 $group: {
-                    _id: "$rentalType",
-                    date: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt"
-                        }
+                    _id: {
+                        rentalType: "$rentalType", // Group by rentalType (local/outstation)
+                        date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } // Group by date
                     },
-                    totalRevenue: {
-                        $sum: "$totalFare"
-                    }
+                    totalRevenue: { $sum: "$totalFare" } // Sum up totalFare
                 }
             },
             {
@@ -186,31 +173,33 @@ export const bookingTrends = async (req, res) => {
     }
 }
 
-export const topPerformingOwners = async(req,res)=>{
+export const topPerformingOwners = async (req, res) => {
     try {
         const topOwners = await Booking.aggregate([
             {
-                $group:{
-                    _id:"$bid.car.owner.userId",
-                    totalRevenue:{
-                        $sum:"$totalFare"
+                $group: {
+                    _id: "$bid.car.owner.username",
+                    totalRevenue: {
+                        $sum: "$totalFare"
                     },
-                    totalBookings:{
-                        $sum:1
+                    totalBookings: {
+                        $sum: 1
                     }
                 }
             },
             {
-                $sort:{
-                    totalRevenue:-1
+                $sort: {
+                    totalRevenue: -1
                 }
             },
             {
-                $limit:5
+                $limit: 5
             }
         ])
+        res.status(200).json(topOwners);
     } catch (error) {
-        
+        console.error("Error fetching top performing owners:", error);
+        res.status(500).json({ msg: "Error fetching top performing owners", error: error.message });
     }
 }
 
@@ -225,7 +214,11 @@ export const carsPerCategory = async (req, res) => {
             },
             { $sort: { totalCars: -1 } } // Sort by totalCars in descending order
         ]);
-
+        console.log(carsByCategory);
+        const formattedData = carsByCategory.map((category) => ({
+            category: category.categoryName, // Category name
+            totalCars: category.totalCars // Total cars in the category
+        }));
         res.status(200).json(carsByCategory);
     } catch (error) {
         console.error("Error fetching cars per category:", error);
