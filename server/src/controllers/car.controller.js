@@ -217,7 +217,7 @@ export const getAvailableCars = async (req, res) => {
         ]);
 
         const total = cars[0]?.total[0]?.count || 0;
-
+        console.log(cars);
         res.status(200).json({ cars: cars[0]?.cars || [], total });
     } catch (error) {
         console.error("Car Controller :: Error fetching available cars", error);

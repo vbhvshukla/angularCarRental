@@ -18,7 +18,7 @@
                     <select id="car-category" ng-model="vm.filters.carCategory" class="form-control"
                         style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
                         <option value="">All Category</option>
-                        <option ng-repeat="category in vm.categories" value="{{category.categoryId}}">
+                        <option ng-repeat="category in vm.categories" value="{{category._id}}">
                             {{category.categoryName}}
                         </option>
                     </select>
