@@ -82,7 +82,7 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
         console.log(car);
         const deferred = $q.defer();
         $http.post(`${BASE_URL}/create`, car, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': undefined }
         })
             .then(response => deferred.resolve(response.data))
             .catch(error => deferred.reject(error));
@@ -112,8 +112,8 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
     this.updateCar = function (carId, carData) {
         console.log("CLIENT :: Car Service :: Update Car :: Car Data  ", carId)
         const deferred = $q.defer();
-        $http.put(`${BASE_URL}/update/${carId._id}`, carId, {
-            headers: { 'Content-Type': 'application/json' }
+        $http.put(`${BASE_URL}/update/${carId}`, carData, {
+            headers: { 'Content-Type': undefined }
         })
             .then(response => deferred.resolve(response.data))
             .catch(error => deferred.reject(error));

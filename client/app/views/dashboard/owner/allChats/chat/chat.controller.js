@@ -1,7 +1,8 @@
 mainApp.controller('OwnerChatController', [
-    '$scope', '$q', '$stateParams', 'chatService', 'authService', 'errorService',
-    function ($scope, $q, $stateParams, chatService, authService, errorService) {
+    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'authService', 'errorService',
+    function ($scope, $timeout, $q, $stateParams, chatService, authService, errorService) {
         let vm = this;
+        let socket = null;
 
         // Initialize variables
         vm.chatId = $stateParams.chatId;
@@ -14,25 +15,43 @@ mainApp.controller('OwnerChatController', [
 
         vm.init = function () {
             vm.loading = true;
-            
+
+            // Initialize Socket.IO connection
+            socket = io('http://127.0.0.1:8006'); // Replace with your server URL
+            socket.emit('joinChat', vm.chatId);
+
+            // Listen for new messages
+            socket.on('newMessage', (message) => {
+                if (message.chatId === vm.chatId) {
+                    vm.messages.push(message);
+                    $timeout();
+                }
+            });
+
             $q.all([
                 authService.getUser(),
                 chatService.getMessages(vm.chatId)
             ])
-            .then(([user, messages]) => {
-                vm.currentUser = user;
-                vm.messages = messages;
-                chatService.scrollToBottom();
-            })
-            .catch(error => {
-                errorService.handleError('Failed to load chat', error);
-            })
-            .finally(() => {
-                vm.loading = false;
-            });
+                .then(([user, messages]) => {
+                    vm.currentUser = user;
+                    vm.messages = messages;
+                    chatService.scrollToBottom();
+                })
+                .catch(error => {
+                    errorService.handleError('Failed to load chat', error);
+                })
+                .finally(() => {
+                    vm.loading = false;
+                });
         };
 
-        vm.handleFileSelect = function(files) {
+        $scope.$on('$destroy', function () {
+            if (socket) {
+                socket.disconnect();
+            }
+        });
+
+        vm.handleFileSelect = function (files) {
             if (files && files.length) {
                 vm.selectedFile = files[0];
                 if (vm.selectedFile.size > 5000000) {
@@ -43,7 +62,7 @@ mainApp.controller('OwnerChatController', [
             }
         };
 
-        vm.sendMessage = function() {
+        vm.sendMessage = function () {
             if (!vm.newMessage.trim() && !vm.selectedFile) return;
             chatService.getChatParticipants(vm.chatId)
                 .then(participants => {
@@ -51,9 +70,9 @@ mainApp.controller('OwnerChatController', [
                         vm.chatId,
                         vm.currentUser,
                         {
-                            _id:participants.user.userId,
-                            username:participants.user.username,
-                            email:participants.user.email
+                            _id: participants.user.userId,
+                            username: participants.user.username,
+                            email: participants.user.email
                         },
                         vm.newMessage,
                         vm.selectedFile
@@ -74,12 +93,12 @@ mainApp.controller('OwnerChatController', [
                 });
         };
 
-        vm.showImageModal = function(imageUrl) {
+        vm.showImageModal = function (imageUrl) {
             vm.modalImage = imageUrl;
             vm.showModal = true;
         };
 
-        vm.downloadPdf = function(dataUrl, filename) {
+        vm.downloadPdf = function (dataUrl, filename) {
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = filename;
@@ -87,7 +106,7 @@ mainApp.controller('OwnerChatController', [
             link.click();
             document.body.removeChild(link);
         };
-        vm.closeModal = function() {
+        vm.closeModal = function () {
             vm.showModal = false;
             vm.modalImage = '';
         };

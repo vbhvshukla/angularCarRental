@@ -22,7 +22,7 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @returns resolved or rejected promise.
          */
         this.getUserConversations = function (userId) {
-            console.log("User Id :: ",userId);
+            console.log("User Id :: ", userId);
             return $http.get(`${BASE_URL}/user/${userId}`)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'ChatService :: User Conversations Fetch Failed'));
@@ -148,5 +148,21 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
                 element.scrollTop = element.prop('scrollHeight');
             }, 100);
         };
+
+        /**
+ * Function :: getCarIdFromChatId
+ * @param {string} chatId - The chat ID in the format "userId_ownerId_carId".
+ * @returns {string} - The extracted car ID.
+ */
+        this.getCarIdFromChatId = function (chatId) {
+            if (!chatId || typeof chatId !== 'string') {
+                throw new Error('Invalid chatId');
+            }
+            const parts = chatId.split('_');
+            if (parts.length < 3) {
+                throw new Error('Invalid chatId format');
+            }
+            return parts[2]; // Return the carId (last part of the chatId)
+        }
     }
 ]);

@@ -91,6 +91,7 @@ export const submitBid = async (req, res) => {
   try {
     const { carId, bidData, userData } = req.body;
     console.log(carId, bidData, userData);
+
     const car = await Car.findById(carId);
     if (!car) {
       return res.status(404).json({ msg: "Car not found" });
@@ -132,6 +133,8 @@ export const submitBid = async (req, res) => {
 
     await bid.save();
 
+    //Make a message body for SQS
+
     const MessageBody = {
       username: userData.username,
       email: car.owner.email,
@@ -140,6 +143,9 @@ export const submitBid = async (req, res) => {
       startDate: bidData.startDate,
       endDate: bidData.endDate,
     };
+
+    //Push this data to aws queue
+    
     await sqs
       .sendMessage({
         QueueUrl: QUEUE_URL,

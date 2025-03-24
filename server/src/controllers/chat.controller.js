@@ -98,8 +98,8 @@ export const getMessages = async (req, res) => {
  * @description Send a message in a specific chat.
  */
 export const sendMessage = async (req, res) => {
-    const { chatId, fromUser, toUser, message, attachment } = req.body
-    console.log(chatId,fromUser,toUser,message,attachment)
+    const { chatId, fromUser, toUser, message, attachment } = req.body;
+    console.log(chatId, fromUser, toUser, message, attachment);
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
@@ -120,16 +120,17 @@ export const sendMessage = async (req, res) => {
                 email: toUser.email
             },
         });
-
         await newMessage.save();
-
         // Update the conversation's last message and timestamp
-        await Conversations.findOneAndUpdate(
+        const updatedConversation = await Conversations.findOneAndUpdate(
             { chatId },
             { lastMessage: message, lastTimestamp: new Date() },
             { new: true }
         );
 
+        // Emit the new message event via Socket.IO
+        const io = req.app.get('io'); // Access the Socket.IO instance
+        io.to(chatId).emit('newMessage', newMessage);
         res.status(201).json(newMessage);
     } catch (error) {
         res.status(500).json({ error: "Failed to send message.", details: error.message });
@@ -137,7 +138,7 @@ export const sendMessage = async (req, res) => {
 };
 
 export const sendOwnerMessage = async (req, res) => {
-    const { chatId, fromUser, toUser, message, attachment } = req.body
+    const { chatId, fromUser, toUser, message, attachment } = req.body;
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
