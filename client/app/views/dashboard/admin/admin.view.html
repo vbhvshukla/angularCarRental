@@ -1,5 +1,5 @@
 <div class="admin-main" ng-controller="AdminController as vm" ng-init="vm.init()"
-    style="width: 100%; background-color: white; display: flex; flex-direction: column; gap: 20px; max-width: 1164px; justify-self: center;">
+    style="width: 76%; background-color: white; display: flex; flex-direction: column; gap: 20px; max-width: 1164px; justify-self: center;">
     <div class="section"
         style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
         <h3 style="margin-top: 0;">Users</h3>
@@ -23,7 +23,7 @@
                     <td>{{user.role}}</td>
                     <td>{{user.rating.avgRating}}</td>
                     <td>{{user.rating.ratingCount}}</td>
-                    <td>{{user.rating.isApproved ? 'Yes' : 'No'}}</td>
+                    <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
                     <td>
                         <button class="btn btn-primary" ng-click="vm.showUserApprovalModal(user)">Manage</button>
                     </td>

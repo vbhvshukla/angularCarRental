@@ -180,7 +180,6 @@ export const deleteCar = async (req, res) => {
  */
 export const getAvailableCars = async (req, res) => {
     try {
-        console.log(req.query);
         const { page = 1, limit = 10, location, carCategory, priceRange, carType, availability, features, rating } = req.query;
 
         const pageNumber = parseInt(page, 10);
@@ -198,7 +197,7 @@ export const getAvailableCars = async (req, res) => {
         // Add filters to the query
         if (location) query.city = location;
         if (carCategory) query["category._id"] = carCategory;
-        if (priceRange) query.price = { $lte: parseInt(priceRange) };
+        if (priceRange) query["rentalOptions.local.pricePerHour"] = { $lte: parseInt(priceRange) };
         if (carType) query.carType = carType;
         if (availability) query.availability = availability;
         if (features) query.features = { $regex: features, $options: "i" }; // Partial match
@@ -217,7 +216,6 @@ export const getAvailableCars = async (req, res) => {
         ]);
 
         const total = cars[0]?.total[0]?.count || 0;
-        console.log(cars);
         res.status(200).json({ cars: cars[0]?.cars || [], total });
     } catch (error) {
         console.error("Car Controller :: Error fetching available cars", error);
