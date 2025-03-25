@@ -15,12 +15,8 @@ mainApp.controller('OwnerChatController', [
 
         vm.init = function () {
             vm.loading = true;
-
-            // Initialize Socket.IO connection
-            socket = io('http://127.0.0.1:8006'); // Replace with your server URL
+            socket = io('http://127.0.0.1:8006'); 
             socket.emit('joinChat', vm.chatId);
-
-            // Listen for new messages
             socket.on('newMessage', (message) => {
                 if (message.chatId === vm.chatId) {
                     vm.messages.push(message);

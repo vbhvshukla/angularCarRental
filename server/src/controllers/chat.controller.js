@@ -12,9 +12,13 @@ export const createChat = async (req, res) => {
     }
 
     try {
-        const chatId = `${user._id}_${owner._id}_${carId}`;
-
-
+        let chatId = null;
+        if(user._id){
+            chatId = `${user._id}_${owner._id}_${carId}`;
+        }
+        else{
+            chatId = `${user.userId}_${owner.userId}_${carId}`;
+        }
         const existingChat = await Conversations.findOne({ chatId });
         if (existingChat) {
             return res.status(200).json(existingChat);
@@ -121,16 +125,18 @@ export const sendMessage = async (req, res) => {
             },
         });
         await newMessage.save();
-        // Update the conversation's last message and timestamp
+
         const updatedConversation = await Conversations.findOneAndUpdate(
             { chatId },
             { lastMessage: message, lastTimestamp: new Date() },
             { new: true }
         );
 
-        // Emit the new message event via Socket.IO
-        const io = req.app.get('io'); // Access the Socket.IO instance
+        // Get the io instance we set in indexjs
+        const io = req.app.get('io');
+        //Emit the new message onto the chatId room.
         io.to(chatId).emit('newMessage', newMessage);
+
         res.status(201).json(newMessage);
     } catch (error) {
         res.status(500).json({ error: "Failed to send message.", details: error.message });
@@ -162,7 +168,6 @@ export const sendOwnerMessage = async (req, res) => {
 
         await newMessage.save();
 
-        // Update the conversation's last message and timestamp
         await Conversations.findOneAndUpdate(
             { chatId },
             { lastMessage: message, lastTimestamp: new Date() },

@@ -131,25 +131,25 @@ export const submitBid = async (req, res) => {
       },
     });
 
-    await bid.save();
+    // await bid.save();
 
     //Make a message body for SQS
 
-    const MessageBody = {
-      username: userData.username,
-      email: car.owner.email,
-      carName: car.carName,
-      bidAmount: bidData.bidAmount,
-      startDate: bidData.startDate,
-      endDate: bidData.endDate,
-    };
+    // const MessageBody = {
+    //   username: userData.username,
+    //   email: car.owner.email,
+    //   carName: car.carName,
+    //   bidAmount: bidData.bidAmount,
+    //   startDate: bidData.startDate,
+    //   endDate: bidData.endDate,
+    // };
 
     //Push this data to aws queue
     
     await sqs
       .sendMessage({
         QueueUrl: QUEUE_URL,
-        MessageBody: JSON.stringify(MessageBody),
+        MessageBody: JSON.stringify(bid),
       })
       .promise();
 

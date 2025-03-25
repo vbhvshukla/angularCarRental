@@ -1,5 +1,6 @@
 import { Booking } from "../models/booking.model.js";
 import { Car } from "../models/car.model.js";
+import { sendEmail } from "../services/mail.service.js";
 
 /**
  * @function createBooking
@@ -71,6 +72,24 @@ export const createBooking = async (req, res) => {
 
         // console.log(booking);
         const newBooking = await booking.save();
+        const emailContent = `
+            <h1>Booking Confirmation</h1>
+            <p>Dear ${booking.bid.user.username},</p>
+            <p>Your booking has been successfully created. Here are the details:</p>
+            <ul>
+                <li><strong>Car Name:</strong> ${booking.bid.car.carName}</li>
+                <li><strong>From:</strong> ${new Date(booking.bid.fromTimestamp).toLocaleString()}</li>
+                <li><strong>To:</strong> ${new Date(booking.bid.toTimestamp).toLocaleString()}</li>
+                <li><strong>Total Fare:</strong> $${calculatedTotalAmount}</li>
+                <li><strong>Status:</strong> Confirmed</li>
+            </ul>
+            <p>Thank you for choosing our service!</p>
+        `;
+        await sendEmail({
+            to: booking.bid.user.email,
+            subject: "Booking Confirmation",
+            html: emailContent,
+        });
         res.status(201).json({ msg: "Booking created successfully", newBooking });
     } catch (error) {
         console.error("Booking Controller :: Error creating booking", error);

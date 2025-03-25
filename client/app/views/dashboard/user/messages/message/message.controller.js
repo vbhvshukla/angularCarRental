@@ -1,5 +1,5 @@
-mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout','$stateParams', 'chatService', 'authService', 'carService',
-    function ($scope, $q, $timeout,  $stateParams, chatService, authService, carService) {
+mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'authService', 'carService',
+    function ($scope, $q, $timeout, $stateParams, chatService, authService, carService) {
 
         //Variable declaration
         let vm = this;
@@ -16,12 +16,8 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout','$stateP
         //Message Controller Inititialization Function 
         vm.init = function () {
             loadData();
-
-            // Initialize Socket.IO connection
-            socket = io('http://127.0.0.1:8006'); // Replace with your server URL
+            socket = io('http://127.0.0.1:8006');
             socket.emit('joinChat', vm.chatId);
-
-            // Listen for new messages
             socket.on('newMessage', (message) => {
                 if (message.chatId === vm.chatId) {
                     vm.messages.push(message);
@@ -62,10 +58,15 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout','$stateP
 
         vm.sendMessage = function () {
 
-            if (!vm.newMessage.trim() && !vm.selectedFile) return;
+            if (!vm.newMessage.trim() && !vm.selectedFile)
+                return;
 
             //Get the carID
             const carId = chatService.getCarIdFromChatId(vm.chatId);
+
+            const formData = new FormData();
+
+            
 
             //Fetch the car by carID.
             carService.getCarById(carId).then(car => {
@@ -77,7 +78,6 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout','$stateP
                     vm.selectedFile
                 );
             })
-                //Clear the Input Fields
                 .then(() => {
                     vm.newMessage = '';
                     vm.selectedFile = null;

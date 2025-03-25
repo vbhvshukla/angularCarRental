@@ -106,6 +106,7 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @returns resolved or rejected promise.
          */
         this.getOrCreateChat = function (carId, user, owner) {
+            console.log("Chat Service :: ", carId,user,owner)
             return this.createChat(carId, user, owner)
                 .then(chat => chat)
                 .catch(error => errorService.handleError(error, 'ChatService :: Chat Get/Create Failed'));

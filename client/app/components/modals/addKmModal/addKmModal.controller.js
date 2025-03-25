@@ -80,7 +80,7 @@ mainApp.controller('AddKmModalController', [
             )
                 .then(function (conversation) {
                     const message = `Additional charges have been added to your booking (ID: ${booking.bookingId}).`;
-                    return chatService.sendOwnerMessage(
+                    return chatService.sendMessage(
                         conversation.chatId,
                         booking.bid.car.owner,
                         booking.bid.user,

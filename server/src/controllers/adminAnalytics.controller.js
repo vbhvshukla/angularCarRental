@@ -12,7 +12,7 @@ export const getTotals = async (req, res) => {
         const topBidders = await Bid.aggregate(
             [
                 {
-                    //Group the document by the userId
+                    //group the documents by there user Id
                     $group: {
                         _id: "$user.userId",
                         totalBids: {
@@ -20,12 +20,13 @@ export const getTotals = async (req, res) => {
                         }
                     },
                 },
-                //Sort the collection and limit the collection the the top 3
+                //sort the bids in desceneding order
                 {
                     $sort: {
                         totalBids: -1
                     }
                 },
+                //limit the results to the top 3 only
                 {
                     $limit: 3
                 },
@@ -56,6 +57,7 @@ export const revenueByCity = async (req, res) => {
         const revenueData = await Booking.aggregate(
             [
                 {
+                    //match the document by the where createdAt lies between startDate and today
                     $match: {
                         createdAt: {
                             $gte: startDate,
@@ -65,6 +67,7 @@ export const revenueByCity = async (req, res) => {
                 },
                 {
                     $group: {
+                        //Group by two things the car's city and the date
                         _id: {
                             city: "$bid.car.city",
                             date: {
@@ -80,6 +83,7 @@ export const revenueByCity = async (req, res) => {
                     }
                 },
                 {
+                    //sort by date
                     $sort: {
                         "_id.date": 1
                     }
@@ -110,12 +114,13 @@ export const revenueByRentalType = async (req, res) => {
                 }
             },
             {
+                //group by rental type and created at both 
                 $group: {
                     _id: {
-                        rentalType: "$rentalType", // Group by rentalType (local/outstation)
+                        rentalType: "$rentalType",
                         date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } // Group by date
                     },
-                    totalRevenue: { $sum: "$totalFare" } // Sum up totalFare
+                    totalRevenue: { $sum: "$totalFare" } // sum up totalFare
                 }
             },
             {
@@ -177,6 +182,7 @@ export const topPerformingOwners = async (req, res) => {
     try {
         const topOwners = await Booking.aggregate([
             {
+                //group by username -> calculate total revenue & bookings
                 $group: {
                     _id: "$bid.car.owner.username",
                     totalRevenue: {
@@ -187,11 +193,13 @@ export const topPerformingOwners = async (req, res) => {
                     }
                 }
             },
+            //sort by revenue largest first
             {
                 $sort: {
                     totalRevenue: -1
                 }
             },
+            //limit it to 5 documents.
             {
                 $limit: 5
             }
@@ -214,11 +222,6 @@ export const carsPerCategory = async (req, res) => {
             },
             { $sort: { totalCars: -1 } } // Sort by totalCars in descending order
         ]);
-        console.log(carsByCategory);
-        const formattedData = carsByCategory.map((category) => ({
-            category: category.categoryName, // Category name
-            totalCars: category.totalCars // Total cars in the category
-        }));
         res.status(200).json(carsByCategory);
     } catch (error) {
         console.error("Error fetching cars per category:", error);

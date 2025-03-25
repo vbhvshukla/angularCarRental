@@ -1,49 +1,47 @@
 import AWS from "aws-sdk";
-import { sendEmail } from "./mail.service.js";
+import { Bid } from "../models/bid.model.js";
 
-//SQS Config
+// SQS configuration
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+  accessKeyId: 'AKIAXYKJRBXVYAW2OYOF',
+  secretAccessKey: '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',
+  region: 'us-east-1'
 });
 
 const sqs = new AWS.SQS();
-const QUEUE_URL = process.env.SQS_QUEUE_URL;
+const QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/533267025387/carental';
 
-export const pollQueue = () => {
-  const params = { QueueUrl: QUEUE_URL, MaxNumberOfMessages: 1 };
+export const processBids = async () => {
+  const params = { QueueUrl: QUEUE_URL, MaxNumberOfMessages: 10 };
 
-  //Recieve message from SQS
-  sqs.receiveMessage(params, async (err, data) => {
-    //IF any error occurs while receiving it will retry in 5 seconds later
-    if (err) console.error("Error receiving message:", err);
+  try {
+    const data = await sqs.receiveMessage(params).promise();
 
-    //If we have the message
-    if (data.Messages.length > 0) {
-      //As we had the array of message there so we get a array here and we are saving the message body as an object.
-      const MessageBody = JSON.parse(data.Messages[0].Body);
-      console.log("Received message:", MessageBody);
-      try {
-        // Send confirmation email
-        await sendEmail(
-          MessageBody.email,
-          `New bid placed on car ${MessageBody.carName} `,
-          `New Bid Placed at INR ${MessageBody.bidAmount} 
-          from ${MessageBody.startDate} to ${MessageBody.endDate} 
-          by ${MessageBody.username}.`
-        );
+    if (data.Messages && data.Messages.length > 0) {
+      for (const message of data.Messages) {
+        const bidData = JSON.parse(message.Body);
+        console.log('Bid data:: ', bidData);
+        try {
+          // Save the bid object to MongoDB
+          const bid = new Bid(bidData);
+          await bid.save();
+          console.log("Bid saved to MongoDB:", bid);
 
-        // Delete message from queue after processing
-        await sqs
-          .deleteMessage({
-            QueueUrl: QUEUE_URL,
-            ReceiptHandle: data.Messages[0].ReceiptHandle,
-          })
-          .promise();
-        console.log("Message processed and deleted.");
-      } catch (error) {
-        console.error("Failed to process message:", error);
+          // Delete the message from SQS
+          await sqs
+            .deleteMessage({
+              QueueUrl: QUEUE_URL,
+              ReceiptHandle: message.ReceiptHandle,
+            })
+            .promise();
+          console.log("Message deleted from SQS");
+        } catch (error) {
+          console.error("Error saving bid to MongoDB:", error);
+        }
       }
     }
-  });
+  } catch (error) {
+    console.error("Error processing SQS messages:", error);
+  }
 };
+

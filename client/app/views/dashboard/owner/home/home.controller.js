@@ -144,7 +144,7 @@ mainApp.controller('OwnerHomeDashboardController', [
                     errorService.handleError('Failed to accept bid: ' + error.message);
                     if (vm.isProcessing) {
                         return bidService.updateBidStatus(bid._id, 'pending')
-                            .catch(() => { /* Ignore revert errors */ });
+                            .catch(() => { /* something soethngn */ });
                     }
                 })
                 .finally(() => {

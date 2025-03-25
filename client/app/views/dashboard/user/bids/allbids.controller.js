@@ -85,7 +85,7 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'authService',
         vm.cancelBid = function (bid) {
             if (bid.status === 'pending') {
                 bid.status = 'cancelled';
-                bidService.updateBidStatus(bid.bidId, 'cancelled')
+                bidService.updateBidStatus(bid._id, 'cancelled')
                     .then(function () {
                         vm.filterBids();
                     })
