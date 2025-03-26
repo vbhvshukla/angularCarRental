@@ -38,7 +38,7 @@ connectDb()
       });
     });
 
-    // Replace `app.listen` with `server.listen`
+   
     server.listen(process.env.PORT || 8002, () => {
       console.log(`Server is running at port : ${process.env.PORT}`);
     });

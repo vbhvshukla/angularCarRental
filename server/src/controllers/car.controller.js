@@ -198,7 +198,6 @@ export const getAvailableCars = async (req, res) => {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
-        // Build the query object
         const query = {
             isDeleted: false,
             $or: [
@@ -207,16 +206,15 @@ export const getAvailableCars = async (req, res) => {
             ]
         };
 
-        // Add filters to the query
         if (location) query.city = location;
         if (carCategory) query["category._id"] = carCategory;
         if (priceRange) query["rentalOptions.local.pricePerHour"] = { $lte: parseInt(priceRange) };
         if (carType) query.carType = carType;
         if (availability) query.availability = availability;
-        if (features) query.features = { $regex: features, $options: "i" }; // Partial match
+        if (features) query.features = { $regex: features, $options: "i" };
         if (rating) query["rating.avgRating"] = { $gte: parseInt(rating) };
 
-        // Pagination
+
         const skip = (pageNumber - 1) * limitNumber;
         const cars = await Car.aggregate([
             { $match: query },

@@ -51,7 +51,7 @@ mainApp.controller('OwnerHomeDashboardController', [
          */
         vm.init = function () {
             authService.getUser()
-                .then(user => vm.getAllData(user._id))
+                .then(user => {console.log(user); vm.getAllData(user._id)})
                 .catch(err => console.error("Owner controller :: Error Getting User :: ", err));
         };
 
@@ -202,6 +202,21 @@ mainApp.controller('OwnerHomeDashboardController', [
             const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
             const endIndex = startIndex + pagination.itemsPerPage;
             return data.slice(startIndex, endIndex);
+        };
+
+        /**
+         * Function :: Is Booking Over
+         * @param {*} booking 
+         * @description Checks if the booking has ended based on the current date and time.
+         * @returns {boolean} True if the booking is over, false otherwise.
+         */
+        vm.isBookingOver = function (booking) {
+            if (!booking || !booking.toTimestamp) {
+                return false; // Return false if booking or toTimestamp is invalid
+            }
+            const currentTime = new Date(); // Get the current date and time
+            const bookingEndTime = new Date(booking.toTimestamp); // Convert toTimestamp to a Date object
+            return currentTime > bookingEndTime; // Return true if the current time is past the booking end time
         };
     }
 ]);

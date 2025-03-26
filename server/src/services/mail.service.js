@@ -9,14 +9,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async (email, subject, message) => {
+export const sendEmail = async ({ to, subject, text, attachments }) => {
   const mailOptions = {
     from: user,
-    to: email,
-    subject: subject,
-    text: message,
+    to,
+    subject,
+    text,
+    attachments, // Add attachments support
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Email sent to ${email}`);
+  console.log(`Email sent to ${to}`);
 };

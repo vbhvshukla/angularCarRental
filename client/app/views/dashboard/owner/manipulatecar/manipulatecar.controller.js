@@ -17,7 +17,6 @@ mainApp.controller('ManipulateCarController', [
         vm.currentUser = null;
         vm.newFeature = '';
         vm.car = {
-            carId: '',  // Will be generated for new cars
             carName: '',
             carType: '',
             city: '',
@@ -37,19 +36,19 @@ mainApp.controller('ManipulateCarController', [
             owner: null,  // Will be set during form submission
             rentalOptions: {
                 local: {
-                    pricePerHour: 0,
-                    maxKmPerHour: 0,
                     extraHourlyRate: 0,
-                    extraKmRate: 0
+                    extraKmRate: 0,
+                    maxKmPerHour: 0,
+                    pricePerHour: 0
                 },
                 outstation: {
                     pricePerDay: 0,
                     pricePerKm: 0,
-                    maxKmLimitPerDay: 0,
                     minimumKmChargeable: 0,
+                    maxKmLimitPerDay: 0,
+                    extraKmRate: 0,
+                    extraHourRate: 0,
                     extraDayRate: 0,
-                    extraHourlyRate: 0,
-                    extraKmRate: 0
                 }
             }
         };
