@@ -66,8 +66,6 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
 
             const formData = new FormData();
 
-            
-
             //Fetch the car by carID.
             carService.getCarById(carId).then(car => {
                 return chatService.sendMessage(

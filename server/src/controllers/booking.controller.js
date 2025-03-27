@@ -251,7 +251,8 @@ export const addExtras = async (req, res) => {
         booking.extraHourCharges += extraHourCharges;
         booking.extraDayCharges += extraDayCharges;
         booking.totalFare += extraKmCharges + extraHourCharges + extraDayCharges;
-
+        booking.status='completed';
+        
         await booking.save();
         res.status(200).json({ msg: "Extras added successfully", booking });
     } catch (error) {

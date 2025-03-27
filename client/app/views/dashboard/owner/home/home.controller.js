@@ -92,6 +92,7 @@ mainApp.controller('OwnerHomeDashboardController', [
                     // Filter pending bids
                     vm.pendingBids = vm.allBids.filter(bid => bid.status.toLowerCase() === "pending");
 
+                    console.log(vm.pendingBids)
                     // Apply filters after fetching data
                     vm.applyFilters();
                 })

@@ -1,6 +1,9 @@
 import AWS from "aws-sdk";
 import { Bid } from "../models/bid.model.js";
+import dotenv from "dotenv";
 
+dotenv.config({ path: ".env" })
+  
 // SQS configuration
 AWS.config.update({
   accessKeyId: 'AKIAXYKJRBXVYAW2OYOF',
@@ -22,12 +25,12 @@ export const processBids = async () => {
         const bidData = JSON.parse(message.Body);
         console.log('Bid data:: ', bidData);
         try {
-          // Save the bid object to MongoDB
+          // save the bid object to MongoDB
           const bid = new Bid(bidData);
           await bid.save();
           console.log("Bid saved to MongoDB:", bid);
 
-          // Delete the message from SQS
+          // delete the message from SQS
           await sqs
             .deleteMessage({
               QueueUrl: QUEUE_URL,

@@ -86,10 +86,10 @@ export const getCarById = async (req, res) => {
 export const getCarsByOwner = async (req, res) => {
     try {
         const { ownerId } = req.params;
-        console.log("Server :: Car Controller :: Get Cars By Owner ::", ownerId)
+        // console.log("Server :: Car Controller :: Get Cars By Owner ::", ownerId)
         // const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
         const cars = await Car.find({ "owner._id": ownerId, isDeleted: false });
-        console.log("Server :: Car Controller :: Get Cars By Owner ::", cars)
+        // console.log("Server :: Car Controller :: Get Cars By Owner ::", cars)
         res.status(200).json(cars);
     } catch (error) {
         console.error("Car Controller :: Error fetching cars by owner", error);

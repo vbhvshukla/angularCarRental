@@ -7,6 +7,7 @@ AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
 });
+
 const sqs = new AWS.SQS();
 const QUEUE_URL = process.env.SQS_QUEUE_URL;
 /**

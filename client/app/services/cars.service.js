@@ -90,6 +90,7 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
     };
 
     this.getAvailableCarsWithPagination = function (currentPage, itemsPerPage, filters = {}) {
+        console.log('Coming in car service')
         const deferred = $q.defer();
         const params = {
             page: currentPage,

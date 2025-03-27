@@ -62,7 +62,17 @@ export const revenueByCity = async (req, res) => {
                         createdAt: {
                             $gte: startDate,
                             $lte: today
+                        },
+                        status:{
+                            $in:['confirmed','completed']
                         }
+                    }
+                },
+                {
+                    $project: {
+                        bid: 1,
+                        createdAt: 1,
+                        totalFare: 1
                     }
                 },
                 {
@@ -110,7 +120,18 @@ export const revenueByRentalType = async (req, res) => {
                     createdAt: {
                         $gte: startDate,
                         $lte: today
+                    },
+                    status:{
+                        $in:['confirmed','completed']
                     }
+                }
+            },
+            {
+                $project: {
+                    rentalType: 1,
+                    totalRevenue: 1,
+                    createdAt: 1,
+                    totalFare:1
                 }
             },
             {
@@ -150,7 +171,15 @@ export const bookingTrends = async (req, res) => {
                     createdAt: {
                         $gte: startDate,
                         $lte: today
+                    },
+                    status:{
+                        $in:['confirmed','completed']
                     }
+                }
+            },
+            {
+                $project: {
+                    createdAt: 1,
                 }
             },
             {
@@ -182,7 +211,21 @@ export const topPerformingOwners = async (req, res) => {
     try {
         const topOwners = await Booking.aggregate([
             {
+                $match:{
+                    status:{
+                        $in:['confirmed','completed']
+                    }
+                }
+            },
+            {
+                $project: {
+                    bid: 1,
+                    totalFare: 1
+                }
+            },
+            {
                 //group by username -> calculate total revenue & bookings
+
                 $group: {
                     _id: "$bid.car.owner.username",
                     totalRevenue: {
@@ -214,6 +257,11 @@ export const topPerformingOwners = async (req, res) => {
 export const carsPerCategory = async (req, res) => {
     try {
         const carsByCategory = await Car.aggregate([
+            {
+                $project:{
+                    category:1
+                }
+            },
             {
                 $group: {
                     _id: "$category", // Group by category

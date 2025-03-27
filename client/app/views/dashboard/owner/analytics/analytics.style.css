@@ -95,10 +95,10 @@
   gap: 20px;
 }
 
-.analytics-section canvas {
+.charts-grid canvas {
   margin-bottom: 10px;
   /* width: 100% !important; */
-  height: 300px !important;
+  height: 400px !important;
   /* background: white; */
   border-radius: 8px;
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
@@ -114,10 +114,10 @@
   font-weight: 500;
 }
 
-.analytics-section canvas:hover {
+.charts-grid canvas:hover {
   transform: scale(1);
   /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); */
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 @media (max-width: 768px) {

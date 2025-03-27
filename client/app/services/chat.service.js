@@ -48,7 +48,7 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @param {*} limit 
          * @returns resolved or rejected promise.
          */
-        this.getMessages = function (chatId, page = 1, limit = 10) {
+        this.getMessages = function (chatId, page = 1, limit = 100) {
             return $http.get(`${BASE_URL}/messages/${chatId}?page=${page}&limit=${limit}`)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'ChatService :: Messages Fetch Failed'));
@@ -106,7 +106,7 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @returns resolved or rejected promise.
          */
         this.getOrCreateChat = function (carId, user, owner) {
-            console.log("Chat Service :: ", carId,user,owner)
+            console.log("Chat Service :: ", carId, user, owner)
             return this.createChat(carId, user, owner)
                 .then(chat => chat)
                 .catch(error => errorService.handleError(error, 'ChatService :: Chat Get/Create Failed'));
