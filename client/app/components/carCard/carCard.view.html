@@ -16,8 +16,8 @@
                 <div class="car-rating">
                     <star-rating rating="$ctrl.car.avgRating"></star-rating>
                     <span class="rating-count" style="font-size: 13px; color: #888; opacity: 0.8;">
-                        ({{$ctrl.car.avgRating | number:1}}/5,
-                        {{$ctrl.car.ratingCount || "0"}} reviews)
+                        ({{$ctrl.car.rating.avgRating | number:1}}/5,
+                        {{$ctrl.car.rating.ratingCount || "0"}} reviews)
                     </span>
                 </div>
             </div>

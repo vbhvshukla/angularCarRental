@@ -277,9 +277,16 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
      * @returns resolved or rejected promise.
      */
     service.addExtras = function (bookingId, extras) {
-        return $http.put(`http://127.0.0.1:8006/api/v1/booking/addextras/${bookingId}`, extras)
-            .then(response => response)
-            .catch(error => errorService.handleError('Booking Service :: Error adding extras', error));
+        const deferred = $q.defer();
+        console.log(bookingId, extras);
+        $http.put(`http://127.0.0.1:8006/api/v1/booking/addextras/${bookingId}`, { extras })
+            .then(response => deferred.resolve(response))
+            .catch(error => {
+                errorService.handleError('Booking Service :: Error adding extras', error)
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
     };
 
     /**
@@ -300,6 +307,17 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
         return $http.get(`http://127.0.0.1:8006/api/v1/booking/ownerbookings/${ownerId}`, { params })
             .then(response => response);
     };
+
+    service.generateInvoice = function (booking) {
+        const deferred = $q.defer();
+        $http.get(`http://127.0.0.1:8006/api/v1/booking/generateinvoice/${booking}`).then((response) => {
+            deferred.resolve(response.data);
+        }).catch((error) => {
+            errorService.handleError('Booking Service :: Error generating invoice', error);
+            deferred.reject(error);
+        })
+        return deferred.promise;
+    }
 
     return service;
 }]);

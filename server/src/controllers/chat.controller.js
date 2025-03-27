@@ -12,9 +12,13 @@ export const createChat = async (req, res) => {
     }
 
     try {
-        const chatId = `${user._id}_${owner._id}_${carId}`;
-
-
+        let chatId = null;
+        if(user._id){
+            chatId = `${user._id}_${owner._id}_${carId}`;
+        }
+        else{
+            chatId = `${user.userId}_${owner.userId}_${carId}`;
+        }
         const existingChat = await Conversations.findOne({ chatId });
         if (existingChat) {
             return res.status(200).json(existingChat);
@@ -98,8 +102,8 @@ export const getMessages = async (req, res) => {
  * @description Send a message in a specific chat.
  */
 export const sendMessage = async (req, res) => {
-    const { chatId, fromUser, toUser, message, attachment } = req.body
-    console.log(chatId,fromUser,toUser,message,attachment)
+    const { chatId, fromUser, toUser, message, attachment } = req.body;
+    console.log(chatId, fromUser, toUser, message, attachment);
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
@@ -120,15 +124,18 @@ export const sendMessage = async (req, res) => {
                 email: toUser.email
             },
         });
-
         await newMessage.save();
 
-        // Update the conversation's last message and timestamp
-        await Conversations.findOneAndUpdate(
+        const updatedConversation = await Conversations.findOneAndUpdate(
             { chatId },
             { lastMessage: message, lastTimestamp: new Date() },
             { new: true }
         );
+
+        // Get the io instance we set in indexjs
+        const io = req.app.get('io');
+        //Emit the new message onto the chatId room.
+        io.to(chatId).emit('newMessage', newMessage);
 
         res.status(201).json(newMessage);
     } catch (error) {
@@ -137,7 +144,7 @@ export const sendMessage = async (req, res) => {
 };
 
 export const sendOwnerMessage = async (req, res) => {
-    const { chatId, fromUser, toUser, message, attachment } = req.body
+    const { chatId, fromUser, toUser, message, attachment } = req.body;
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
@@ -161,7 +168,6 @@ export const sendOwnerMessage = async (req, res) => {
 
         await newMessage.save();
 
-        // Update the conversation's last message and timestamp
         await Conversations.findOneAndUpdate(
             { chatId },
             { lastMessage: message, lastTimestamp: new Date() },

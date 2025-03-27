@@ -9,8 +9,7 @@ const router = Router();
 router.post("/create",
     authenticate,
     authorize("owner"),
-    upload.array("images"),
-    // validateCarCreation
+    upload.array("images"), // Handle multiple image uploads
     createCar);
 router.get("/", getAllCars); // Get all cars
 router.get("/owner/:ownerId", authenticate, authorize("owner"), getCarsByOwner); // Get cars by owner
@@ -19,10 +18,11 @@ router.get("/category/:categoryId", getCarsByCategory); // Get cars by category
 router.get("/city/:city", getCarsByCity); // Get cars by city
 router.get("/available", getAvailableCars); // Get all available cars
 
-router.put("/update/:carId", [
+router.put("/update/:carId",
     authenticate,
     authorize("owner"),
-], updateCar); // Update car details
+    upload.array("images"), // Handle multiple image uploads
+    updateCar); // Update car details
 
 router.delete("/:carId", [
     authenticate,

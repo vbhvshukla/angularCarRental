@@ -1,8 +1,9 @@
-mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'chatService', 'authService', 'carService',
-    function ($scope, $q, $stateParams, chatService, authService, carService) {
+mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'authService', 'carService',
+    function ($scope, $q, $timeout, $stateParams, chatService, authService, carService) {
 
         //Variable declaration
         let vm = this;
+        let socket = null;
 
         //Chat ID (Message/Conversation)
         vm.chatId = $stateParams.chatId;
@@ -15,6 +16,14 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
         //Message Controller Inititialization Function 
         vm.init = function () {
             loadData();
+            socket = io('http://127.0.0.1:8006');
+            socket.emit('joinChat', vm.chatId);
+            socket.on('newMessage', (message) => {
+                if (message.chatId === vm.chatId) {
+                    vm.messages.push(message);
+                    $timeout()
+                }
+            });
         }
 
         //Fetch all the data
@@ -49,10 +58,13 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
 
         vm.sendMessage = function () {
 
-            if (!vm.newMessage.trim() && !vm.selectedFile) return;
+            if (!vm.newMessage.trim() && !vm.selectedFile)
+                return;
 
             //Get the carID
             const carId = chatService.getCarIdFromChatId(vm.chatId);
+
+            const formData = new FormData();
 
             //Fetch the car by carID.
             carService.getCarById(carId).then(car => {
@@ -64,7 +76,6 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
                     vm.selectedFile
                 );
             })
-                //Clear the Input Fields
                 .then(() => {
                     vm.newMessage = '';
                     vm.selectedFile = null;
@@ -79,7 +90,7 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
                 })
         };
 
-        vm.downloadPdf = function(dataUrl, filename) {
+        vm.downloadPdf = function (dataUrl, filename) {
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = filename;
@@ -87,5 +98,11 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$stateParams', 'ch
             link.click();
             document.body.removeChild(link);
         };
+
+        $scope.$on('$destroy', function () {
+            if (socket) {
+                socket.disconnect();
+            }
+        });
     }
 ]);

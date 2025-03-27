@@ -67,11 +67,13 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
 
         // Load more cars for pagination
         vm.loadMoreCars = function () {
+            // console.log(vm.pagination.loading,vm.cars.length,vm.pagination.totalItems);
             if (vm.pagination.loading || vm.cars.length >= vm.pagination.totalItems) {
                 return;
             }
             vm.pagination.loading = true;
             vm.pagination.currentPage++;
+            
             carService.getAvailableCarsWithPagination(
                 vm.pagination.currentPage,
                 vm.pagination.itemsPerPage,

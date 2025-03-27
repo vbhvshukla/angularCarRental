@@ -4,6 +4,8 @@ mainApp.controller('ManipulateCarController', [
     '$scope', '$state', '$q', '$stateParams', 'carService', 'categoryService', 'cityService', 'authService', 'errorService',
     function ($scope, $state, $q, $stateParams, carService, categoryService, cityService, authService, errorService) {
 
+        console.log($stateParams.carId)
+
         /** Variable Declaration */
         let vm = this;
         vm.loading = false;
@@ -15,7 +17,6 @@ mainApp.controller('ManipulateCarController', [
         vm.currentUser = null;
         vm.newFeature = '';
         vm.car = {
-            carId: '',  // Will be generated for new cars
             carName: '',
             carType: '',
             city: '',
@@ -35,19 +36,19 @@ mainApp.controller('ManipulateCarController', [
             owner: null,  // Will be set during form submission
             rentalOptions: {
                 local: {
-                    pricePerHour: 0,
-                    maxKmPerHour: 0,
                     extraHourlyRate: 0,
-                    extraKmRate: 0
+                    extraKmRate: 0,
+                    maxKmPerHour: 0,
+                    pricePerHour: 0
                 },
                 outstation: {
                     pricePerDay: 0,
                     pricePerKm: 0,
-                    maxKmLimitPerDay: 0,
                     minimumKmChargeable: 0,
+                    maxKmLimitPerDay: 0,
+                    extraKmRate: 0,
+                    extraHourRate: 0,
                     extraDayRate: 0,
-                    extraHourlyRate: 0,
-                    extraKmRate: 0
                 }
             }
         };
@@ -126,25 +127,13 @@ mainApp.controller('ManipulateCarController', [
                 return;
             }
 
-            const imagePromises = Array.from(files).map(file => {
+            Array.from(files).forEach(file => {
                 if (file.size > 5000000) {
-                    return $q.reject('File size exceeds 5MB limit');
+                    vm.imageError = 'File size exceeds 5MB limit';
+                    return;
                 }
-                const deferred = $q.defer();
-                const reader = new FileReader();
-                reader.onload = e => deferred.resolve(e.target.result);
-                reader.onerror = () => deferred.reject('Failed to read file');
-                reader.readAsDataURL(file);
-                return deferred.promise;
+                vm.car.images.push(file); // Store raw File objects
             });
-
-            $q.all(imagePromises)
-                .then(results => {
-                    vm.car.images.push(...results);
-                })
-                .catch(error => {
-                    vm.imageError = error;
-                });
         };
 
         /**
@@ -208,8 +197,7 @@ mainApp.controller('ManipulateCarController', [
                 errorService.handleError('Please select a valid category');
                 return;
             }
-            // Update category with complete data
-            console.log(selectedCategory);
+
             vm.car.category = {
                 _id: selectedCategory._id,
                 categoryName: selectedCategory.categoryName
@@ -217,47 +205,16 @@ mainApp.controller('ManipulateCarController', [
 
             vm.isSubmitting = true;
 
-            // Validate rental options
-            if (!vm.car.isAvailableForLocal && !vm.car.isAvailableForOutstation) {
-                errorService.handleError('At least one rental option must be selected');
-                vm.isSubmitting = false;
-                return;
-            }
+            // Prepare FormData for image upload
+            const formData = new FormData();
+            formData.append('carData', JSON.stringify(vm.car)); // Append car data as a JSON string
+            vm.car.images.forEach(file => {
+                formData.append('images', file); // Append raw File objects
+            });
 
-            // Validate required fields based on rental options
-            if (vm.car.isAvailableForLocal &&
-                (!vm.car.rentalOptions.local.pricePerHour ||
-                    !vm.car.rentalOptions.local.maxKmPerHour)) {
-                errorService.handleError('All local rental fields are required');
-                vm.isSubmitting = false;
-                return;
-            }
-
-            if (vm.car.isAvailableForOutstation &&
-                (!vm.car.rentalOptions.outstation.pricePerDay ||
-                    !vm.car.rentalOptions.outstation.pricePerKm)) {
-                errorService.handleError('All outstation rental fields are required');
-                vm.isSubmitting = false;
-                return;
-            }
-
-            // Set owner details
-            vm.car.owner = {
-                _id: vm.currentUser._id,
-                username: vm.currentUser.username,
-                email: vm.currentUser.email,
-                role: 'owner',
-                isApproved: true,
-                rating: {
-                    avgRating: 0,
-                    ratingCount: 0
-                },
-                paymentPreference: 'cash'
-            };
-
-            const savePromise = vm.isEditMode ?
-                carService.updateCar(vm.car) :
-                carService.createCar(vm.car);
+            const savePromise = vm.isEditMode
+                ? carService.updateCar($stateParams.carId, formData)
+                : carService.createCar(formData);
 
             savePromise
                 .then(() => {

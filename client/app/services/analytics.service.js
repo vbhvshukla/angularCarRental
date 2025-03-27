@@ -22,23 +22,44 @@ mainApp.service('analyticsService', [
          */
         this.getOwnerAnalytics = function (ownerId, days = 30) {
             const body = { ownerId, numberOfDays: days };
-
+            console.log(body);
             return $q.all([
                 $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/gettotalcount', body),
                 $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/bookingspercar', body),
                 $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/rentaldurationpercar', body),
                 $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/revenueovertime', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/bidamountovertime', body)
-            ]).then(([totalsResponse, bookingsResponse, rentalDurationResponse, revenueResponse, bidAmountResponse]) => {
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/bidamountovertime', body),
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/revenuebycar', body),
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/caravailabilityinsights', body),
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/rentaltypedistribution', body),
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/categoryperformance', body),
+                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/peakbookinghours', body)
+            ]).then((
+                [
+                    totalsResponse,
+                    bookingsResponse,
+                    rentalDurationResponse,
+                    revenueResponse,
+                    bidAmountResponse,
+                    revenueByCarResponse,
+                    carAvailabilityResponse,
+                    rentalTypeDistributionResponse,
+                    categoryPerformanceResponse,
+                    peakBookingHoursResponse
+                ]) => {
                 return {
                     totals: totalsResponse.data,
                     charts: {
                         bookings: bookingsResponse.data,
                         rentalDuration: rentalDurationResponse.data,
                         revenue: revenueResponse.data,
-                        bidAmounts: bidAmountResponse.data
+                        bidAmounts: bidAmountResponse.data,
+                        revenueByCar: revenueByCarResponse.data,
+                        carAvailability: carAvailabilityResponse.data,
+                        rentalTypeDistribution: rentalTypeDistributionResponse.data,
+                        categoryPerformance: categoryPerformanceResponse.data,
+                        peakBookingHours: peakBookingHoursResponse.data
                     }
-
                 };
             }).catch(err => {
                 console.error("Error fetching owner analytics:", err);

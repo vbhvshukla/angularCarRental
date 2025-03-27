@@ -109,10 +109,24 @@ mainApp.component('bidForm', {
 
                 const start = new Date($ctrl.bid.startDate);
                 const end = new Date($ctrl.bid.endDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+            
+
+                if(start<today){
+                    alert('Start date must be today or later');
+                    errorService.handleError('Start Date Must Be Today or Later');
+                    $ctrl.resetBidFields();
+                    $ctrl.isCalculating=false;
+                    return;
+                }
 
                 if (end < start) {
                     alert("End date must be after start date', 'BidForm :: Validation")
                     errorService.handleError('End date must be after start date', 'BidForm :: Validation');
+                    $ctrl.isCalculating = false;
+                    $ctrl.resetBidFields();
+
                     return;
                 }
 
@@ -120,7 +134,9 @@ mainApp.component('bidForm', {
                     .then(isAvailable => {
                         console.log(isAvailable)
                         if (!isAvailable) {
+                            $ctrl.resetBidFields();
                             errorService.handleError('Selected dates are not available', 'BidForm :: Availability');
+                            $ctrl.isCalculating = false;
                             return;
                         }
                         return bidService.calculateEstimate($ctrl.carId, $ctrl.bid);
@@ -131,7 +147,7 @@ mainApp.component('bidForm', {
                             $ctrl.bid.bidAmount = estimate.minBid;
                         }
                     })
-                    .catch(error => errorService.handleError(error, 'BidForm :: Estimate Failed'))
+                    .catch(error => {$ctrl.resetBidFields();$ctrl.isCalculating = false;errorService.handleError(error, 'BidForm :: Estimate Failed')})
                     .finally(() => $ctrl.isCalculating = false);
             };
 
@@ -144,12 +160,14 @@ mainApp.component('bidForm', {
                 if ($ctrl.isSubmitting) return;
                 if ($ctrl.bidForm.$invalid || !$ctrl.estimate) {
                     errorService.handleError('BidForm :: Validation :: Please wait for price calculation');
+                    $ctrl.resetBidFields();
                     return;
                 }
 
                 if ($ctrl.bid.bidAmount < $ctrl.estimate.minBid ||
                     $ctrl.bid.bidAmount > $ctrl.estimate.maxBid) {
                     errorService.handleError('BidForm :: Validation  :: Bid amount must be within allowed range');
+                    $ctrl.resetBidFields();
                     return;
                 }
 
@@ -165,6 +183,22 @@ mainApp.component('bidForm', {
                 $ctrl.onBidSubmit({ bid: bidData });
             };
 
+            $ctrl.resetBidFields = function () {
+                $ctrl.bid = {
+                    startDate: null,
+                    endDate: null,
+                    bidAmount: null,
+                    rentalType: $ctrl.rentalType
+                };
+            
+                $ctrl.estimate = null;
+                $ctrl.isCalculating = false;
+            
+                if ($ctrl.bidForm) {
+                    $ctrl.bidForm.$setPristine(); // Mark the form as pristine
+                    $ctrl.bidForm.$setUntouched(); // Mark the form as untouched
+                }
+            };
             /** Price Modal Toggling function
              * @description Sets the price breakup modal true/false.
              */

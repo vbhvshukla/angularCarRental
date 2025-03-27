@@ -11,29 +11,32 @@ import { Car } from "../models/car.model.js";
  */
 export const createCar = async (req, res) => {
     try {
-        //Extract the rating from the data being sent in the request.
-        const { rating, ...carData } = req.body;
+        console.log("Request Body:", req.body); // Debug log for req.body
+        console.log("Request Files:", req.files); // Debug log for req.files
 
-        //Create the car object.
+        const carData = JSON.parse(req.body.carData); // Parse car data from FormData
+        console.log(carData);
+        const imageUrls = req.files.map(file => file.location); // Extract S3 URLs from multer
+
         const newCar = new Car({
             ...carData,
+            images: imageUrls, // Save S3 URLs in the database
             owner: {
                 _id: req.user._id,
                 username: req.user.username,
                 email: req.user.email
             },
-            rating: rating || { avgRating: 0, ratingCount: 0 }
+            rating: carData.rating || { avgRating: 0, ratingCount: 0 }
         });
 
-        //Send the saved car as response.
         const savedCar = await newCar.save();
         res.status(201).json({
-            msg: "Car Controller :: Car Created Successfully!",
+            msg: "Car created successfully!",
             car: savedCar
         });
     } catch (error) {
-        console.error("Car Controller :: Error Creating Car", error);
-        res.status(500).json({ msg: "Car Controller :: Server Error while creating car", details: error.message });
+        console.error("Car Controller :: Error creating car", error);
+        res.status(500).json({ msg: "Server Error", details: error.message });
     }
 };
 
@@ -83,10 +86,10 @@ export const getCarById = async (req, res) => {
 export const getCarsByOwner = async (req, res) => {
     try {
         const { ownerId } = req.params;
-        console.log("Server :: Car Controller :: Get Cars By Owner ::", ownerId)
+        // console.log("Server :: Car Controller :: Get Cars By Owner ::", ownerId)
         // const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
         const cars = await Car.find({ "owner._id": ownerId, isDeleted: false });
-        console.log("Server :: Car Controller :: Get Cars By Owner ::", cars)
+        // console.log("Server :: Car Controller :: Get Cars By Owner ::", cars)
         res.status(200).json(cars);
     } catch (error) {
         console.error("Car Controller :: Error fetching cars by owner", error);
@@ -137,14 +140,24 @@ export const getCarsByCity = async (req, res) => {
  */
 export const updateCar = async (req, res) => {
     try {
+        console.log("Request Body:", req.body); // Debug log for req.body
+        console.log("Request Files:", req.files); // Debug log for req.files
+
         const { carId } = req.params;
-        const carData = req.body;
-        console.log(`Server:: Car Controller :: Car Id:${carId} :: CarData :: ${carData}`)
-        const car = await Car.findByIdAndUpdate(carId, carData, { new: true });
-        if (!car) {
+        const carData = JSON.parse(req.body.carData); // Parse car data from FormData
+        const imageUrls = req.files.map(file => file.location); // Extract S3 URLs from multer
+
+        const updatedCar = await Car.findByIdAndUpdate(
+            carId,
+            { ...carData, ...(imageUrls.length > 0 && { images: imageUrls }) },
+            { new: true }
+        );
+
+        if (!updatedCar) {
             return res.status(404).json({ msg: "Car not found" });
         }
-        res.status(200).json({ msg: "Car updated successfully", car });
+
+        res.status(200).json({ msg: "Car updated successfully", car: updatedCar });
     } catch (error) {
         console.error("Car Controller :: Error updating car", error);
         res.status(500).json({ msg: "Server Error", details: error.message });
@@ -180,13 +193,11 @@ export const deleteCar = async (req, res) => {
  */
 export const getAvailableCars = async (req, res) => {
     try {
-        console.log(req.query);
         const { page = 1, limit = 10, location, carCategory, priceRange, carType, availability, features, rating } = req.query;
 
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
-        // Build the query object
         const query = {
             isDeleted: false,
             $or: [
@@ -195,16 +206,15 @@ export const getAvailableCars = async (req, res) => {
             ]
         };
 
-        // Add filters to the query
         if (location) query.city = location;
         if (carCategory) query["category._id"] = carCategory;
-        if (priceRange) query.price = { $lte: parseInt(priceRange) };
+        if (priceRange) query["rentalOptions.local.pricePerHour"] = { $lte: parseInt(priceRange) };
         if (carType) query.carType = carType;
         if (availability) query.availability = availability;
-        if (features) query.features = { $regex: features, $options: "i" }; // Partial match
+        if (features) query.features = { $regex: features, $options: "i" };
         if (rating) query["rating.avgRating"] = { $gte: parseInt(rating) };
 
-        // Pagination
+
         const skip = (pageNumber - 1) * limitNumber;
         const cars = await Car.aggregate([
             { $match: query },
@@ -217,7 +227,6 @@ export const getAvailableCars = async (req, res) => {
         ]);
 
         const total = cars[0]?.total[0]?.count || 0;
-        console.log(cars);
         res.status(200).json({ cars: cars[0]?.cars || [], total });
     } catch (error) {
         console.error("Car Controller :: Error fetching available cars", error);
