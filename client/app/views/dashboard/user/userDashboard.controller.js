@@ -1,9 +1,9 @@
 mainApp.controller('UserDashboardController', [
-    '$scope', '$state', 'authService',
-    function ($scope, $state, authService) {
+
+    function () {
         var vm = this;
 
-        vm.init = function(){
+        vm.init = function () {
             console.log("Hello world");
         }
     }

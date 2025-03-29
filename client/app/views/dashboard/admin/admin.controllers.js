@@ -1,17 +1,13 @@
 /** @file Admin Dashboard Controller */
 
 mainApp.controller('AdminController', [
-    'userService',
-    'authService',
-    'bookingService',
+    'userFactory',
     'carService',
     'categoryService',
     'errorService',
     '$uibModal',
     function (
-        userService,
-        authService,
-        bookingService,
+        userFactory,
         carService,
         categoryService,
         errorService,
@@ -51,13 +47,13 @@ mainApp.controller('AdminController', [
          * Function :: Load All Data
          * @function vm.loadAllData()
          * @description Loads all required data (users,cars,categories) as per requirement.
-         * @requires userService,carService,categoryService
+         * @requires userFactory,carService,categoryService
          */
 
         vm.loadAllData = function () {
             async.parallel([
                 function (callback) {
-                    userService.getAllUsers(vm.currentPage)
+                    userFactory.getAllUsers()
                         .then(function (response) {
                             vm.users = response;
                             vm.totalUsers = response.length;
@@ -102,14 +98,14 @@ mainApp.controller('AdminController', [
          * Function :: Load All Users
          * @function vm.loadUsers()
          * @description Loads all users
-         * @requires userService
+         * @requires userFactory
          */
 
         vm.loadUsers = function () {
-            userService.getAllUsers(vm.currentPage)
+            userFactory.getAllUsers()
                 .then(function (response) {
-                    vm.users = response.data;
-                    vm.totalUsers = response.total;
+                    vm.users = response;
+                    vm.totalUsers = response.length;
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
         }
 
@@ -207,12 +203,13 @@ mainApp.controller('AdminController', [
 
         /**
          * Function :: Approve a user
-         * @requires userService
+         * @requires userFactory
          * @description approves a user in the DB.
          */
 
         vm.approveUser = function () {
-            userService.approveUser(vm.selectedUser.userId)
+            userFactory.getUserById(vm.selectedUser.userId)
+                .then(user => user.approve())
                 .then(function () {
                     vm.closeUserModal();
                     vm.loadAllData();
@@ -222,15 +219,15 @@ mainApp.controller('AdminController', [
 
         /**
          * Function :: Rejects/Blocks a user
-         * @requires userService
+         * @requires userFactory
          * @description rejects/blocks a user in the DB.
          */
 
         vm.rejectUser = function () {
-            userService.rejectUser(vm.selectedUser.userId)
+            userFactory.getUserById(vm.selectedUser.userId)
+                .then(user => user.reject())
                 .then(function () {
                     vm.loadAllData();
-
                     vm.closeUserModal();
                 }).catch(err => errorService.handleError("Admin Controller :: Error Rejecting User :: ", err));
         }

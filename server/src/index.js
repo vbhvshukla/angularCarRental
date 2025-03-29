@@ -38,13 +38,12 @@ connectDb()
       });
     });
 
-   
+
     server.listen(process.env.PORT || 8002, () => {
       console.log(`Server is running at port : ${process.env.PORT}`);
     });
 
-    //Poll the aws queue for any new message
-    // setInterval(pollQueue, 5000);
+    //Poll the aws queue for any new message || TODO -> Separate server pr chalao
     setInterval(processBids, 5000); // Poll every 5 seconds
   })
   .catch((err) => {

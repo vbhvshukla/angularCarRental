@@ -1,7 +1,7 @@
 /** @file Owner's Listed Cars Page's Controller */
 
-mainApp.controller('OwnerListedCarsController', ['$state', 'carService', 'authService',
-    function ($state, carService, authService) {
+mainApp.controller('OwnerListedCarsController', ['$state', 'carService', 'userFactory',
+    function ($state, carService, userFactory) {
 
         /**
          * Variable Declarations
@@ -12,11 +12,11 @@ mainApp.controller('OwnerListedCarsController', ['$state', 'carService', 'authSe
 
         /**
          * Function :: Initialization
-         * @requires authService
+         * @requires userFactory
          * @description Get all cars of the logged-in owner.
          */
         vm.init = function () {
-            authService.getUser()
+            userFactory.getCurrentUser()
                 .then(user => vm.getAllCars(user._id))
                 .catch(err => console.error("Listed Cars Controller :: Error Getting User :: ", err));
         };

@@ -1,6 +1,6 @@
-mainApp.controller('NavbarController', ['$state', '$transitions', 'authService', 'errorService',
+mainApp.controller('NavbarController', ['$state', '$transitions', 'userFactory', 'errorService',
 
-    function ($state, $transitions, authService, errorService) {
+    function ($state, $transitions, userFactory, errorService) {
 
         /**
          * Variable declarations
@@ -17,12 +17,12 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'authService',
 
         /**
          * Function : Initialization
-         * @requires authService
-         * @description Calls authService to get the user and assign it to @var vm.currentUser
+         * @requires userFactory
+         * @description Calls userFactory to get the user and assign it to @var vm.currentUser
          */
 
         vm.init = function () {
-            authService.getUser()
+            userFactory.getCurrentUser()
                 .then(user => {
                     vm.isLoggedIn = true;
                     vm.currentUser = user;
@@ -71,11 +71,11 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'authService',
 
         /**
          * Function : Logout
-         * @requires AuthService
+         * @requires userFactory
          */
 
         vm.logout = function () {
-            authService.logout()
+            userFactory.logout()
                 .then(function () {
                     vm.isLoggedIn = false;
                     vm.currentUser = null;

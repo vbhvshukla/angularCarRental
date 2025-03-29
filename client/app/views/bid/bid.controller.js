@@ -2,9 +2,9 @@
 
 mainApp.controller('BiddingController', [
     '$scope', '$state', '$stateParams', 'carService', 'chatService',
-    'authService', 'errorService', 'bidService',
+    'userFactory', 'errorService', 'bidService',
     function ($scope, $state, $stateParams, carService, chatService,
-        authService, errorService, bidService) {
+        userFactory, errorService, bidService) {
 
         /**
          * Variable declarations
@@ -29,7 +29,7 @@ mainApp.controller('BiddingController', [
             vm.loading = true;
             //Tasks list to be fetched parallely.
             const tasks = [
-                authService.getUser(), //Gets the details of the currently logged in user.
+                userFactory.getCurrentUser(), //Gets the details of the currently logged in user.
                 carService.getCarById($stateParams.carId) //Gets the params passed in the url.
             ];
 
@@ -68,7 +68,7 @@ mainApp.controller('BiddingController', [
 
                 vm.currentUser = user;
                 vm.car = car;
-        
+
                 if (!vm.car || !vm.currentUser) {
                     errorService.handleError('BiddingController  :: Missing required :: Init Failed');
                     return $state.go('home');
@@ -94,7 +94,10 @@ mainApp.controller('BiddingController', [
          */
 
         vm.handleBidSubmit = function (bid) {
+            console.log(bid);
             if (vm.isSubmitting) return;
+
+
 
             if (!bid || !bid.bidAmount || !bid.startDate || !bid.endDate || !bid.rentalType) {
                 errorService.handleError('Invalid bid data', 'BiddingController :: Bid Validation');

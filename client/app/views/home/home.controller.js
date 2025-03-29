@@ -73,7 +73,7 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             }
             vm.pagination.loading = true;
             vm.pagination.currentPage++;
-            
+
             carService.getAvailableCarsWithPagination(
                 vm.pagination.currentPage,
                 vm.pagination.itemsPerPage,

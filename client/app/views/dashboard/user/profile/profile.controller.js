@@ -1,6 +1,6 @@
 mainApp.controller('UserProfileController', [
-    'authService', 'userService', 'errorService',
-    function (authService, userService, errorService) {
+    'userFactory', 'errorService',
+    function (userFactory, errorService) {
         var vm = this;
         //Holds user variable from init function.
         vm.user = null;
@@ -14,11 +14,11 @@ mainApp.controller('UserProfileController', [
         //Profile Initialization function
         vm.init = function () {
             vm.loading = true;
-            authService.getUser()
-                .then(user => { vm.user = user })
+            userFactory.getCurrentUser()
+                .then(user => { vm.user = user; })
                 .catch(error => { errorService.handleError('Profile Controller :: Failed to get user :: ', error); })
                 .finally(() => { vm.loading = false; });
-        }
+        };
 
         vm.debouncedValidateOldPassword = _.debounce(function () {
             if (!vm.oldPassword) {
@@ -27,14 +27,20 @@ mainApp.controller('UserProfileController', [
                 return;
             }
 
-            userService.validatePassword(vm.user._id, vm.oldPassword)
+            if (typeof vm.user.validatePassword !== 'function') {
+                vm.oldPasswordError = 'Password validation is not supported.';
+                console.error("Profile Controller :: validatePassword method is missing on user object.");
+                return;
+            }
+
+            vm.user.validatePassword(vm.oldPassword)
                 .then(isValid => {
                     vm.showNewPasswordField = isValid;
                     vm.oldPasswordError = isValid ? '' : 'Incorrect old password.';
                 })
                 .catch((error) => {
                     vm.oldPasswordError = 'Error validating password';
-                    console.log("Profile Controller :: Error validating password :: ", error);
+                    console.error("Profile Controller :: Error validating password :: ", error);
                 });
         }, 300);
 
@@ -48,7 +54,7 @@ mainApp.controller('UserProfileController', [
             if (!vm.validateNewPassword()) return;
 
             vm.isUpdating = true;
-            userService.updatePassword(vm.newPassword)
+            vm.user.updatePassword(vm.newPassword)
                 .then(() => {
                     errorService.logSuccess('Password updated successfully!');
                     vm.newPassword = '';
@@ -94,7 +100,7 @@ mainApp.controller('UserProfileController', [
             }
 
             vm.isUpdating = true;
-            userService.updateProfile(vm.user)
+            userFactory.createUser(vm.user).create()
                 .then(() => {
                     errorService.logSuccess('Profile updated successfully!');
                 })

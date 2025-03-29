@@ -9,33 +9,32 @@ export const getTotals = async (req, res) => {
         console.log("Get Totals Owner Id :", ownerId);
         const totalBookings = await Booking.countDocuments({ "bid.car.owner.userId": ownerId });
         const totalBids = await Bid.countDocuments({ "car.owner.userId": ownerId });
-        const totalRevenueResult = await Booking.aggregate(
-            [
-                {
-                    //match the document with the given id
-                    $match: {
-                        'bid.car.owner.userId': ownerId,
-                        status:{
-                            $in:['confirmed','completed']
-                        }
-                    }
-                }, {
-                    //only pass totalFare instead of whole document.
-                    $project: {
-                        totalFare: 1
-                    },
-                }, {
-                    //group the documents as a single document and sum up the revenue
-                    $group: {
-                        _id: null,
-                        totalRevenue:
-                        {
-                            $sum: '$totalFare'
-                        }
+        const pipeline = [
+            {
+                //match the document with the given id
+                $match: {
+                    'bid.car.owner.userId': ownerId,
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
-            ]
-        )
+            }, {
+                //only pass totalFare instead of whole document.
+                $project: {
+                    totalFare: 1
+                },
+            }, {
+                //group the documents as a single document and sum up the revenue
+                $group: {
+                    _id: null,
+                    totalRevenue:
+                    {
+                        $sum: '$totalFare'
+                    }
+                }
+            }
+        ]
+        const totalRevenueResult = await Booking.aggregate(pipeline)
         const totalCars = await Car.countDocuments({ "owner._id": ownerId })
 
         const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalRevenue : 0;
@@ -196,8 +195,8 @@ export const revenueOverTime = async (req, res) => {
                             $lte: today
                         },
                         'bid.car.owner.userId': ownerObjectId,
-                        status:{
-                            $in:['confirmed','completed']
+                        status: {
+                            $in: ['confirmed', 'completed']
                         }
                     },
                 },
@@ -328,8 +327,8 @@ export const revenueByCar = async (req, res) => {
                         $lte: today
                     },
                     'bid.car.owner.userId': ownerObjectId,
-                    status:{
-                        $in:['confirmed','completed']
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },

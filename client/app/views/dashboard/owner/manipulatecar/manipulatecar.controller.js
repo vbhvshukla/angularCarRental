@@ -1,8 +1,8 @@
 /** @file Manipulate Car's Page Controller */
 
 mainApp.controller('ManipulateCarController', [
-    '$scope', '$state', '$q', '$stateParams', 'carService', 'categoryService', 'cityService', 'authService', 'errorService',
-    function ($scope, $state, $q, $stateParams, carService, categoryService, cityService, authService, errorService) {
+    '$scope', '$state', '$q', '$stateParams', 'carFactory', 'categoryService', 'cityService', 'authService', 'errorService','carService',
+    function ($scope, $state, $q, $stateParams, carFactory, categoryService, cityService, authService, errorService,carService) {
 
         console.log($stateParams.carId)
 
@@ -24,8 +24,6 @@ mainApp.controller('ManipulateCarController', [
             description: '',
             isAvailableForLocal: false,
             isAvailableForOutstation: false,
-            avgRating: 0,  // Default for new cars
-            ratingCount: 0,  // Default for new cars
             images: [],
             featured: [],
             isDeleted: false,
@@ -34,6 +32,7 @@ mainApp.controller('ManipulateCarController', [
                 categoryName: ''
             },
             owner: null,  // Will be set during form submission
+            rating: { avgRating: 0, ratingCount: 0 }, // Updated to handle rating as an object
             rentalOptions: {
                 local: {
                     extraHourlyRate: 0,
@@ -198,6 +197,12 @@ mainApp.controller('ManipulateCarController', [
                 return;
             }
 
+            vm.car.owner = {
+                _id: vm.currentUser._id,
+                username: vm.currentUser.username,
+                email:vm.currentUser.email
+            }
+
             vm.car.category = {
                 _id: selectedCategory._id,
                 categoryName: selectedCategory.categoryName
@@ -205,16 +210,9 @@ mainApp.controller('ManipulateCarController', [
 
             vm.isSubmitting = true;
 
-            // Prepare FormData for image upload
-            const formData = new FormData();
-            formData.append('carData', JSON.stringify(vm.car)); // Append car data as a JSON string
-            vm.car.images.forEach(file => {
-                formData.append('images', file); // Append raw File objects
-            });
-
-            const savePromise = vm.isEditMode
-                ? carService.updateCar($stateParams.carId, formData)
-                : carService.createCar(formData);
+            // Use carFactory to create or update the car
+            const carInstance = carFactory.createCar(vm.car);
+            const savePromise = vm.isEditMode ? carInstance.update() : carInstance.create();
 
             savePromise
                 .then(() => {

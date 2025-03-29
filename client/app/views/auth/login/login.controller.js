@@ -1,47 +1,36 @@
 /** @file Login Controller */
 
-mainApp.controller('LoginController', ['$scope', 'authService', '$state', 'errorService',
-    function ($scope, authService, $state, errorService) {
-    
+mainApp.controller('LoginController', ['$scope', 'userFactory', '$state', 'errorService',
+    function ($scope, userFactory, $state, errorService) {
+
         /**
          * Variable Declarations
          */
-        
-        var vm = this;              //Alias for view model for this controller
-        vm.credentials = {          //Holds the user's object of form.
+
+        var vm = this;              // Alias for view model for this controller
+        vm.credentials = {          // Holds the user's object of form.
             email: '',
             password: ''
         };
-        vm.errorMessage = '';       //Holds the message to be displayed on UI.
+        vm.errorMessage = '';       // Holds the message to be displayed on UI.
 
         /**
          * Login Function
          * @function vm.login()
          * @description logs in a user and redirects according to the user role.
-         * @requires authService
+         * @requires userFactory
          */
 
         vm.login = function () {
             if ($scope.loginForm.$valid) {
-                authService.login(vm.credentials.email, vm.credentials.password)
-                    .then(function (user) {
+                const user = userFactory.createUser(vm.credentials);
+                user.login()
+                    .then(function (response) {
                         errorService.logSuccess('Login Controller :: Authentication :: Login successful!');
-                        switch (user.role) {
-                            case 'admin':
-                                $state.go('admindashboard');
-                                break;
-                            case 'owner':
-                                $state.go('ownerdashboard');
-                                break;
-                            case 'customer':
-                                $state.go('home');
-                                break;
-                            default:
-                                $state.go('home');
-                        }
+                        userFactory.redirectBasedOnRole(response.data.user, $state);
                     })
                     .catch(function (error) {
-                        vm.errorMessage = error;
+                        vm.errorMessage = error.message || 'Login failed. Please try again.';
                         errorService.handleError(error, 'Login Controller :: Authentication Failed');
                     });
             } else {

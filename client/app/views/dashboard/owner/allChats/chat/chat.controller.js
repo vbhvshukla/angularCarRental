@@ -1,6 +1,6 @@
 mainApp.controller('OwnerChatController', [
-    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'authService', 'errorService',
-    function ($scope, $timeout, $q, $stateParams, chatService, authService, errorService) {
+    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService',
+    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService) {
         let vm = this;
         let socket = null;
 
@@ -25,7 +25,7 @@ mainApp.controller('OwnerChatController', [
             });
 
             $q.all([
-                authService.getUser(),
+                userFactory.getCurrentUser(), // Use userFactory to fetch the current user
                 chatService.getMessages(vm.chatId)
             ])
                 .then(([user, messages]) => {
@@ -102,6 +102,7 @@ mainApp.controller('OwnerChatController', [
             link.click();
             document.body.removeChild(link);
         };
+
         vm.closeModal = function () {
             vm.showModal = false;
             vm.modalImage = '';

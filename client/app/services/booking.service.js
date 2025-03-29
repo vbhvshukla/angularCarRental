@@ -80,6 +80,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
      * @returns resolved/rejected promise.
      */
     service.createBooking = function (bookingData) {
+        console.log(bookingData);
         const deferred = $q.defer();
 
         try {
@@ -95,8 +96,6 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
             if (!bookingData._id || !bookingData.user || !bookingData.car) {
                 throw new Error('Invalid bid information');
             }
-
-            console.log(bookingData.car.carId, bookingData.fromTimestamp, bookingData.toTimestamp);
 
             // Create booking object
             const booking = {
@@ -130,7 +129,8 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
             )
                 .then(function (availabilityResponse) {
                     if (!availabilityResponse.isAvailable) {
-                        throw new Error('Car is not available for selected dates');
+                        deferred.reject('Car is not available for selected dates');
+                        return;
                     }
 
                     // Save booking to the backend

@@ -13,10 +13,10 @@ export const createChat = async (req, res) => {
 
     try {
         let chatId = null;
-        if(user._id){
+        if (user._id) {
             chatId = `${user._id}_${owner._id}_${carId}`;
         }
-        else{
+        else {
             chatId = `${user.userId}_${owner.userId}_${carId}`;
         }
         const existingChat = await Conversations.findOne({ chatId });
@@ -143,6 +143,15 @@ export const sendMessage = async (req, res) => {
     }
 };
 
+
+/**
+ * Send Owner Message
+ * @description Currently not in use
+ * @async
+ * @param {*} req 
+ * @param {*} res 
+ * @returns {unknown} 
+ */
 export const sendOwnerMessage = async (req, res) => {
     const { chatId, fromUser, toUser, message, attachment } = req.body;
     if (!chatId || !fromUser || !toUser || !message) {

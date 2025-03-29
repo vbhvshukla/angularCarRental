@@ -1,8 +1,8 @@
 /** @file Owner Dashboard's Home Controller */
 
 mainApp.controller('OwnerHomeDashboardController', [
-    '$http', 'bidService', 'authService', 'bookingService', 'errorService', 'chatService', '$uibModal', '$q',
-    function ($http, bidService, authService, bookingService, errorService, chatService, $uibModal, $q) {
+    '$http', 'bidService', 'userFactory','bookingFactory', 'bookingService', 'errorService', 'chatService', '$uibModal', '$q',
+    function ($http, bidService, userFactory,bookingFactory, bookingService, errorService, chatService, $uibModal, $q) {
 
         /**
          * Variable declaration
@@ -47,11 +47,11 @@ mainApp.controller('OwnerHomeDashboardController', [
          * Function :: Initialization
          * @function vm.init()
          * @description Loads the user and fetches all data.
-         * @requires authService
+         * @requires userFactory
          */
         vm.init = function () {
-            authService.getUser()
-                .then(user => {console.log(user); vm.getAllData(user._id)})
+            userFactory.getCurrentUser() // Use userFactory to fetch the current user
+                .then(user => { console.log(user); vm.getAllData(user._id) })
                 .catch(err => console.error("Owner controller :: Error Getting User :: ", err));
         };
 
@@ -136,7 +136,7 @@ mainApp.controller('OwnerHomeDashboardController', [
             vm.isProcessing = true;
 
             bidService.updateBidStatus(bid._id, 'accepted')
-                .then(() => bookingService.createBooking(bid))
+                .then(() => bookingFactory.createBooking(bid))
                 .then(() => {
                     errorService.logSuccess('Bid accepted and booking created successfully');
                     return vm.getAllData(bid.car.owner.userId);
@@ -152,6 +152,7 @@ mainApp.controller('OwnerHomeDashboardController', [
                     vm.isProcessing = false;
                     vm.processingBidId = null;
                 });
+            vm.applyFilters();
         };
 
         /**
@@ -188,6 +189,7 @@ mainApp.controller('OwnerHomeDashboardController', [
             });
             modalInstance.result.then(function () {
                 vm.getAllData();
+                vm.applyFilters();
             }, function () {
                 console.log('Modal dismissed');
             });

@@ -1,5 +1,5 @@
-mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'dbService', 'idGenerator', 'schemaValidator', 'errorService',
-    function ($http, $q, $state, $cookies, dbService, idGenerator, schemaValidator, errorService) {
+mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorService',
+    function ($http, $q, $state, $cookies, errorService) {
 
         /**
          * User Schema's for validations
@@ -41,7 +41,6 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'dbService'
                 .then(response => deferred.resolve(response.data.user))
                 .catch(error => {
                     if (error.status === 401) {
-                        // Attempt to regenerate token
                         this.regenerateToken()
                             .then(() => this.getUser().then(user => deferred.resolve(user)))
                             .catch(err => deferred.reject(err));

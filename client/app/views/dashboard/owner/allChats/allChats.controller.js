@@ -1,6 +1,6 @@
 mainApp.controller('OwnerAllChatsController', [
-    '$scope', '$state', 'chatService', 'authService', 'errorService',
-    function ($scope, $state, chatService, authService, errorService) {
+    '$scope', '$state', 'chatService', 'userFactory', 'errorService',
+    function ($scope, $state, chatService, userFactory, errorService) {
         let vm = this;
 
         vm.loading = false;
@@ -10,7 +10,7 @@ mainApp.controller('OwnerAllChatsController', [
         vm.init = function () {
             vm.loading = true;
 
-            authService.getUser()
+            userFactory.getCurrentUser() // Use userFactory to fetch the current user
                 .then(user => {
                     vm.currentUser = user;
                     return chatService.getOwnerConversations(user._id);

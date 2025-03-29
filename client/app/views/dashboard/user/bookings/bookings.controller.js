@@ -1,5 +1,5 @@
-mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authService',
-    function ($state, bookingService, authService) {
+mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'userFactory',
+    function ($state, bookingService, userFactory) {
 
         /**Variable Declarations */
         let vm = this;
@@ -22,7 +22,7 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authS
          * Function :: Load Bookings of User
          * @function vm.loadBookings()
          * @description Loads user's booking of the current loggedIn user.
-         * @requires async,authService,bookingService
+         * @requires async,userFactory,bookingService
          */
 
         vm.loadBookings = function () {
@@ -30,7 +30,7 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'authS
             //Get the user and fetch all it's bookings from the userId.
             async.waterfall([
                 function (callback) {
-                    authService.getUser()
+                    userFactory.getCurrentUser()
                         .then(user => callback(null, user))
                         .catch(err => callback(err));
                 },

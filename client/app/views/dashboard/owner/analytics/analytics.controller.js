@@ -1,6 +1,6 @@
 mainApp.controller('OwnerAnalyticsController', [
-    '$scope', 'analyticsService', 'authService', 'errorService',
-    function ($scope, analyticsService, authService, errorService) {
+    '$scope', 'analyticsService', 'userFactory', 'errorService',
+    function ($scope, analyticsService, userFactory, errorService) {
         let vm = this;
         vm.chartInstances = {};
         vm.loading = false;
@@ -63,7 +63,7 @@ mainApp.controller('OwnerAnalyticsController', [
         vm.init = function () {
             vm.loading = true;
 
-            authService.getUser()
+            userFactory.getCurrentUser() // Use userFactory to fetch the current user
                 .then(user => {
                     vm.currentUser = user;
                     return analyticsService.getOwnerAnalytics(user._id, vm.selectedDays);
@@ -342,7 +342,7 @@ mainApp.controller('OwnerAnalyticsController', [
 
         vm.updateTimeRange = function () {
             vm.loading = true;
-            authService.getUser()
+            userFactory.getCurrentUser() // Use userFactory to fetch the current user
                 .then(user => analyticsService.getOwnerAnalytics(user._id, vm.selectedDays))
                 .then(data => {
                     vm.totals = data.totals;

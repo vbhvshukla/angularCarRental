@@ -3,7 +3,7 @@ import { Bid } from "../models/bid.model.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env" })
-  
+
 // SQS configuration
 AWS.config.update({
   accessKeyId: 'AKIAXYKJRBXVYAW2OYOF',
