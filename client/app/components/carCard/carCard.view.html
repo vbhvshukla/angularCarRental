@@ -1,38 +1,70 @@
-<div class="panel panel-default car-card" style="height: 470px; width: 100%; border: 1px solid #bdc3c7; border-radius: 8px; overflow: hidden; background-color: white; transition: transform 0.3s ease;">
-    <div class="panel-body">
+<div class="panel panel-default"
+    style="height: 470px; width: 100%; border: 1px solid #bdc3c7; border-radius: 8px; overflow: hidden; background-color: white; transition: transform 0.3s ease;">
+    <div class="panel-body" style="padding: 0;">
+        <!-- Carousel Section -->
         <div class="carousel">
             <div uib-carousel active="active" no-wrap="false" class="carousel slide" no-pause="true">
                 <div uib-slide ng-repeat="image in $ctrl.car.images track by $index" index="$index">
-                    <img ng-src="{{image}}" alt="Car Image {{$index + 1}}" class="img-thumbnail img-responsive" style="width: 100%; height: 200px; object-fit: contain;">
+                    <img ng-src="{{image}}" alt="Car Image {{$index + 1}}"
+                        class="img-thumbnail img-responsive center-block"
+                        style="width: 100%; height: 200px; object-fit: contain;">
                 </div>
             </div>
         </div>
-        <div class="car-details" style="padding: 15px;">
-            <h3 class="car-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.5rem; color: #2c3e50; margin: 10px 0; font-weight: 400;">{{$ctrl.car.carName}}</h3>
-            <div class="car-features" style="display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; white-space: nowrap; text-overflow: ellipsis; align-items: center; scrollbar-width: none; -ms-overflow-style: none;">
-                <span class="label label-info" ng-repeat="feature in $ctrl.car.featured" style="background-color: #e9ecef; padding: 5px 10px; border-radius: 4px; font-size: 12px; color: #495057; flex-shrink: 0;">{{feature}}</span>
+
+        <!-- Car Details Section -->
+        <div class="panel-content" style="padding: 15px;">
+            <!-- Car Name -->
+            <h3 class="text-primary"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.5rem; margin: 10px 0; font-weight: 400;">
+                {{$ctrl.car.carName}}
+            </h3>
+
+            <!-- Features -->
+            <div
+                style="display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; white-space: nowrap; align-items: center; scrollbar-width: none; -ms-overflow-style: none;">
+                <span class="label label-info" ng-repeat="feature in $ctrl.car.featured"
+                    style="background-color: #e9ecef; padding: 5px 10px; border-radius: 4px; font-size: 12px; color: #495057; flex-shrink: 0;">
+                    {{feature}}
+                </span>
             </div>
-            <div class="rating-container" style="white-space: nowrap; padding-top: 8px; display: flex; align-items: center; gap: 8px;">
-                <div class="car-rating">
+
+            <!-- Rating Section -->
+            <div class="clearfix" style="padding-top: 8px; display: flex; align-items: center; gap: 8px;">
+                <div class="pull-left">
                     <star-rating rating="$ctrl.car.avgRating"></star-rating>
-                    <span class="rating-count" style="font-size: 13px; color: #888; opacity: 0.8;">
+                    <span class="text-muted" style="font-size: 13px; opacity: 0.8;">
                         ({{$ctrl.car.rating.avgRating | number:1}}/5,
                         {{$ctrl.car.rating.ratingCount || "0"}} reviews)
                     </span>
                 </div>
             </div>
-            <div class="home-user-info" style="display: flex; align-items: center; margin: 10px 0;">
+
+            <!-- User Info -->
+            <div class="clearfix" style="display: flex; align-items: center; margin: 10px 0;">
                 <span class="glyphicon glyphicon-user"></span>
-                &nbsp;
-                <span class="user-name">{{$ctrl.car.owner.username}}</span>
+                <span class="text-muted" style="margin-left: 5px;">{{$ctrl.car.owner.username}}</span>
             </div>
-            <div class="car-price-city" style="display: flex; justify-content: space-between; margin: 10px 0;">
-                <p>Starting <span class="price" style="font-size: 1.4rem; color: #1c7441; font-weight: 400;">₹{{$ctrl.getDisplayPrice().amount}}/{{$ctrl.getDisplayPrice().unit}}
-                    </span> </p>
-                <span class="city">{{$ctrl.car.city}}</span>
+
+            <!-- Price and City -->
+            <div class="row" style="margin: 10px 0;">
+                <div class="col-xs-6">
+                    <p class="text-muted">
+                        Starting
+                        <span style="font-size: 1.4rem; color: #1c7441; font-weight: 400;">
+                            ₹{{$ctrl.getDisplayPrice().amount}}/{{$ctrl.getDisplayPrice().unit}}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <span class="text-muted">{{$ctrl.car.city}}</span>
+                </div>
             </div>
-            <button ng-if="$ctrl.showButton !== false" ng-class="['book-now-btn', $ctrl.buttonClass]"
-                ng-click="$ctrl.handleButtonClick()" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 10px 15px; border: none; border-radius: 6px; text-decoration: none; font-weight: 400; cursor: pointer; transition: all 0.3s; width: 100%;">
+
+            <!-- Book Now Button -->
+            <button ng-if="$ctrl.showButton !== false" ng-class="['btn', 'btn-block', $ctrl.buttonClass]"
+                ng-click="$ctrl.handleButtonClick()"
+                style=" color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: 400; cursor: pointer; transition: all 0.3s;">
                 {{$ctrl.buttonText || 'Book Now'}}
             </button>
         </div>

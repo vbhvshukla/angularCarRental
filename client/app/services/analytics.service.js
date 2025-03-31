@@ -88,8 +88,9 @@ mainApp.service('analyticsService', [
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/revenuebyrentaltype', body),
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/bookingtrends', body),
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/topperformingowners', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/carspercategory', body)
-            ]).then(([totalsResponse, revenueByCityResponse, revenueByRentalTypeResponse, bookingTrendsResponse, topOwnersResponse, carsPerCategoryResponse]) => {
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/carspercategory', body),
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/customerretentionanalysis', body)
+            ]).then(([totalsResponse, revenueByCityResponse, revenueByRentalTypeResponse, bookingTrendsResponse, topOwnersResponse, carsPerCategoryResponse,customerRetentionResponse]) => {
                 return {
                     cards: totalsResponse.data,
                     charts: {
@@ -97,7 +98,8 @@ mainApp.service('analyticsService', [
                         revenueByRentalType: revenueByRentalTypeResponse.data,
                         bookingTrends: bookingTrendsResponse.data,
                         topOwners: topOwnersResponse.data,
-                        carsPerCategory: carsPerCategoryResponse.data
+                        carsPerCategory: carsPerCategoryResponse.data,
+                        customerRetention: customerRetentionResponse.data 
                     }
                 };
             }).catch(err => {

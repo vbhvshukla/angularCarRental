@@ -81,9 +81,6 @@ mainApp.controller('AdminAnalyticsController', [
 
                 // Ensure the canvas element is not reused without destroying the previous chart
                 const canvas = document.getElementById('carsPerCategoryChart');
-                // if (canvas && Chart.getChart(canvas)) {
-                //     Chart.getChart(canvas).destroy(); // Destroy the existing chart instance
-                // }
 
                 vm.chartInstances.carsPerCategoryChart = new Chart(
                     canvas,
@@ -93,7 +90,21 @@ mainApp.controller('AdminAnalyticsController', [
                             labels: categories, // Category names as labels
                             datasets: [{
                                 data: carCounts, // Total cars as data
-                                backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#8e44ad'] // Colors for each category
+                                backgroundColor: [
+                                    'rgba(52, 152, 219, 0.5)', // Transparentized blue
+                                    'rgba(231, 76, 60, 0.5)',  // Transparentized red
+                                    'rgba(46, 204, 113, 0.5)', // Transparentized green
+                                    'rgba(241, 196, 15, 0.5)', // Transparentized yellow
+                                    'rgba(142, 68, 173, 0.5)'  // Transparentized purple
+                                ],
+                                borderColor: [
+                                    '#3498db', // Blue
+                                    '#e74c3c', // Red
+                                    '#2ecc71', // Green
+                                    '#f1c40f', // Yellow
+                                    '#8e44ad'  // Purple
+                                ],
+                                borderWidth: 1
                             }]
                         },
                         options: {
@@ -129,12 +140,20 @@ mainApp.controller('AdminAnalyticsController', [
                                 label: 'Total Revenue',
                                 data: ownerRevenues,
                                 backgroundColor: [
-                                    '#3498db',
-                                    '#e74c3c',
-                                    '#2ecc71',
-                                    '#f1c40f',
-                                    '#8e44ad'
-                                ]
+                                    'rgba(52, 152, 219, 0.5)', // Transparentized blue
+                                    'rgba(231, 76, 60, 0.5)',  // Transparentized red
+                                    'rgba(46, 204, 113, 0.5)', // Transparentized green
+                                    'rgba(241, 196, 15, 0.5)', // Transparentized yellow
+                                    'rgba(142, 68, 173, 0.5)'  // Transparentized purple
+                                ],
+                                borderColor: [
+                                    '#3498db', // Blue
+                                    '#e74c3c', // Red
+                                    '#2ecc71', // Green
+                                    '#f1c40f', // Yellow
+                                    '#8e44ad'  // Purple
+                                ],
+                                borderWidth: 1
                             }]
                         },
                         options: {
@@ -155,8 +174,6 @@ mainApp.controller('AdminAnalyticsController', [
                 );
             }
 
-            
-
             // Revenue by City Chart
             if (charts.revenueByCity) {
                 const cityLabels = [...new Set(charts.revenueByCity.map(item => item._id.city))];
@@ -175,7 +192,9 @@ mainApp.controller('AdminAnalyticsController', [
                             datasets: [{
                                 label: 'Revenue',
                                 data: cityData,
-                                backgroundColor: '#3498db'
+                                backgroundColor: 'rgba(52, 152, 219, 0.5)', // Transparentized blue
+                                borderColor: '#3498db',
+                                borderWidth: 1
                             }]
                         },
                         options: getChartOptions('revenue')
@@ -210,13 +229,15 @@ mainApp.controller('AdminAnalyticsController', [
                                     label: 'Local Revenue',
                                     data: localRevenue,
                                     borderColor: '#3498db',
-                                    fill: false
+                                    backgroundColor: 'rgba(52, 152, 219, 0.5)', // Transparentized blue
+                                    fill: true
                                 },
                                 {
                                     label: 'Outstation Revenue',
                                     data: outstationRevenue,
                                     borderColor: '#e74c3c',
-                                    fill: false
+                                    backgroundColor: 'rgba(231, 76, 60, 0.5)', // Transparentized red
+                                    fill: true
                                 }
                             ]
                         },
@@ -240,7 +261,8 @@ mainApp.controller('AdminAnalyticsController', [
                                 label: 'Bookings',
                                 data: bookings,
                                 borderColor: '#2ecc71',
-                                fill: false
+                                backgroundColor: 'rgba(46, 204, 113, 0.5)', // Transparentized green
+                                fill: true
                             }]
                         },
                         options: getChartOptions('bookings')
@@ -248,6 +270,51 @@ mainApp.controller('AdminAnalyticsController', [
                 );
             }
 
+            // Customer Retention Chart
+            if (charts.customerRetention) {
+                const retentionData = charts.customerRetention; // Extract the retention data
+                const retentionLabels = ['Retention Rate', 'Churn Rate'];
+                const retentionValues = [
+                    retentionData[0].retentionRate, // Retention rate
+                    100 - retentionData[0].retentionRate // Churn rate (100% - retention rate)
+                ];
+                // Doughnut Chart for Retention Rate
+                vm.chartInstances.customerRetentionChart = new Chart(
+                    document.getElementById('customerRetentionChart'),
+                    {
+                        type: 'doughnut',
+                        data: {
+                            labels: retentionLabels,
+                            datasets: [{
+                                data: retentionValues,
+                                backgroundColor: [
+                                    'rgba(46, 204, 113, 0.5)', // Green for retention rate
+                                    'rgba(231, 76, 60, 0.5)'  // Red for churn rate
+                                ],
+                                borderColor: [
+                                    '#2ecc71', // Green
+                                    '#e74c3c'  // Red
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const label = context.label || '';
+                                            const value = context.raw;
+                                            return `${label}: ${value}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            }
         }
 
         /**
@@ -274,11 +341,11 @@ mainApp.controller('AdminAnalyticsController', [
                         }
                     }
                 },
-                
+
                 scales: {
                     x: {
                         ticks: {
-                            maxTicksLimit: 10 
+                            maxTicksLimit: 10
                         }
                     },
                     y: {

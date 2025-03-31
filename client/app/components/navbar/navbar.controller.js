@@ -14,6 +14,7 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'userFactory',
         vm.isLoggedIn = false;
         vm.currentUser = null;
         vm.links = [];
+        vm.isNavCollapsed = true;
 
         /**
          * Function : Initialization
@@ -86,11 +87,20 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'userFactory',
         };
 
         /**
+         * Toggle menu
+         */
+
+        vm.toggleMenu = function() {
+            vm.isNavCollapsed = !vm.isNavCollapsed;
+        };
+
+        /**
          * Transition
          * @description If transaction is successful , as the navbar is static recall the init function.
          */
         
         $transitions.onSuccess({}, function () {
+            vm.isNavCollapsed = true;
             vm.init();
         });
     }

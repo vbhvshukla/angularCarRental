@@ -17,6 +17,10 @@ mainApp.component('userSidebar', {
             { state: 'userdashboard.messages', icon: '✉️', label: 'My Messages' },
             { state: 'userdashboard.bids', icon: '💰', label: 'My Biddings' }
         ];
+        /**
+         * Variable to track sidebar visibility
+         */
+        $ctrl.isSidebarVisible = false;
 
         /**
          * Function : Check if the state is active or not.
@@ -25,6 +29,15 @@ mainApp.component('userSidebar', {
          */
         $ctrl.isActive = function (state) {
             return $state.includes(state);
+        };
+
+
+
+        /**
+         * Function to toggle sidebar visibility
+         */
+        $ctrl.toggleSidebar = function () {
+            $ctrl.isSidebarVisible = !$ctrl.isSidebarVisible;
         };
     }],
 });

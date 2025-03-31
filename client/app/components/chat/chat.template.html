@@ -1,41 +1,128 @@
-<div class="panel panel-default chatbox"
-    style="min-height: 400px; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">
-    <div class="panel-body">
-        <h3>Chat with {{$ctrl.toUser.username}}</h3>
-        <div class="chat-messages"
-            style="flex: 1; overflow-y: auto; max-height:300px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
-            <p ng-show="!$ctrl.messages">Say Hi to {{$ctrl.toUser.username}}</p>
-            <div ng-repeat="message in $ctrl.messages"
-                ng-class="{'sent': $ctrl.isOwnMessage(message), 'received': !$ctrl.isOwnMessage(message)}"
-                class="message" style="padding: 10px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
-                <p>{{message.message}}</p>
-                <small>{{message.createdAt | date:'short'}}</small>
-                <div ng-if="message.attachment" class="attachment">
-                    <img ng-if="message.attachment" ng-src="{{message.attachment}}" alt="Attachment"
-                        ng-click="$ctrl.viewAttachment(message.attachment)">
-                    <span ng-if="!message.attachment">Uploading...</span>
+<div class="panel panel-default" style="min-height: 400px; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-comment"></span>
+            Chat with {{$ctrl.toUser.username}}
+        </h3>
+    </div>
+
+    <div class="panel-body" style="padding: 15px;">
+        <!-- Messages Container -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well" style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; margin-bottom: 15px; padding: 15px;">
+                    <!-- Empty State -->
+                    <p class="text-center text-muted" ng-show="!$ctrl.messages.length">
+                        Say Hi to {{$ctrl.toUser.username}}
+                    </p>
+
+                    <!-- Loading State -->
+                    <div class="text-center" ng-show="$ctrl.loading">
+                        <span class="glyphicon glyphicon-refresh spinning" style="font-size: 20px;"></span>
+                    </div>
+
+                    <!-- Messages -->
+                    <div ng-repeat="message in $ctrl.messages" 
+                         style="margin-bottom: 15px; overflow: hidden;">
+                        
+                        <!-- Message Container -->
+                        <div class="row">
+                            <div ng-class="$ctrl.isOwnMessage(message) ? 'col-xs-12 text-right' : 'col-xs-12 text-left'">
+                                <!-- Message Bubble -->
+                                <div style="display: inline-block; max-width: 80%;">
+                                    <div class="panel" 
+                                         ng-class="{'panel-primary': $ctrl.isOwnMessage(message), 'panel-default': !$ctrl.isOwnMessage(message)}"
+                                         style="margin-bottom: 0; border-radius: 15px; text-align: left;">
+                                        <div class="panel-body" style="padding: 10px 15px;">
+                                            <p style="margin-bottom: 5px; word-wrap: break-word;">{{message.message}}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Timestamp -->
+                                    <div style="margin: 5px 5px 0;">
+                                        <small class="text-muted">
+                                            {{message.createdAt | date:'short'}}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="chat-input" style="display: flex; gap: 10px; padding: 15px 0 0; border-top: 1px solid #dee2e6;">
-            <input type="text" ng-model="$ctrl.newMessage" placeholder="Type a message"
-                ng-keypress="$event.keyCode === 13 && $ctrl.sendMessage()"
-                style="flex: 1; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
+        <!-- Input Area -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="input-group">
+                    <!-- Text Input -->
+                    <input type="text" 
+                           class="form-control input-lg"
+                           ng-model="$ctrl.newMessage" 
+                           placeholder="Type a message"
+                           ng-keypress="$event.keyCode === 13 && $ctrl.sendMessage()"
+                           style="border-radius: 4px 0 0 4px;">
 
-            <label for="chatFileInput" class="chat-file-label"
-                style="display: flex; align-items: center; cursor: pointer;">
-                <span class="glyphicon glyphicon-paperclip "></span>
-            </label>
-
-            <input type="file" id="chatFileInput" class="chat-file-input" accept="image/*,video/*,application/pdf"
-                onchange="angular.element(this).scope().$ctrl.handleFileSelect(this)" style="display: none;">
-
-            <button ng-click="$ctrl.sendMessage()" ng-disabled="!$ctrl.newMessage && !$ctrl.selectedFile"
-                class="send-button"
-                style="padding: 8px 12px; border: none; border-radius: 4px; background: #007bff; color: white; cursor: pointer;">
-                <span class="glyphicon glyphicon-send"></span>
-            </button>
+                    <!-- Send Button -->
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary btn-lg" 
+                                ng-click="$ctrl.sendMessage()"
+                                ng-disabled="!$ctrl.newMessage"
+                                style="border-radius: 0 4px 4px 0;">
+                            <span class="glyphicon glyphicon-send"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Spinning animation for loading indicator */
+    .glyphicon.spinning {
+        animation: spin 1s infinite linear;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Custom scrollbar for messages container */
+    .well::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .well::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 3px;
+    }
+
+    /* Message bubble styles */
+    .panel-primary {
+        background-color: #337ab7;
+        border-color: #337ab7;
+    }
+
+    .panel-primary .panel-body {
+        color: white;
+    }
+
+    /* Input group styling */
+    .input-group {
+        width: 100%;
+    }
+
+    .input-group .form-control {
+        height: 46px;
+    }
+
+    .input-group .btn {
+        height: 46px;
+        padding: 10px 16px;
+        top:-10px
+    }
+</style>

@@ -110,16 +110,16 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Local Revenue',
                         data: data.revenue.map(item => item.totalLocalRevenue).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.5)', // Transparentized blue
                         borderColor: '#3498db',
-                        fill: false
+                        fill: true
                     },
                     {
                         label: 'Outstation Revenue',
                         data: data.revenue.map(item => item.totalOutstationRevenue).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.5)', // Transparentized red
                         borderColor: '#e74c3c',
-                        fill: false
+                        fill: true
                     }
                 ]
             }, {
@@ -148,7 +148,7 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Bookings',
                         data: data.bookings.map(item => item.totalBookings).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#2ecc71'
+                        backgroundColor: 'rgba(46, 204, 113, 0.5)' // Transparentized green
                     }
                 ]
             }, {
@@ -158,14 +158,14 @@ mainApp.controller('OwnerAnalyticsController', [
                     x: {
                         ...vm.barChartOptions.scales.x,
                         ticks: {
-                            maxTicksLimit: 10 
+                            maxTicksLimit: 10
                         }
                     },
                     y: {
                         ...vm.barChartOptions.scales.y,
                         ticks: {
-                            maxTicksLimit: 10, 
-                            stepSize: 1, 
+                            maxTicksLimit: 10,
+                            stepSize: 1,
                             callback: value => Math.floor(value)
                         }
                     }
@@ -179,12 +179,12 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Local Duration (Hours)',
                         data: data.rentalDuration.map(item => item.totalLocalDurationInHours).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#8e44ad'
+                        backgroundColor: 'rgba(142, 68, 173, 0.5)' // Transparentized purple
                     },
                     {
                         label: 'Outstation Duration (Days)',
                         data: data.rentalDuration.map(item => item.totalOutstationDurationInDays).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#e67e22'
+                        backgroundColor: 'rgba(230, 126, 34, 0.5)' // Transparentized orange
                     }
                 ]
             }, {
@@ -213,7 +213,7 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Bid Amount',
                         data: data.bidAmounts.map(item => item.bidAmount).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#f1c40f'
+                        backgroundColor: 'rgba(241, 196, 15, 0.5)' // Transparentized yellow
                     }
                 ]
             }, {
@@ -242,7 +242,7 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Availability (%)',
                         data: data.carAvailability.map(item => item.availabilityPercentage).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#1abc9c'
+                        backgroundColor: 'rgba(26, 188, 156, 0.5)' // Transparentized teal
                     }
                 ]
             }, {
@@ -271,7 +271,10 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Rental Type Distribution',
                         data: data.rentalTypeDistribution.map(item => item.count).slice(0, 10), // Limit to 10 points
-                        backgroundColor: ['#3498db', '#e74c3c']
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.5)', // Transparentized blue
+                            'rgba(231, 76, 60, 0.5)'  // Transparentized red
+                        ]
                     }
                 ]
             });
@@ -283,12 +286,12 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Revenue',
                         data: data.categoryPerformance.map(item => item.totalRevenue).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#9b59b6'
+                        backgroundColor: 'rgba(155, 89, 182, 0.5)' // Transparentized violet
                     },
                     {
                         label: 'Bookings',
                         data: data.categoryPerformance.map(item => item.totalBookings).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#34495e'
+                        backgroundColor: 'rgba(52, 73, 94, 0.5)' // Transparentized gray
                     }
                 ]
             }, {
@@ -317,7 +320,7 @@ mainApp.controller('OwnerAnalyticsController', [
                     {
                         label: 'Bookings',
                         data: data.peakBookingHours.map(item => item.bookings).slice(0, 10), // Limit to 10 points
-                        backgroundColor: '#e67e22'
+                        backgroundColor: 'rgba(230, 126, 34, 0.5)' // Transparentized orange
                     }
                 ]
             }, {

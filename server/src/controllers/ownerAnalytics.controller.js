@@ -36,7 +36,6 @@ export const getTotals = async (req, res) => {
         ]
         const totalRevenueResult = await Booking.aggregate(pipeline)
         const totalCars = await Car.countDocuments({ "owner._id": ownerId })
-
         const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalRevenue : 0;
         res.status(200).json({ totalBookings, totalBids, totalRevenue, totalCars });
     } catch (error) {

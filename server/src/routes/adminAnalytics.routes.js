@@ -7,6 +7,7 @@ import {
     topPerformingOwners,
     carsPerCategory,
     revenueByCity,
+    customerRetentionAnalysis
 } from "../controllers/adminAnalytics.controller.js";
 
 const router = Router();
@@ -28,5 +29,8 @@ router.post("/topperformingowners", topPerformingOwners);
 
 // Routposto get cars per category
 router.post("/carspercategory", carsPerCategory);
+
+// Route to get customer retention analysis
+router.post("/customerretentionanalysis", customerRetentionAnalysis);
 
 export default router;

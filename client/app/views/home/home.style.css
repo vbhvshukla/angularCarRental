@@ -49,7 +49,34 @@
   animation: spin 1s linear infinite;
 }
 
+.cars-container {
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: repeat(
+    3,
+    1fr
+  ) !important; /* Default: 3 cards per row */
+  gap: 5px;
+}
+
+@media (max-width: 1024px) {
+  /* For tablets */
+  .cars-container {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 cards per row */
+  }
+
+  .home-main {
+    width: 77% !important; /* Set content width to 100% */
+    padding: 15px; /* Add padding for better spacing */
+  }
+}
+
 @media (max-width: 768px) {
+  /* For smaller tablets and large phones */
+  .cars-container {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 cards per row */
+  }
+
   .car-card {
     width: calc(50% - 10px);
   }
@@ -58,8 +85,22 @@
     flex-direction: column;
   }
 
-  .sidebar {
-    width: 100%;
+
+  .home-main {
+    width: 94% !important; /* Set content width to 100% */
+    padding: 10px; /* Adjust padding */
+  }
+}
+
+@media (max-width: 576px) {
+  /* For iPhones and small devices */
+  .cars-container {
+    grid-template-columns: 1fr !important; /* 1 card per row */
+  }
+
+  .home-main {
+    width: 94% !important; /* Set content width to 100% */
+    padding: 8px; /* Adjust padding */
   }
 }
 
@@ -69,5 +110,55 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@media (max-width: 767px) {
+  .sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 80%;
+      height: 100%;
+      max-height: 100vh;
+      background-color: white;
+      z-index: 1050;
+      overflow-y: auto;
+      transition: left 0.3s ease;
+      padding: 33px;
+      padding-bottom: 60px; /* Add space for footer */
+  }
+
+  .sidebar.visible-sidebar {
+      left: 0;
+  }
+
+  /* Prevent main content scroll when sidebar is open */
+  .row.sidebar-open {
+      height: 100vh;
+      overflow: hidden;
+  }
+
+  /* Ensure footer stays at bottom */
+  .navbar-default.navbar {
+      position: relative !important;
+      z-index: 1030;
+  }
+
+  /* Adjust navbar z-index */
+  .navbar-fixed-top {
+      z-index: 1060;
+  }
+
+  /* Ensure sidebar scrolls independently */
+  .sidebar {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      padding-top: 70px; /* Space for fixed navbar */
+  }
+
+  /* Hide footer when sidebar is open */
+  .row.sidebar-open + footer,
+  .sidebar-open .navbar {
+      display: none;
   }
 }

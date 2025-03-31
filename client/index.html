@@ -61,11 +61,11 @@
     <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <!-- Application Scripts -->
     <script src="app.js"></script>
-    
+
     <!-- Factories  -->
     <script src="app/factories/schemaValidator.factory.js"></script>
     <script src="app/factories/idGenerator.factory.js"></script>
-    
+
     <!-- Services  -->
     <script src="app/services/db.service.js"></script>
     <script src="app/services/cars.service.js"></script>
@@ -84,7 +84,7 @@
     <script src="app/factories/booking.factory.js"></script>
     <script src="app/factories/car.factory.js"></script>
     <script src="app/factories/category.factory.js"></script>
-    
+
     <!-- Directives  -->
     <script src="app/directives/rating.directive.js"></script>
     <script src="app/directives/compareTo.directive.js"></script>
@@ -137,17 +137,17 @@
 <body ng-app="mainApp">
     <div ng-include="'app/components/navbar/navbar.view.html'" ng-controller="NavbarController as vm"></div>
     <div ui-view></div>
-    <div class="container">
-        <div class="row">
-            <div style="width: 107%;
-            margin-left: -39px;
-            margin-right: auto;">
-                <div class="footer text-center bg-primary text-white w-76 rounded shadow">
-                    &copy; 2025 Car Rental. All rights reserved.
+    <footer class="navbar navbar-default" style="background-color: #337ab7; border: none; margin-bottom: 0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center" style="color: #ffffff; margin: 15px 0; font-size: 14px;">
+                        &copy; 2025 Car Rental. All rights reserved.
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 </body>
 
 </html>

@@ -1,19 +1,11 @@
 {
   "name": "carrental",
-  "authors": [
-    "Vaibhav <rushukla7@gmail.com>"
-  ],
+  "authors": ["Vaibhav <rushukla7@gmail.com>"],
   "description": "Car Rental Application using AngularJS",
   "main": "./src/app.js",
   "license": "MIT",
   "homepage": "./src/index.html",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
   "dependencies": {
     "angular": "^1.8.3",
     "angular-route": "^1.8.3",

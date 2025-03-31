@@ -1,8 +1,28 @@
-<div class="container home-main" ng-controller="HomeController as vm" ng-init="vm.init()"
+<div class="container-fluid home-main" ng-controller="HomeController as vm" ng-init="vm.init()"
     style="gap: 20px !important; background-color: white; width: 76.3%; color: #3c4248;">
-    <div class="row">
-        <div class="col-md-3 sidebar" style="box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) !important;">
-            <h3 style="margin-top: 25px; margin-bottom: 15px; color: #337ab7; font-size: 1.75rem;">Search for Cars</h3>
+
+    <!-- Filter Button for Mobile -->
+    <div class="visible-xs">
+        <button class="btn btn-primary btn-block" ng-click="vm.isSidebarVisible = !vm.isSidebarVisible"
+            style="margin: 10px 0;">
+            <span class="glyphicon glyphicon-filter"></span>
+            {{vm.isSidebarVisible ? 'Hide Filters' : 'Show Filters'}}
+        </button>
+    </div>
+
+    <div class="row" ng-class="{'sidebar-open': vm.isSidebarVisible}">
+        <!-- Sidebar -->
+        <div class="col-xs-12 col-sm-4 col-md-3 sidebar" ng-class="{'visible-sidebar': vm.isSidebarVisible}"
+            style="box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) !important;">
+
+            <!-- Close Button - Only visible on mobile -->
+            <button type="button" class="close visible-xs" ng-click="vm.isSidebarVisible = false"
+                style="position: absolute; right: 15px; top: 10px; font-size: 24px;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <h3 class="visible-xs text-center" style="margin-top: 40px;">Search for Cars</h3>
+            <h3 class="hidden-xs">Search for Cars</h3>
             <form>
                 <!-- Angular-ui-bootstrap's uib-typeahead component -->
                 <div class="form-group">
@@ -83,31 +103,30 @@
             </form>
         </div>
 
-        <div class="col-md-9">
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay visible-xs" ng-if="vm.isSidebarVisible" ng-click="vm.isSidebarVisible = false"
+            style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1040;">
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-xs-12 col-sm-8 col-md-9">
             <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="car in vm.cars | orderBy : '-createdAt'">
+                    <car-card car="car" button-text="Book Now" button-class="btn btn-primary btn-block"
+                        on-button-click="vm.goToBooking(car._id)" show-button="true">
+                    </car-card>
+                </div>
+
                 <div class="col-xs-12">
-                    <div class="cars-container"
-                        style="margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
-                        <car-card ng-repeat="car in vm.cars | orderBy : '-createdAt'" car="car" button-text="Book Now"
-                            button-class="btn btn-primary btn-block" on-button-click="vm.goToBooking(car._id)"
-                            show-button="true">
-                        </car-card>
+                    <div class="loading-more text-center" ng-if="vm.pagination.loading">
+                        <div class="spinner"></div>
+                    </div>
 
-                        <div class="loading-more text-center" ng-if="vm.pagination.loading"
-                            style="width: 100%; text-align: center; padding: 20px;">
-                            <div class="spinner"
-                                style="display: inline-block; width: 120px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
-                            </div>
-                        </div>
-
-                        <div class="load-more-container text-center"
-                            ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems"
-                            style="margin-top: 0; padding: 20px 0; width: 120px;">
-                            <button class="btn btn-primary" ng-click="vm.loadMoreCars()"
-                                style="background-color: #3498db; width: 120px; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background-color 0.3s ease;">
-                                Load More
-                            </button>
-                        </div>
+                    <div class="load-more-container text-center"
+                        ng-if="!vm.pagination.loading && vm.cars.length < vm.pagination.totalItems">
+                        <button class="btn btn-primary" ng-click="vm.loadMoreCars()">
+                            Load More
+                        </button>
                     </div>
                 </div>
             </div>

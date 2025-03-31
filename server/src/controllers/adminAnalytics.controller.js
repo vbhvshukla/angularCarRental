@@ -63,8 +63,8 @@ export const revenueByCity = async (req, res) => {
                             $gte: startDate,
                             $lte: today
                         },
-                        status:{
-                            $in:['confirmed','completed']
+                        status: {
+                            $in: ['confirmed', 'completed']
                         }
                     }
                 },
@@ -121,8 +121,8 @@ export const revenueByRentalType = async (req, res) => {
                         $gte: startDate,
                         $lte: today
                     },
-                    status:{
-                        $in:['confirmed','completed']
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -131,7 +131,7 @@ export const revenueByRentalType = async (req, res) => {
                     rentalType: 1,
                     totalRevenue: 1,
                     createdAt: 1,
-                    totalFare:1
+                    totalFare: 1
                 }
             },
             {
@@ -172,8 +172,8 @@ export const bookingTrends = async (req, res) => {
                         $gte: startDate,
                         $lte: today
                     },
-                    status:{
-                        $in:['confirmed','completed']
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -211,9 +211,9 @@ export const topPerformingOwners = async (req, res) => {
     try {
         const topOwners = await Booking.aggregate([
             {
-                $match:{
-                    status:{
-                        $in:['confirmed','completed']
+                $match: {
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -258,8 +258,8 @@ export const carsPerCategory = async (req, res) => {
     try {
         const carsByCategory = await Car.aggregate([
             {
-                $project:{
-                    category:1
+                $project: {
+                    category: 1
                 }
             },
             {
@@ -274,5 +274,56 @@ export const carsPerCategory = async (req, res) => {
     } catch (error) {
         console.error("Error fetching cars per category:", error);
         res.status(500).json({ msg: "Error fetching cars per category", error: error.message });
+    }
+}
+
+export const customerRetentionAnalysis = async (req, res) => {
+    const { numberOfDays = 90 } = req.body;
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - numberOfDays);
+
+    try {
+        const retentionData = await Booking.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today },
+                    status: { $in: ['confirmed', 'completed'] }
+                }
+            },
+            {
+                $group: {
+                    _id: "$bid.user.userId",
+                    customerName: { $first: "$bid.user.username" },
+                    totalRevenue: { $sum: "$totalFare" },
+                    totalBookings: { $sum: 1 }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    repeatCustomers: {
+                        $sum: {
+                            $cond: [{ $gt: ["$totalBookings", 1] }, 1, 0]
+                        }
+                    },
+                    totalCustomers: { $sum: 1 },
+                    totalRevenue: { $sum: "$totalRevenue" }
+                }
+            },
+            {
+                $project: {
+                    retentionRate: {
+                        $multiply: [{ $divide: ["$repeatCustomers", "$totalCustomers"] }, 100]
+                    },
+                    totalRevenue: 1
+                }
+            }
+        ]);
+
+        res.status(200).json(retentionData);
+    } catch (error) {
+        console.error("Error fetching customer retention analysis:", error);
+        res.status(500).json({ msg: "Error fetching customer retention analysis", error: error.message });
     }
 };

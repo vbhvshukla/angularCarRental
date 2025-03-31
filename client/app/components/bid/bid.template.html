@@ -1,69 +1,152 @@
-<div class="panel panel-default bid-form"
-    style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    <div class="panel-body">
+<div class="panel panel-default" style="background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <div class="panel-body" style="padding: 20px;">
+        <h3 class="panel-title" style="margin-bottom: 20px;">Place Your Bid</h3>
 
-        <h3>Place Your Bid</h3>
-        <div class="" role="group" style="margin-bottom: 20px;">
-            <button type="button" ng-if="$ctrl.car.isAvailableForLocal" class="btn btn-primary"
-                ng-class="{'active': $ctrl.rentalType === 'local'}" ng-click="$ctrl.setRentalType('local')">
-                Local
-            </button>
-            <button type="button" ng-if="$ctrl.car.isAvailableForOutstation" class="btn btn-primary"
-                ng-class="{'active': $ctrl.rentalType === 'outstation'}" ng-click="$ctrl.setRentalType('outstation')">
-                Outstation
-            </button>
+        <!-- Rental Type Buttons -->
+        <div class="btn-group btn-group-justified" style="margin-bottom: 20px;">
+            <div class="btn-group" ng-if="$ctrl.car.isAvailableForLocal">
+                <button type="button" class="btn btn-primary" 
+                        ng-class="{'active': $ctrl.rentalType === 'local'}" 
+                        ng-click="$ctrl.setRentalType('local')">
+                    Local
+                </button>
+            </div>
+            <div class="btn-group" ng-if="$ctrl.car.isAvailableForOutstation">
+                <button type="button" class="btn btn-primary" 
+                        ng-class="{'active': $ctrl.rentalType === 'outstation'}" 
+                        ng-click="$ctrl.setRentalType('outstation')">
+                    Outstation
+                </button>
+            </div>
         </div>
 
         <form name="$ctrl.bidForm" ng-submit="$ctrl.submitBid()" novalidate>
-            <div ng-show="$ctrl.rentalType === 'local'" class="rental-form"
-                style="display: flex; flex-direction: column; gap: 15px;">
-                <label style="font-weight: 500; color: #495057;">Start Date & Time</label>
-                <input type="datetime-local" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()"
-                    min="{{$ctrl.minDate}}" class="form-control" required
-                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-                <label style="font-weight: 500; color: #495057;">End Date & Time</label>
-                <input type="datetime-local" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()"
-                    min="{{$ctrl.minDate}}" class="form-control" required
-                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-            </div>
-
-            <div ng-show="$ctrl.rentalType === 'outstation'" class="rental-form"
-                style="display: flex; flex-direction: column; gap: 15px;">
-                <label style="font-weight: 500; color: #495057;">Start Date</label>
-                <input type="date" ng-model="$ctrl.bid.startDate" ng-change="$ctrl.onDateChange()" class="form-control"
-                    min="{{$ctrl.minDate}}" required
-                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-
-                <label style="font-weight: 500; color: #495057;">End Date</label>
-                <input type="date" ng-model="$ctrl.bid.endDate" ng-change="$ctrl.onDateChange()" class="form-control"
-                    min="{{$ctrl.minDate}}" required
-                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-            </div>
-
-            <price-info base-price="$ctrl.basePrice" total-price="$ctrl.totalPrice"
-                show-breakup="$ctrl.showPriceBreakup">
-            </price-info>
-
-            <div class="bid-amount" style="margin-top: 20px;">
-                <label style="font-weight: 500; color: #495057;">Your Bid</label>
-                <input type="number" ng-model="$ctrl.bid.bidAmount" min="{{$ctrl.estimate.minBid}}"
-                    max="{{$ctrl.estimate.maxBid}}" required
-                    style="padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 4px;">
-                <div class="bid-limits" ng-if="$ctrl.estimate"
-                    style="display: flex; justify-content: space-between; color: #6c757d; font-size: 0.875rem; margin-top: 5px;">
-                    <small>Minimum bid: ₹{{$ctrl.estimate.minBid}}</small>
-                    <small>Maximum bid: ₹{{$ctrl.estimate.maxBid}}</small>
+            <!-- Local Rental Form -->
+            <div ng-show="$ctrl.rentalType === 'local'" class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 15px;">
+                        <label class="control-label" style="font-weight: 500; color: #495057;">
+                            Start Date & Time
+                        </label>
+                        <input type="datetime-local" 
+                               ng-model="$ctrl.bid.startDate" 
+                               ng-change="$ctrl.onDateChange()"
+                               min="{{$ctrl.minDate}}" 
+                               class="form-control" 
+                               required>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <label class="control-label" style="font-weight: 500; color: #495057;">
+                            End Date & Time
+                        </label>
+                        <input type="datetime-local" 
+                               ng-model="$ctrl.bid.endDate" 
+                               ng-change="$ctrl.onDateChange()"
+                               min="{{$ctrl.minDate}}" 
+                               class="form-control" 
+                               required>
+                    </div>
                 </div>
             </div>
 
-            <div class="loading-indicator text-center" ng-if="$ctrl.isCalculating" style="margin-top: 20px;">
+            <!-- Outstation Rental Form -->
+            <div ng-show="$ctrl.rentalType === 'outstation'" class="form-group">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 15px;">
+                        <label class="control-label" style="font-weight: 500; color: #495057;">
+                            Start Date
+                        </label>
+                        <input type="date" 
+                               ng-model="$ctrl.bid.startDate" 
+                               ng-change="$ctrl.onDateChange()" 
+                               class="form-control"
+                               min="{{$ctrl.minDate}}" 
+                               required>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <label class="control-label" style="font-weight: 500; color: #495057;">
+                            End Date
+                        </label>
+                        <input type="date" 
+                               ng-model="$ctrl.bid.endDate" 
+                               ng-change="$ctrl.onDateChange()" 
+                               class="form-control"
+                               min="{{$ctrl.minDate}}" 
+                               required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Info Component -->
+            <price-info base-price="$ctrl.basePrice" 
+                       total-price="$ctrl.totalPrice"
+                       show-breakup="$ctrl.showPriceBreakup">
+            </price-info>
+
+            <!-- Bid Amount Section -->
+            <div class="form-group" style="margin-top: 20px;">
+                <label class="control-label" style="font-weight: 500; color: #495057;">
+                    Your Bid
+                </label>
+                <input type="number" 
+                       ng-model="$ctrl.bid.bidAmount" 
+                       min="{{$ctrl.estimate.minBid}}"
+                       max="{{$ctrl.estimate.maxBid}}" 
+                       class="form-control" 
+                       required>
+                
+                <!-- Bid Limits -->
+                <div ng-if="$ctrl.estimate" class="row" style="margin-top: 5px;">
+                    <div class="col-xs-6">
+                        <small class="text-muted">Minimum bid: ₹{{$ctrl.estimate.minBid}}</small>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <small class="text-muted">Maximum bid: ₹{{$ctrl.estimate.maxBid}}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div ng-if="$ctrl.isCalculating" class="text-center" style="margin: 20px 0;">
+                <span class="glyphicon glyphicon-refresh spinning"></span>
                 Calculating estimate...
             </div>
 
-            <button type="submit" ng-disabled="$ctrl.bidForm.$invalid || $ctrl.isSubmitting"
-                class="btn btn-primary btn-block">
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="btn btn-primary btn-lg btn-block"
+                    ng-disabled="$ctrl.bidForm.$invalid || $ctrl.isSubmitting"
+                    style="margin-top: 20px;">
                 {{$ctrl.isSubmitting ? 'Submitting...' : 'Place Bid'}}
             </button>
         </form>
     </div>
 </div>
+
+<style>
+    /* Add spinning animation for loading indicator */
+    .glyphicon.spinning {
+        animation: spin 1s infinite linear;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Custom form control styles */
+    .form-control {
+        padding: 8px 12px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        height: auto;
+    }
+
+    /* Active button state */
+    .btn-group .btn.active {
+        background-color: #286090;
+        border-color: #204d74;
+    }
+</style>
