@@ -134,9 +134,9 @@ mainApp.controller('OwnerHomeDashboardController', [
 
             vm.processingBidId = bid._id;
             vm.isProcessing = true;
-
-            bidService.updateBidStatus(bid._id, 'accepted')
-                .then(() => bookingFactory.createBooking(bid))
+            const bookingInstance = bookingFactory.createBooking(bid);
+            bookingInstance.create()
+                .then(() =>  bidService.updateBidStatus(bid._id, 'accepted'))
                 .then(() => {
                     errorService.logSuccess('Bid accepted and booking created successfully');
                     return vm.getAllData(bid.car.owner.userId);

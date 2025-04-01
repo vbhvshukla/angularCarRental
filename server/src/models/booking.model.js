@@ -47,6 +47,6 @@ const bookingSchema = new mongoose.Schema(
         timestamps: true
     }
 )
-bookingSchema.index({ "bid.car.owner.userId": 1, totalFare: 1 ,createdAt:1});
+bookingSchema.index({ "bid.car.owner.userId": 1, totalFare: 1, createdAt: 1 });
 
 export const Booking = mongoose.model("Booking", bookingSchema);

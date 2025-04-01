@@ -1,15 +1,113 @@
-<div class="messages-content" ng-controller="UserMessagesController" ng-init="vm.init()" style="padding: 20px; width: 100%; border-radius: 8px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1); min-height: 450px; display: flex; flex-direction: column; justify-content: space-between;">
-    <h2>All Conversations</h2>
-    <div id="message-list" class="message-list" style="white-space: nowrap !important; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px; min-height: 300px;">
-        <p class="no-messages" ng-if="!vm.messages.length" style="text-align: center; font-size: 16px; color: #888; padding: 30px 0;">No conversations</p>
-        <div ng-repeat="message in vm.messages" ng-click="vm.goToMessagePage(message.chatId)" style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; transition: background 0.3s; cursor: pointer;">
-            <img ng-src="{{vm.message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
-            <div class="message-content" style="overflow: hidden; white-space: nowrap; flex-grow: 1;">
-                <div class="name" style="font-weight: bold; color: #2c3e50; margin-bottom: 5px;">{{message.owner.username}}</div>
-                &nbsp;&nbsp;
-                <div class="last-message" style="color: #555; font-size: 14px; margin-bottom: 5px;">{{message.lastMessage}}</div>
-                <div class="timestamp" style="font-size: 0.9em; color: #888;">{{message.lastTimestamp}}</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="messages-content" ng-controller="UserMessagesController" ng-init="vm.init()" 
+                style="padding: 20px; width: 100%; border-radius: 8px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1); min-height: 450px; display: flex; flex-direction: column;  background-color: #fff;">
+                
+                <h2 class="page-header" style="margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">All Conversations</h2>
+
+                <!-- Loading State -->
+                <div ng-if="vm.loading" class="text-center" style="padding: 20px;">
+                    <span class="glyphicon glyphicon-refresh spinning"></span> Loading conversations...
+                </div>
+
+                <!-- Message List -->
+                <div id="message-list" class="message-list" 
+                    style="border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 15px; min-height: 300px; background-color: #fff;">
+                    
+                    <!-- No Messages State -->
+                    <p class="no-messages text-center" ng-if="!vm.messages.length" 
+                        style="font-size: 16px; color: #888; padding: 30px 0;">
+                        No conversations
+                    </p>
+
+                    <!-- Message Items -->
+                    <div class="row" ng-repeat="message in vm.messages" ng-click="vm.goToMessagePage(message.chatId)" 
+                        style="margin: 0; border-bottom: 1px solid #ddd; padding: 10px; cursor: pointer; transition: background-color 0.3s;">
+                        
+                        <!-- Profile Image -->
+                        <div class="col-xs-2 col-sm-1" style="padding-right: 0;">
+                            <img ng-src="{{vm.message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" 
+                                alt="Profile" 
+                                class="img-circle" 
+                                style="width: 50px; height: 50px; object-fit: cover;">
+                        </div>
+
+                        <!-- Message Content -->
+                        <div class="col-xs-10 col-sm-11">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                        <span class="name" style="font-weight: bold; color: #2c3e50;">
+                                            {{message.owner.username}}
+                                        </span>
+                                        <small class="timestamp" style="color: #888; font-size: 0.9em;">
+                                            {{message.lastTimestamp}}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="last-message" style="color: #555; font-size: 14px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{message.lastMessage}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Hover effect for message items */
+.message-list .row:hover {
+    background-color: #f8f9fa;
+}
+
+/* Loading spinner animation */
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+    display: inline-block;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+    .messages-content {
+        padding: 10px !important;
+    }
+
+    .message-list {
+        padding: 10px !important;
+    }
+
+    .name {
+        font-size: 14px;
+    }
+
+    .last-message {
+        font-size: 13px !important;
+    }
+
+    .timestamp {
+        font-size: 0.8em !important;
+    }
+}
+
+/* Ensure consistent spacing */
+.row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+/* Message item spacing */
+.message-list .row:last-child {
+    border-bottom: none;
+}
+</style>

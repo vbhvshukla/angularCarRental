@@ -1,49 +1,156 @@
-<div class="booking-content" ng-init="vm.init()" style="width: 100%; padding: 20px; background-color: #fff !important; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); box-sizing: border-box;">
-    <h2>Bookings</h2>
-    <div ng-if="errorMessage" class="alert alert-danger">
-        {{errorMessage}}
-    </div>
-    <div ng-if="isLoading" class="loading">
-        Loading bookings...
-    </div>
-    <div class="table-container table-responsive">
-        <table id="booking-table" class="table table-hover" style="table-layout: auto; width: 100%; border-collapse: collapse; margin-top: 15px;">
-            <thead>
-                <tr>
-                    <!-- <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Booking ID</th> -->
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Car Name</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Owner Name</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Bid Amount</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Start Date</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">End Date</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Created At</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Total Fare</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Status</th>
-                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Actions</th>
-                </tr>
-            </thead>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="booking-content" ng-init="vm.init()"
+                style="width: 100%; padding: 20px; background-color: #fff !important; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); box-sizing: border-box;">
+                <h2>Bookings</h2>
 
-            <tbody>
-                <tr ng-repeat="booking in vm.bookings" style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                    <!-- <td>{{booking.bookingId}}</td> -->
-                    <td>{{booking.bid.car.carName}}</td>
-                    <td>{{booking.bid.car.owner.username}}</td>
-                    <td>{{booking.bid.bidAmount | price}}</td>
-                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
-                    <td>{{booking.totalFare | price}}</td>
-                    <td>{{booking.status}}</td>
-                    <td>
-                        <button ng-if="booking.status !== 'cancelled'" ng-click="vm.cancelBooking(booking.bookingId)" class="action-btn" style="margin: 2px; padding: 6px 10px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; font-weight: 400; transition: background 0.3s ease; white-space: nowrap; background: #a01000; color: white;">Cancel</button>
-                    </td>
-                </tr>
-                <!-- Add no bookings message -->
-                <tr ng-if="bookings.length === 0" style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                    <td colspan="10" class="text-center">No bookings found</td>
-                </tr>
-            </tbody>
-        </table>
+                <!-- Alerts -->
+                <div ng-if="errorMessage" class="alert alert-danger">
+                    {{errorMessage}}
+                </div>
+                <div ng-if="isLoading" class="text-center" style="padding: 20px;">
+                    <span class="glyphicon glyphicon-refresh spinning"></span> Loading bookings...
+                </div>
+
+                <!-- Table Container -->
+                <div class="table-container table-responsive">
+                    <table id="booking-table" class="table table-hover"
+                        style="table-layout: auto; width: 100%; border-collapse: collapse; margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
+                                    class="hidden-xs">Car Name</th>
+                                <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
+                                    class="hidden-xs">Owner Name</th>
+                                <th
+                                    style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
+                                    Bid Amount</th>
+                                <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
+                                    class="hidden-xs">Start Date</th>
+                                <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
+                                    class="hidden-xs">End Date</th>
+                                <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
+                                    class="hidden-xs hidden-sm">Created At</th>
+                                <th
+                                    style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
+                                    Total Fare</th>
+                                <th
+                                    style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
+                                    Status</th>
+                                <th
+                                    style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="booking in vm.bookings"
+                                style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
+                                <td class="hidden-xs">{{booking.bid.car.carName}}</td>
+                                <td class="hidden-xs">{{booking.bid.car.owner.username}}</td>
+                                <td>{{booking.bid.bidAmount | price}}</td>
+                                <td class="hidden-xs">{{booking.fromTimestamp | date:'MM/dd/yyyy'}}</td>
+                                <td class="hidden-xs">{{booking.toTimestamp | date:'MM/dd/yyyy'}}</td>
+                                <td class="hidden-xs hidden-sm">{{booking.createdAt | date:'MM/dd/yyyy'}}</td>
+                                <td>{{booking.totalFare | price}}</td>
+                                <td>
+                                    {{booking.status}}
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <button ng-if="booking.status !== 'cancelled'"
+                                        ng-click="vm.cancelBooking(booking.bookingId)" class="action-btn"
+                                        style="margin: 2px; padding: 6px 10px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; font-weight: 400; transition: background 0.3s ease; white-space: nowrap; background: #a01000; color: white;">
+                                        <span class="hidden-xs">Cancel</span>
+                                        <span class="visible-xs glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr ng-if="vm.bookings.length === 0">
+                                <td colspan="9" class="text-center" style="padding: 20px;">
+                                    No bookings found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  
 </div>
+
+<style>
+    /* Table container styles */
+    .table-container {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    /* Scrollbar styling */
+    .table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    /* Status label styling */
+    .label {
+        display: inline-block;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+
+    /* Loading spinner animation */
+    .glyphicon.spinning {
+        animation: spin 1s infinite linear;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 767px) {
+
+        .table>thead>tr>th,
+        .table>tbody>tr>td {
+            padding: 8px 4px;
+        }
+
+        .action-btn {
+            padding: 4px 8px !important;
+            font-size: 12px !important;
+        }
+
+        .booking-content {
+            padding: 10px !important;
+        }
+    }
+
+    /* Ensure consistent table cell padding */
+    .table>thead>tr>th,
+    .table>tbody>tr>td {
+        padding: 12px 8px;
+        vertical-align: middle;
+    }
+</style>

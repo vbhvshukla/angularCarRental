@@ -89,8 +89,24 @@ mainApp.service('analyticsService', [
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/bookingtrends', body),
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/topperformingowners', body),
                 $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/carspercategory', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/customerretentionanalysis', body)
-            ]).then(([totalsResponse, revenueByCityResponse, revenueByRentalTypeResponse, bookingTrendsResponse, topOwnersResponse, carsPerCategoryResponse,customerRetentionResponse]) => {
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/customerretentionanalysis', body),
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/rentalduration', body),
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/categoryperformance', body),
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/bidsuccessrate', body),
+                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/peakhours', body)
+            ]).then(([
+                totalsResponse,
+                revenueByCityResponse,
+                revenueByRentalTypeResponse,
+                bookingTrendsResponse,
+                topOwnersResponse,
+                carsByCategoryResponse,
+                customerRetentionResponse,
+                rentalDurationResponse,
+                categoryPerformanceResponse,
+                bidSuccessRateResponse,
+                peakHoursResponse
+            ]) => {
                 return {
                     cards: totalsResponse.data,
                     charts: {
@@ -98,8 +114,12 @@ mainApp.service('analyticsService', [
                         revenueByRentalType: revenueByRentalTypeResponse.data,
                         bookingTrends: bookingTrendsResponse.data,
                         topOwners: topOwnersResponse.data,
-                        carsPerCategory: carsPerCategoryResponse.data,
-                        customerRetention: customerRetentionResponse.data 
+                        carsPerCategory: carsByCategoryResponse.data,
+                        customerRetention: customerRetentionResponse.data,
+                        rentalDuration: rentalDurationResponse.data,
+                        categoryPerformance: categoryPerformanceResponse.data,
+                        bidSuccessRate: bidSuccessRateResponse.data,
+                        peakHours: peakHoursResponse.data
                     }
                 };
             }).catch(err => {

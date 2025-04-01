@@ -1,19 +1,19 @@
 mainApp.factory('bookingFactory', ['$q', 'bookingService', function ($q, bookingService) {
     function Booking(initialData = {}) {
-        this._id = initialData._id || null; // Matches "_id"
-        this.user = initialData.user || null; // Matches "user"
-        this.car = initialData.car || null; // Matches "car"
-        this.fromTimestamp = initialData.fromTimestamp || null; // Matches "fromTimestamp"
-        this.toTimestamp = initialData.toTimestamp || null; // Matches "toTimestamp"
-        this.rentalType = initialData.rentalType || 'local'; // Matches "rentalType"
-        this.extraKmCharges = initialData.extraKmCharges || 0; // Defaults to 0
-        this.extraHourCharges = initialData.extraHourCharges || 0; // Defaults to 0
-        this.extraDayCharges = initialData.extraDayCharges || 0; // Defaults to 0
-        this.status = initialData.status || 'pending'; // Matches "status"
-        this.bidAmount = initialData.bidAmount || null; // Matches "bidAmount"
-        this.bidBaseFare = initialData.bidBaseFare || null; // Matches "bidBaseFare"
-        this.createdAt = initialData.createdAt || null; // Matches "createdAt"
-        this.updatedAt = initialData.updatedAt || null; // Matches "updatedAt"
+        this._id = initialData._id || null; 
+        this.user = initialData.user || null;
+        this.car = initialData.car || null; 
+        this.fromTimestamp = initialData.fromTimestamp || null;
+        this.toTimestamp = initialData.toTimestamp || null; 
+        this.rentalType = initialData.rentalType || 'local'; 
+        this.extraKmCharges = initialData.extraKmCharges || 0;
+        this.extraHourCharges = initialData.extraHourCharges || 0;
+        this.extraDayCharges = initialData.extraDayCharges || 0; 
+        this.status = initialData.status || 'pending'; 
+        this.bidAmount = initialData.bidAmount || null; 
+        this.bidBaseFare = initialData.bidBaseFare || null;
+        this.createdAt = initialData.createdAt || null; 
+        this.updatedAt = initialData.updatedAt || null; 
     }
 
     // Centralized validation logic
@@ -43,17 +43,7 @@ mainApp.factory('bookingFactory', ['$q', 'bookingService', function ($q, booking
         create: function () {
             const deferred = $q.defer();
 
-            const bookingData = {
-                user: this.user,
-                car: this.car,
-                fromTimestamp: this.fromTimestamp,
-                toTimestamp: this.toTimestamp,
-                rentalType: this.rentalType,
-                extraKmCharges: this.extraKmCharges,
-                extraHourCharges: this.extraHourCharges,
-                extraDayCharges: this.extraDayCharges,
-                status: this.status
-            };
+            const bookingData = this
 
             const errors = validateBookingData(bookingData);
             if (errors.length > 0) {

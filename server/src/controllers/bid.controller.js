@@ -97,7 +97,6 @@ export const submitBid = async (req, res) => {
       return res.status(404).json({ msg: "Car not found" });
     }
 
-    // Determine bidBaseFare based on rental type
     let bidBaseFare = 0;
     if (bidData.rentalType === "local") {
       bidBaseFare = car.rentalOptions.local.pricePerHour;

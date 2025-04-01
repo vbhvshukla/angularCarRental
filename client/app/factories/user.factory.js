@@ -37,7 +37,7 @@ mainApp.factory('userFactory', ['$q', 'authService', 'userService', function ($q
     }
 
     function redirectBasedOnRole(user, $state) {
-        if (!user) return true; // Allow unauthenticated users
+        if (!user) return true;
 
         switch (user.role) {
             case 'admin': return $state.go('admindashboard');
@@ -139,7 +139,7 @@ mainApp.factory('userFactory', ['$q', 'authService', 'userService', function ($q
 
     return {
         createUser: function (data, verificationFile) {
-            return new User(data, verificationFile); // Pass verificationFile here
+            return new User(data, verificationFile); 
         },
         getUserById: function (userId) {
             const deferred = $q.defer();

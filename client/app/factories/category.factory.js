@@ -3,7 +3,6 @@ mainApp.factory('categoryFactory', ['$q', 'categoryService', function ($q, categ
         this.categoryName = initialData.categoryName || '';
     }
 
-    // Centralized validation logic
     function validateCategoryData(categoryData) {
         const errors = [];
 

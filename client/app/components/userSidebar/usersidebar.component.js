@@ -1,15 +1,15 @@
 mainApp.component('userSidebar', {
-
     templateUrl: 'app/components/userSidebar/usersidebar.template.html',
-
-    controller: ['$state', function ($state) {
-
+    bindings: {
+        isVisible: '=',
+        onToggle: '&'
+    },
+    controller: ['$state', '$transitions', function ($state, $transitions) {
         /**
          * Variable Declarations and Initializations
          * @var $ctrl : Alias for view modal for this component.
          * @var $ctrl.menuItems : Holds all the navigation links
          */
-
         let $ctrl = this;
         $ctrl.menuItems = [
             { state: 'userdashboard.profile', icon: '🏠', label: 'My Profile' },
@@ -17,10 +17,6 @@ mainApp.component('userSidebar', {
             { state: 'userdashboard.messages', icon: '✉️', label: 'My Messages' },
             { state: 'userdashboard.bids', icon: '💰', label: 'My Biddings' }
         ];
-        /**
-         * Variable to track sidebar visibility
-         */
-        $ctrl.isSidebarVisible = false;
 
         /**
          * Function : Check if the state is active or not.
@@ -31,13 +27,18 @@ mainApp.component('userSidebar', {
             return $state.includes(state);
         };
 
-
+        // Close sidebar on state change in mobile view
+        $transitions.onSuccess({}, function() {
+            if (window.innerWidth < 768) {
+                $ctrl.isVisible = false;
+            }
+        });
 
         /**
          * Function to toggle sidebar visibility
          */
-        $ctrl.toggleSidebar = function () {
-            $ctrl.isSidebarVisible = !$ctrl.isSidebarVisible;
+        $ctrl.toggleSidebar = function() {
+            $ctrl.onToggle();
         };
-    }],
+    }]
 });

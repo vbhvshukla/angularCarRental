@@ -14,7 +14,7 @@
 .form-group select,
 .form-group textarea {
     width: 100%;
-    min-width: 80%;
+    /* min-width: 80%; */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;

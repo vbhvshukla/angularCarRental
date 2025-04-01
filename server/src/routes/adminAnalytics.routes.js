@@ -7,7 +7,11 @@ import {
     topPerformingOwners,
     carsPerCategory,
     revenueByCity,
-    customerRetentionAnalysis
+    customerRetentionAnalysis,
+    getRentalDurationAnalytics,
+    getCategoryPerformance,
+    getBidSuccessRate,
+    getPeakHoursAnalysis
 } from "../controllers/adminAnalytics.controller.js";
 
 const router = Router();
@@ -32,5 +36,17 @@ router.post("/carspercategory", carsPerCategory);
 
 // Route to get customer retention analysis
 router.post("/customerretentionanalysis", customerRetentionAnalysis);
+
+// Route to get rental duration analytics
+router.post("/rentalduration", getRentalDurationAnalytics);
+
+// Route to get category performance analytics
+router.post("/categoryperformance", getCategoryPerformance);
+
+// Route to get bid success rate analytics
+router.post("/bidsuccessrate", getBidSuccessRate);
+
+// Route to get peak hours analysis
+router.post("/peakhours", getPeakHoursAnalysis);
 
 export default router;

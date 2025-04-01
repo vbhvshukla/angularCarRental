@@ -10,8 +10,8 @@
                 <label for="carName">Car Name *</label>
                 <input type="text" id="carName" name="carName" ng-model="vm.car.carName" required ng-minlength="2"
                     ng-maxlength="500">
-                <div class="error-messages" ng-messages="carForm.carName.$error" 
-                     ng-if="carForm.carName.$touched && carForm.carName.$invalid">
+                <div class="error-messages" ng-messages="carForm.carName.$error"
+                    ng-if="carForm.carName.$touched && carForm.carName.$invalid">
                     <span ng-message="required">Car name is required</span>
                     <span ng-message="minlength">Car name must be at least 2 characters</span>
                     <span ng-message="maxlength">Car name cannot exceed 100 characters</span>
@@ -24,49 +24,35 @@
                     <option value="automatic">Automatic</option>
                     <option value="manual">Manual</option>
                 </select>
-                <div class="error-messages" ng-messages="carForm.carType.$error" 
-                     ng-if="carForm.carType.$touched && carForm.carType.$invalid">
+                <div class="error-messages" ng-messages="carForm.carType.$error"
+                    ng-if="carForm.carType.$touched && carForm.carType.$invalid">
                     <span ng-message="required">Car type is required</span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="category">Category *</label>
-                <input type="text" 
-                       id="category" 
-                       name="category" 
-                       ng-model="vm.car.category.categoryName"
-                       list="categories-list" 
-                       required 
-                       placeholder="Select or type a category">
+                <input type="text" id="category" name="category" ng-model="vm.car.category.categoryName"
+                    list="categories-list" required placeholder="Select or type a category">
                 <datalist id="categories-list">
-                    
-                    <option ng-repeat="category in vm.categories" 
-                            value="{{category.categoryName}}">
+
+                    <option ng-repeat="category in vm.categories" value="{{category.categoryName}}">
                     </option>
                 </datalist>
-                <div class="error-messages" 
-                     ng-messages="carForm.category.$error" 
-                     ng-if="carForm.category.$touched && carForm.category.$invalid">
+                <div class="error-messages" ng-messages="carForm.category.$error"
+                    ng-if="carForm.category.$touched && carForm.category.$invalid">
                     <span ng-message="required">Category is required</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="city">City *</label>
-                <input type="text" 
-                       id="city" 
-                       name="city" 
-                       ng-model="vm.car.city" 
-                       list="cities-list" 
-                       required
-                       ng-change="vm.validateCity()"
-                       placeholder="Select or type a city">
+                <input type="text" id="city" name="city" ng-model="vm.car.city" list="cities-list" required
+                    ng-change="vm.validateCity()" placeholder="Select or type a city">
                 <datalist id="cities-list">
                     <option ng-repeat="city in vm.cities" value="{{city}}">
                 </datalist>
-                <div class="error-messages" 
-                     ng-messages="carForm.city.$error" 
-                     ng-if="carForm.city.$touched || carForm.city.$invalid">
+                <div class="error-messages" ng-messages="carForm.city.$error"
+                    ng-if="carForm.city.$touched || carForm.city.$invalid">
                     <span ng-message="required">City is required</span>
                     <span ng-message="validCity">Please select a valid city from the list</span>
                 </div>
@@ -76,8 +62,8 @@
                 <label for="description">Description</label>
                 <textarea id="description" name="description" ng-model="vm.car.description"
                     ng-maxlength="1000"></textarea>
-                <div class="error-messages" ng-messages="carForm.description.$error" 
-                     ng-if="carForm.description.$touched && carForm.description.$invalid">
+                <div class="error-messages" ng-messages="carForm.description.$error"
+                    ng-if="carForm.description.$touched && carForm.description.$invalid">
                     <span ng-message="maxlength">Description cannot exceed 1000 characters</span>
                 </div>
             </div>
@@ -90,7 +76,10 @@
                     onchange="angular.element(this).scope().vm.handleImageUpload(this.files)">
                 <div class="image-preview" ng-if="vm.car.images.length">
                     <div ng-repeat="image in vm.car.images track by $index" class="image-item">
-                        <img ng-src="{{image}}" alt="Car image {{$index + 1}}">
+                        <!-- Show file name in Add Car mode -->
+                        <span ng-if="!vm.isEditMode">{{image}}</span>
+                        <!-- Show image preview in Edit Car mode -->
+                        <img ng-if="vm.isEditMode" ng-src="{{image}}" alt="Car image {{$index + 1}}" style="max-width: 100px; max-height: 100px;">
                         <button type="button" ng-click="vm.removeImage($index)">Remove</button>
                     </div>
                 </div>

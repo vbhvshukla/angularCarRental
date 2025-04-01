@@ -66,7 +66,7 @@
   }
 
   .home-main {
-    width: 77% !important; /* Set content width to 100% */
+    width: 77%  !important; /* Set content width to 100% */
     padding: 15px; /* Add padding for better spacing */
   }
 }
@@ -85,9 +85,12 @@
     flex-direction: column;
   }
 
+  .sidebar {
+    width: 100%;
+  }
 
   .home-main {
-    width: 94% !important; /* Set content width to 100% */
+    width: 94%  !important; /* Set content width to 100% */
     padding: 10px; /* Adjust padding */
   }
 }
@@ -112,53 +115,44 @@
     transform: rotate(360deg);
   }
 }
+
+ /* Form Control Focus States */
+ .form-control:focus {
+  border-color: #337ab7;
+  box-shadow: none;
+  outline: none;
+}
+
+
 @media (max-width: 767px) {
   .sidebar {
       position: fixed;
       top: 0;
       left: -100%;
-      width: 80%;
+      width: 85%;
       height: 100%;
       max-height: 100vh;
       background-color: white;
       z-index: 1050;
       overflow-y: auto;
       transition: left 0.3s ease;
-      padding: 33px;
-      padding-bottom: 60px; /* Add space for footer */
+      padding: 20px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+      border-bottom: none;
   }
 
   .sidebar.visible-sidebar {
       left: 0;
   }
 
-  /* Prevent main content scroll when sidebar is open */
-  .row.sidebar-open {
-      height: 100vh;
-      overflow: hidden;
+  .sidebar form {
+      padding-bottom: 40px;
   }
+}
 
-  /* Ensure footer stays at bottom */
-  .navbar-default.navbar {
-      position: relative !important;
-      z-index: 1030;
-  }
-
-  /* Adjust navbar z-index */
-  .navbar-fixed-top {
-      z-index: 1060;
-  }
-
-  /* Ensure sidebar scrolls independently */
-  .sidebar {
-      -webkit-overflow-scrolling: touch;
-      overflow-y: auto;
-      padding-top: 70px; /* Space for fixed navbar */
-  }
-
-  /* Hide footer when sidebar is open */
-  .row.sidebar-open + footer,
-  .sidebar-open .navbar {
-      display: none;
-  }
+/* Button Hover Effect */
+.btn-primary:hover {
+  background-color: #286090;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

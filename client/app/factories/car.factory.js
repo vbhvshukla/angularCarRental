@@ -12,7 +12,7 @@ mainApp.factory('carFactory', ['$q', 'carService', function ($q, carService) {
         this.isDeleted = initialData.isDeleted || false;
         this.category = initialData.category || { categoryId: '', categoryName: '' };
         this.owner = initialData.owner || null;
-        this.rating = initialData.rating || { avgRating: 0, ratingCount: 0 }; // Updated to handle rating as an object
+        this.rating = initialData.rating || { avgRating: 0, ratingCount: 0 }; 
         this.rentalOptions = initialData.rentalOptions || {
             local: {
                 extraHourlyRate: 0,
@@ -99,8 +99,8 @@ mainApp.factory('carFactory', ['$q', 'carService', function ($q, carService) {
                 deferred.reject({ message: 'Validation failed', errors });
             } else {
                 const formData = new FormData();
-                formData.append('carData', JSON.stringify(this)); // Correctly append the car data as JSON
-                this.images.forEach(file => formData.append('images', file)); // Append images
+                formData.append('carData', JSON.stringify(this)); 
+                this.images.forEach(file => formData.append('images', file)); 
 
                 carService.createCar(formData)
                     .then(response => deferred.resolve(response))
@@ -116,8 +116,8 @@ mainApp.factory('carFactory', ['$q', 'carService', function ($q, carService) {
                 deferred.reject({ message: 'Car ID is required to update.' });
             } else {
                 const formData = new FormData();
-                formData.append('carData', JSON.stringify(this)); // Correctly append the car data as JSON
-                this.images.forEach(file => formData.append('images', file)); // Append images
+                formData.append('carData', JSON.stringify(this)); 
+                this.images.forEach(file => formData.append('images', file)); 
 
                 carService.updateCar(this._id, formData)
                     .then(response => deferred.resolve(response))

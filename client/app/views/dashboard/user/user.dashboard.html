@@ -1,6 +1,67 @@
-<div class="dashboard-layout" ng-init="vm.init()">
-    <user-sidebar></user-sidebar>
+<div class="dashboard-layout" ng-controller="UserDashboardController as vm" ng-init="vm.init()">
+    <user-sidebar is-visible="vm.isSidebarVisible" on-toggle="vm.toggleSidebar()">
+    </user-sidebar>
+
     <div class="dashboard-content">
+        <div class="visible-xs dashboard-header" style="margin-bottom: 20px;">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-default" ng-class="{'active': !vm.isSidebarVisible}"
+                        ng-click="vm.toggleSidebar(false)">
+                        <span class="glyphicon glyphicon-th-list"></span> Content
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-default" ng-class="{'active': vm.isSidebarVisible}"
+                        ng-click="vm.toggleSidebar(true)">
+                        <span class="glyphicon glyphicon-menu-hamburger"></span> Menu
+                    </button>
+                </div>
+            </div>
+        </div>
         <ui-view></ui-view>
     </div>
 </div>
+
+<style>
+    .dashboard-header {
+        position: relative;
+        top: -50px;
+        z-index: 1020;
+        background-color: #fff;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .btn-group-justified>.btn-group .btn {
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+
+    .btn-group-justified>.btn-group .btn.active {
+        background: #3498db;
+        color: #fff;
+        border-color: #3498db;
+    }
+
+    @media (max-width: 767px) {
+        .dashboard-layout {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .dashboard-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .user-sidebar {
+            position: fixed;
+            top: 51px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+    }
+</style>

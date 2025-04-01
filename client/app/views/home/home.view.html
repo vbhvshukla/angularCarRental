@@ -13,93 +13,131 @@
     <div class="row" ng-class="{'sidebar-open': vm.isSidebarVisible}">
         <!-- Sidebar -->
         <div class="col-xs-12 col-sm-4 col-md-3 sidebar" ng-class="{'visible-sidebar': vm.isSidebarVisible}"
-            style="box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) !important;">
+            style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 20px;">
 
             <!-- Close Button - Only visible on mobile -->
             <button type="button" class="close visible-xs" ng-click="vm.isSidebarVisible = false"
-                style="position: absolute; right: 15px; top: 10px; font-size: 24px;">
+                style="position: absolute; right: 15px; top: 15px; font-size: 24px;">
                 <span aria-hidden="true">&times;</span>
             </button>
 
-            <h3 class="visible-xs text-center" style="margin-top: 40px;">Search for Cars</h3>
-            <h3 class="hidden-xs">Search for Cars</h3>
+            <h3 class="visible-xs text-center" style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.8rem;">Search for Cars</h3>
+            <h3 class="hidden-xs" style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.8rem;">Search for Cars</h3>
+
             <form>
-                <!-- Angular-ui-bootstrap's uib-typeahead component -->
+                <!-- Location Input -->
                 <div class="form-group">
-                    <label for="location">Location:</label>
-                    <input type="text" id="location" ng-model="vm.filters.location"
-                        uib-typeahead="city for city in vm.cities | filter:$viewValue" typeahead-min-length="2"
-                        class="form-control" placeholder="Enter city or area" list="city-list"
-                        style="width: 100%; padding: 12px; height: 40px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <label for="location" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Location:</label>
+                    <input type="text" id="location" 
+                        ng-model="vm.filters.location"
+                        uib-typeahead="city for city in vm.cities | filter:$viewValue" 
+                        typeahead-min-length="2"
+                        class="form-control" 
+                        placeholder="Enter city or area"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                 </div>
 
+                <!-- Car Category -->
                 <div class="form-group">
-                    <label for="car-category">Car Category:</label>
-                    <select id="car-category" ng-model="vm.filters.carCategory" class="form-control"
-                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
-                        <option value="">All Category</option>
+                    <label for="car-category" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Car Category:</label>
+                    <select id="car-category" 
+                        ng-model="vm.filters.carCategory" 
+                        class="form-control"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
+                        <option value="">All Categories</option>
                         <option ng-repeat="category in vm.categories" value="{{category._id}}">
                             {{category.categoryName}}
                         </option>
                     </select>
                 </div>
 
-                <h3>Filter by</h3>
+                <h3 style="margin: 20px 0; color: #2c3e50; font-size: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">Filter by</h3>
 
+                <!-- Price Range -->
                 <div class="form-group">
-                    <label for="price-range">Price Range: {{vm.filters.priceRange}}</label>
-                    <div>
-                        <input type="range" id="price-range" ng-model="vm.filters.priceRange" min="0" max="1000"
-                            step="50" ng-model-options="{ debounce: 300 }" class="form-control"
-                            style="flex: 2; appearance: none; -webkit-appearance: none; height: 2px; background: #ffffff; border-radius: 5px; outline: none; transition: 0.3s;">
-                    </div>
+                    <label style="color: #34495e; font-weight: 500; margin-bottom: 8px;">
+                        Price Range: <span style="color: #3498db; font-weight: 600;">₹{{vm.filters.priceRange}}</span>
+                    </label>
+                    <input type="range" 
+                        ng-model="vm.filters.priceRange" 
+                        min="0" 
+                        max="1000" 
+                        step="50"
+                        ng-model-options="{ debounce: 300 }" 
+                        class="form-control"
+                        style="width: 100%; margin: 10px 0; height: 20px;">
                 </div>
 
+                <!-- Car Type -->
                 <div class="form-group">
-                    <label for="car-type">Car Type:</label>
-                    <select id="car-type" ng-model="vm.filters.carType" class="form-control"
-                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <label for="car-type" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Car Type:</label>
+                    <select id="car-type" 
+                        ng-model="vm.filters.carType" 
+                        class="form-control"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                         <option value="">Select Type</option>
                         <option value="automatic">Automatic</option>
                         <option value="manual">Manual</option>
                     </select>
                 </div>
 
+                <!-- Availability -->
                 <div class="form-group">
-                    <label for="availability">Availability:</label>
-                    <select id="availability" ng-model="vm.filters.availability" class="form-control"
-                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <label for="availability" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Availability:</label>
+                    <select id="availability" 
+                        ng-model="vm.filters.availability" 
+                        class="form-control"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                         <option value="">Select Availability</option>
                         <option value="local">Local</option>
                         <option value="outstation">Outstation</option>
                     </select>
                 </div>
 
+                <!-- Features -->
                 <div class="form-group">
-                    <label for="features">Features:</label>
-                    <input type="text" id="features" ng-model="vm.filters.features" placeholder="e.g., AC, Bluetooth"
-                        list="features-list" class="form-control"
-                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <label for="features" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Features:</label>
+                    <input type="text" 
+                        id="features" 
+                        ng-model="vm.filters.features" 
+                        placeholder="e.g., AC, Bluetooth"
+                        list="features-list" 
+                        class="form-control"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                     <datalist id="features-list">
                         <option ng-repeat="feature in vm.features" value="{{feature}}">
                     </datalist>
                 </div>
 
+                <!-- Rating -->
                 <div class="form-group">
-                    <label for="rating">Minimum Rating:</label>
-                    <select id="rating" ng-model="vm.filters.rating" class="form-control"
-                        style="width: 100%; padding: 12px; height: 45px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 14px; transition: all 0.3s;">
+                    <label for="rating" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Minimum Rating:</label>
+                    <select id="rating" 
+                        ng-model="vm.filters.rating" 
+                        class="form-control"
+                        style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                         <option value="">Select Rating</option>
-                        <option value="5">5</option>
-                        <option value="4">4</option>
-                        <option value="3">3</option>
-                        <option value="2">2</option>
-                        <option value="1">1</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="3">3+ Stars</option>
+                        <option value="2">2+ Stars</option>
+                        <option value="1">1+ Star</option>
                     </select>
                 </div>
-                <button type="submit" ng-click="vm.applyFilters()" uib-tooltip="Apply all filters"
-                    tooltip-placement="left" class="btn btn-primary btn-block"
-                    style="color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 400; cursor: pointer; transition: all 0.3s; width: 100%;">Filter</button>
+
+                <!-- Filter Button -->
+                <button type="submit" 
+                    ng-click="vm.applyFilters()" 
+                    class="btn btn-primary btn-block"
+                    style="background-color: #337ab7; 
+                           border: none; 
+                           padding: 12px; 
+                           border-radius: 4px; 
+                           font-weight: 500; 
+                           margin-top: 20px;
+                           transition: all 0.3s ease;">
+                    Apply Filters
+                </button>
             </form>
         </div>
 
