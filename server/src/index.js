@@ -26,7 +26,7 @@ connectDb()
     io.on('connection', (socket) => {
       console.log('A user connected:', socket.id);
 
-      // Join the room which is the chatid in the oconversation.
+      // Join the room which is the chatid in the conversation.
       socket.on('joinChat', (chatId) => {
         socket.join(chatId);
         console.log(`User joined chat: ${chatId}`);

@@ -19,21 +19,23 @@ mainApp.service('analyticsService', [
          *                  rentalDuration,revenueOverTime,avgRevenueByType,avgBidAmount
          *              }     
          *          }
-         */
+        */
+        const BASE_URL = 'http://127.0.0.1:8006/api/v1/ownerAnalytics';
+        const BASE_ADMIN_URL = 'http://127.0.0.1:8006/api/v1/adminanalytics';
         this.getOwnerAnalytics = function (ownerId, days = 30) {
             const body = { ownerId, numberOfDays: days };
             console.log(body);
             return $q.all([
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/gettotalcount', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/bookingspercar', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/rentaldurationpercar', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/revenueovertime', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/bidamountovertime', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/revenuebycar', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/caravailabilityinsights', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/rentaltypedistribution', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/categoryperformance', body),
-                $http.post('http://127.0.0.1:8006/api/v1/ownerAnalytics/peakbookinghours', body)
+                $http.post(`${BASE_URL}/gettotalcount`, body),
+                $http.post(`${BASE_URL}/bookingspercar`, body),
+                $http.post(`${BASE_URL}/rentaldurationpercar`, body),
+                $http.post(`${BASE_URL}/revenueovertime`, body),
+                $http.post(`${BASE_URL}/bidamountovertime`, body),
+                $http.post(`${BASE_URL}/revenuebycar`, body),
+                $http.post(`${BASE_URL}/caravailabilityinsights`, body),
+                $http.post(`${BASE_URL}/rentaltypedistribution`, body),
+                $http.post(`${BASE_URL}/categoryperformance`, body),
+                $http.post(`${BASE_URL}/peakbookinghours`, body)
             ]).then((
                 [
                     totalsResponse,
@@ -83,17 +85,17 @@ mainApp.service('analyticsService', [
             const body = { days };
 
             return $q.all([
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/totals', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/revenuebycity', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/revenuebyrentaltype', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/bookingtrends', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/topperformingowners', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/carspercategory', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/customerretentionanalysis', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/rentalduration', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/categoryperformance', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/bidsuccessrate', body),
-                $http.post('http://127.0.0.1:8006/api/v1/adminAnalytics/peakhours', body)
+                $http.post(`${BASE_ADMIN_URL}/totals`, body),
+                $http.post(`${BASE_ADMIN_URL}/revenuebycity`, body),
+                $http.post(`${BASE_ADMIN_URL}/revenuebyrentaltype`, body),
+                $http.post(`${BASE_ADMIN_URL}/bookingtrends`, body),
+                $http.post(`${BASE_ADMIN_URL}/topperformingowners`, body),
+                $http.post(`${BASE_ADMIN_URL}/carspercategory`, body),
+                $http.post(`${BASE_ADMIN_URL}/customerretentionanalysis`, body),
+                $http.post(`${BASE_ADMIN_URL}/rentalduration`, body),
+                $http.post(`${BASE_ADMIN_URL}/categoryperformance`, body),
+                $http.post(`${BASE_ADMIN_URL}/bidsuccessrate`, body),
+                $http.post(`${BASE_ADMIN_URL}/peakhours`, body)
             ]).then(([
                 totalsResponse,
                 revenueByCityResponse,

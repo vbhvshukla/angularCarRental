@@ -15,23 +15,13 @@
                 {{$ctrl.car.carName}}</h3>
             <div class="car-features"
                 style="display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; white-space: nowrap; text-overflow: ellipsis; align-items: center; scrollbar-width: none; -ms-overflow-style: none;">
-                <span class="label" ng-repeat="feature in $ctrl.car.featured" style="background-color: #f8f9fa; 
-                             padding: 4px 10px; 
-                             border-radius: 15px; 
-                             font-size: 12px; 
-                             color: #6c757d; 
-                             font-weight: 400;
-                             border: 1px solid #e9ecef;
-                             flex-shrink: 0;">
-                    {{feature}}
-                </span>
+                <span class="label label-info" ng-repeat="feature in $ctrl.car.featured"
+                    style="background-color: #e9ecef; padding: 5px 10px; border-radius: 4px; font-size: 12px; color: #495057; flex-shrink: 0;">{{feature}}</span>
             </div>
             <div class="rating-container"
                 style="white-space: nowrap; padding-top: 8px; display: flex; align-items: center; gap: 8px;">
                 <div class="car-rating">
-                    <span class="stars" style="color: #f1c40f; letter-spacing: 2px;">
-                        {{$ctrl.car.rating.avgRating | starRating}}
-                    </span>
+                    <star-rating rating="$ctrl.car.rating.avgRating"></star-rating>
                     <span class="rating-count" style="font-size: 13px; color: #888; opacity: 0.8;">
                         ({{$ctrl.car.rating.avgRating | number:1}}/5,
                         {{$ctrl.car.rating.ratingCount || "0"}} reviews)
@@ -50,40 +40,10 @@
                 <span class="city">{{$ctrl.car.city}}</span>
             </div>
             <button ng-if="$ctrl.showButton !== false" ng-class="['book-now-btn', $ctrl.buttonClass]"
-                ng-click="$ctrl.handleButtonClick()" style="background-color: #337ab7; 
-                           color: white; 
-                           padding: 10px 15px; 
-                           border: none; 
-                           border-radius: 4px; 
-                           text-decoration: none; 
-                           font-weight: 500; 
-                           cursor: pointer; 
-                           transition: all 0.3s; 
-                           width: 100%;
-                           box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                ng-click="$ctrl.handleButtonClick()" class="btn-info"
+                style=" color: white; padding: 10px 15px; border: none; border-radius: 6px; text-decoration: none; font-weight: 400; cursor: pointer; transition: all 0.3s; width: 100%;">
                 {{$ctrl.buttonText || 'Book Now'}}
             </button>
         </div>
     </div>
 </div>
-
-<style>
-    .book-now-btn:hover {
-        background-color: #286090 !important;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
-        transform: translateY(-1px);
-    }
-
-    .car-features::-webkit-scrollbar {
-        display: none;
-    }
-
-    .label {
-        transition: all 0.3s ease;
-    }
-
-    .label:hover {
-        background-color: #e9ecef !important;
-        color: #495057 !important;
-    }
-</style>

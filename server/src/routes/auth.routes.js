@@ -14,12 +14,11 @@ router.post('/logout', logout);
 router.get('/regenerateToken', regenerateToken);
 router.get('/getcurrentuser', getCurrentUser);
 router.post('/injectadmin',injectAdminUser);
-// Protected route
-router.get('/protected', authenticate, (req, res) => {
-    res.status(200).json({
-        msg: "You are logged in and have accessed a protected route!",
-        user: req.user
-    });
-});
+// router.get('/protected', authenticate, (req, res) => {
+//     res.status(200).json({
+//         msg: "You are logged in and have accessed a protected route!",
+//         user: req.user
+//     });
+// });
 
 export default router;

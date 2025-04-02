@@ -1,7 +1,6 @@
 <div class="container-fluid home-main" ng-controller="HomeController as vm" ng-init="vm.init()"
     style="gap: 20px !important; background-color: white; width: 76.3%; color: #3c4248;">
 
-    <!-- Filter Button for Mobile -->
     <div class="visible-xs">
         <button class="btn btn-primary btn-block" ng-click="vm.isSidebarVisible = !vm.isSidebarVisible"
             style="margin: 10px 0;">
@@ -11,11 +10,9 @@
     </div>
 
     <div class="row" ng-class="{'sidebar-open': vm.isSidebarVisible}">
-        <!-- Sidebar -->
         <div class="col-xs-12 col-sm-4 col-md-3 sidebar" ng-class="{'visible-sidebar': vm.isSidebarVisible}"
             style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 20px;">
 
-            <!-- Close Button - Only visible on mobile -->
             <button type="button" class="close visible-xs" ng-click="vm.isSidebarVisible = false"
                 style="position: absolute; right: 15px; top: 15px; font-size: 24px;">
                 <span aria-hidden="true">&times;</span>
@@ -25,7 +22,6 @@
             <h3 class="hidden-xs" style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.8rem;">Search for Cars</h3>
 
             <form>
-                <!-- Location Input -->
                 <div class="form-group">
                     <label for="location" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Location:</label>
                     <input type="text" id="location" 
@@ -37,7 +33,6 @@
                         style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 8px 12px; height: 40px; box-shadow: none;">
                 </div>
 
-                <!-- Car Category -->
                 <div class="form-group">
                     <label for="car-category" style="color: #34495e; font-weight: 500; margin-bottom: 8px;">Car Category:</label>
                     <select id="car-category" 
@@ -53,7 +48,6 @@
 
                 <h3 style="margin: 20px 0; color: #2c3e50; font-size: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">Filter by</h3>
 
-                <!-- Price Range -->
                 <div class="form-group">
                     <label style="color: #34495e; font-weight: 500; margin-bottom: 8px;">
                         Price Range: <span style="color: #3498db; font-weight: 600;">₹{{vm.filters.priceRange}}</span>

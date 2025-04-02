@@ -1,5 +1,6 @@
 mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorService',
     function ($http, $q, $state, $cookies, errorService) {
+        const BASE_URL = 'http://127.0.0.1:8006/api/v1/auth';
 
         /**
          * User Schema's for validations
@@ -37,7 +38,7 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
 
         this.getUser = function () {
             const deferred = $q.defer();
-            $http.get("http://127.0.0.1:8006/api/v1/auth/getcurrentuser")
+            $http.get(`${BASE_URL}/getcurrentuser`)
                 .then(response => deferred.resolve(response.data.user))
                 .catch(error => {
                     if (error.status === 401) {
@@ -72,7 +73,7 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
         this.login = function (email, password) {
             const deferred = $q.defer();
             const user = { email, password };
-            $http.post('http://127.0.0.1:8006/api/v1/auth/login', user, {
+            $http.post(`${BASE_URL}/login`, user, {
                 withCredentials: true,
             }).then((response) => {
                 deferred.resolve(response);
@@ -90,7 +91,7 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
 
         this.logout = function () {
             const deferred = $q.defer();
-            $http.post("http://127.0.0.1:8006/api/v1/auth/logout", {}, { withCredentials: true })
+            $http.post(`${BASE_URL}/logout`, {}, { withCredentials: true })
                 .then(() => {
                     $cookies.remove('userId');
                     $state.go('home');
@@ -123,7 +124,7 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
             formData.append('isApproved', userData.role !== 'owner');
             formData.append('verificationFile', verificationFile); // Attach the file
 
-            $http.post('http://127.0.0.1:8006/api/v1/auth/register', formData, {
+            $http.post(`${BASE_URL}/register`, formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': undefined
@@ -147,7 +148,7 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
          */
         this.regenerateToken = function () {
             const deferred = $q.defer();
-            $http.get("http://127.0.0.1:8006/api/v1/auth/regenerateToken", { withCredentials: true })
+            $http.get(`${BASE_URL}/regenerateToken`, { withCredentials: true })
                 .then((response) => {
                     deferred.resolve(response.data);
                 })

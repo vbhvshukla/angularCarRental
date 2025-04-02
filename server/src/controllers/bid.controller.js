@@ -1,15 +1,8 @@
-import AWS from "aws-sdk";
 import mongoose from "mongoose";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
+import { sendMessageToSQS } from "../utils/sqsConsumer.utils.js";
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
-});
-
-const sqs = new AWS.SQS();
-const QUEUE_URL = process.env.SQS_QUEUE_URL;
 /**
  * @function calculateEstimate
  * @description Calculate the estimate for a bid based on rental type and car details.
@@ -141,13 +134,7 @@ export const submitBid = async (req, res) => {
     });
 
     // Push this data to AWS SQS queue
-    await sqs
-      .sendMessage({
-        QueueUrl: QUEUE_URL,
-        MessageBody: JSON.stringify(bid),
-      })
-      .promise();
-
+    sendMessageToSQS(bid);
     console.log("Message sent to SQS");
 
     res.status(201).json({ msg: "Bid submitted successfully", bid });
