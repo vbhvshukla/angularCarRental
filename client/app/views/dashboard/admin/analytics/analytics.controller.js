@@ -1,14 +1,15 @@
 /** @file Admin Analytics Controller */
 
 mainApp.controller('AdminAnalyticsController', [
-    '$scope', 'analyticsService',
+    '$scope', 'analyticsService', '$uibModal',
     /**
      * Admin Analytics controller
      *
      * @param {*} $scope 
      * @param {*} analyticsService 
+     * @param {*} $uibModal 
      */
-    function ($scope, analyticsService) {
+    function ($scope, analyticsService, $uibModal) {
 
         /**
          * Variable declarations
@@ -20,6 +21,20 @@ mainApp.controller('AdminAnalyticsController', [
         vm.cards = [];
         vm.charts = {};
         vm.topOwners = [];
+
+        /**
+         * Function : Open Predictive Modal
+         * @description Opens the predictive analytics modal
+         */
+        vm.openPredictiveModal = function() {
+            $uibModal.open({
+                templateUrl: 'app/components/modals/predictiveAnalytics/predictiveAnalyticsModal.html',
+                controller: 'PredictiveAnalyticsModalController as vm',
+                size: 'lg',
+                backdrop: 'static',
+                keyboard: false
+            });
+        };
 
         /**
          * Initialization function

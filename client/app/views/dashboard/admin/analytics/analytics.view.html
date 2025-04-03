@@ -14,6 +14,9 @@
                         <div class="col-sm-6">
                             <div class="form-group text-right" style="margin-bottom: 0;">
                                 <label for="time-range" class="control-label">Filter by:</label>
+                                <button class="btn btn-primary btn-sm" ng-click="vm.openPredictiveModal()" style="margin-left: 15px; position: relative; top: -6.5px; height: 35px; padding:2px; width: 120px;">
+                                    <i class="fa fa-flask"></i> Predictive
+                                </button>
                                 <select id="time-range" ng-model="vm.selectedTimeRange"
                                     ng-change="vm.loadAnalyticsData()" class="form-control input-sm"
                                     style="display: inline-block; width: auto; min-height: 35px; margin-left: 10px;">
@@ -22,6 +25,7 @@
                                     <option value="365">Last Year</option>
                                     <option value="1095">Last 3 Years</option>
                                 </select>
+                               
                             </div>
                         </div>
                     </div>
