@@ -163,15 +163,16 @@ const createOwnerPredictionPrompt = (historicalData) => {
     `;
 };
 
-// Helper function to create admin prediction prompt
+
 const createAdminPredictionPrompt = (historicalData) => {
+
     // Calculate some basic metrics from historical data
     const totalBookings = historicalData.bookings.length;
     const totalRevenue = historicalData.bookings.reduce((sum, booking) => sum + booking.revenue, 0);
     const uniqueUsers = new Set(historicalData.bookings.map(booking => booking.userId)).size;
     const uniqueCities = new Set(historicalData.bookings.map(booking => booking.city)).size;
     const categories = [...new Set(historicalData.bookings.map(booking => booking.category))];
-    
+
     // Calculate bid success rate
     const totalBids = historicalData.bids.length;
     const acceptedBids = historicalData.bids.filter(bid => bid.status === 'accepted').length;
@@ -228,7 +229,7 @@ const createAdminPredictionPrompt = (historicalData) => {
     `;
 };
 
-// Helper function to generate content with retry logic
+
 const generateContentWithRetry = async (prompt, maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
@@ -237,13 +238,12 @@ const generateContentWithRetry = async (prompt, maxRetries = 3) => {
             return response.text();
         } catch (error) {
             if (attempt === maxRetries) throw error;
-            // Wait before retrying (exponential backoff)
             await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
         }
     }
 };
 
-// Get predictions for car owners
+
 export const getOwnerPredictions = async (req, res) => {
     try {
         const { ownerId, timeframe = 30 * 24 * 60 * 60 * 1000 } = req.body;
@@ -306,7 +306,6 @@ export const getAdminPredictions = async (req, res) => {
 export const getCarSpecificPredictions = async (req, res) => {
     try {
         const { ownerId, carId, timeframe = 30 * 24 * 60 * 60 * 1000 } = req.body;
-
         if (!ownerId || !carId) {
             return res.status(400).json({
                 msg: "Owner ID and Car ID are required"
@@ -315,13 +314,12 @@ export const getCarSpecificPredictions = async (req, res) => {
 
         const historicalData = await prepareOwnerHistoricalData(ownerId, timeframe);
 
-        // Filter data for specific car
         const carSpecificData = {
             bookings: historicalData.bookings.filter(
-                booking => booking.carId === carId
+                booking => booking.carId == carId
             ),
             bids: historicalData.bids.filter(
-                bid => bid.carId === carId
+                bid => bid.carId == carId
             )
         };
 

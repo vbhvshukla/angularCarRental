@@ -103,7 +103,6 @@ export const getMessages = async (req, res) => {
  */
 export const sendMessage = async (req, res) => {
     const { chatId, fromUser, toUser, message, attachment } = req.body;
-    console.log(chatId, fromUser, toUser, message, attachment);
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
