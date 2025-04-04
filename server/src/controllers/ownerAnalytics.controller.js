@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
 import { Booking } from "../models/booking.model.js"
+import client from "../services/redis.service.js";
 
 export const getTotals = async (req, res) => {
     try {
@@ -37,6 +38,12 @@ export const getTotals = async (req, res) => {
         const totalRevenueResult = await Booking.aggregate(pipeline)
         const totalCars = await Car.countDocuments({ "owner._id": ownerId })
         const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalRevenue : 0;
+        const result = { totalBookings, totalBids, totalRevenue, totalCars };
+        // Cache the result in Redis for 1 hour
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(result), { EX: 3600 });
+        }
+
         res.status(200).json({ totalBookings, totalBids, totalRevenue, totalCars });
     } catch (error) {
         console.error("Error in getTotals:", error);
@@ -86,6 +93,11 @@ export const totalBookingsPerCar = async (req, res) => {
                 }
             }
         ])
+
+        // Cache the result in Redis for 1 hour
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(bookingData), { EX: 3600 });
+        }
         res.status(200).json(bookingData);
     } catch (error) {
         console.error("Error fetching bookings per car:", error);
@@ -169,6 +181,11 @@ export const rentalDurationPerCar = async (req, res) => {
                 }
             ]
         )
+
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(rentalDurationData), { EX: 3600 });
+        }
+
         res.status(200).json(rentalDurationData);
     } catch (error) {
         console.error("Error calculating rental duration per car:", error);
@@ -256,6 +273,11 @@ export const revenueOverTime = async (req, res) => {
             totalLocalRevenue: data.totalLocalRevenue,
             totalOutstationRevenue: data.totalOutstationRevenue
         }));
+
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(formattedData), { EX: 3600 });
+        }
+
         res.status(200).json(formattedData);
     } catch (error) {
         console.error("Error calculating rental duration per car:", error);
@@ -303,6 +325,9 @@ export const bidAmountPerCar = async (req, res) => {
             }
         ]);
 
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(bidAmountData), { EX: 3600 });
+        }
         res.status(200).json(bidAmountData);
     } catch (error) {
         console.error("Error fetching bid amount per car:", error);
@@ -354,6 +379,9 @@ export const revenueByCar = async (req, res) => {
                 }
             }
         ])
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(revenueData), { EX: 3600 });
+        }
         res.status(200).json(revenueData);
     } catch (error) {
         console.error("Error fetching revenue by car:", error);
@@ -424,6 +452,11 @@ export const carAvailabilityInsights = async (req, res) => {
                 100
             ).toFixed(2)
         }));
+
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(formattedData), { EX: 3600 });
+        }
+
         res.status(200).json(formattedData);
 
     } catch (error) {
@@ -471,6 +504,10 @@ export const rentalTypeDistribution = async (req, res) => {
             }
         });
 
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(formattedData), { EX: 3600 });
+        }
+
         res.status(200).json(formattedData);
     } catch (error) {
         console.error("Error fetching rental type distribution:", error);
@@ -515,6 +552,9 @@ export const categoryPerformance = async (req, res) => {
             }
         ]);
 
+        if (req.cacheKey) {
+            await client.set(req.cacheKey, JSON.stringify(categoryData), { EX: 3600 });
+        }
         res.status(200).json(categoryData);
     } catch (error) {
         console.error("Error fetching category performance:", error);
@@ -557,6 +597,11 @@ export const peakBookingHours = async (req, res) => {
             hour: `${hourData._id}:00 - ${hourData._id + 1}:00`,
             bookings: hourData.count
         }));
+
+        if (req.cacheKey) {
+            console.log('DB Call made for analytics')
+            await client.set(req.cacheKey, JSON.stringify(formattedData), { EX: 3600 });
+        }
 
         res.status(200).json(formattedData);
     } catch (error) {

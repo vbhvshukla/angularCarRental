@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
-import { sendMessageToSQS } from "../utils/sqsConsumer.utils.js";
+import { sendMessageToSQS } from "../services/sqsProducer.service.js";
 
 /**
  * @function calculateEstimate

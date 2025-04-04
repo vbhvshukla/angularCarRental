@@ -3,10 +3,12 @@ import { app } from "./app.js";
 import connectDb from "./config/db.config.js";
 import http from 'http';
 import { Server } from 'socket.io';
-import { processBids } from "./services/sqs.service.js";
+import { processBids } from "./services/sqsConsumer.service.js";
+import { Worker } from "worker_threads";
 
 /** Global Configuration :: dotENV */
 dotenv.config({ path: ".env" });
+const worker = new Worker("./src/utils/sqsWorker.utils.js");
 
 /** DB Connection */
 connectDb()
@@ -43,9 +45,39 @@ connectDb()
       console.log(`Server is running at port : ${process.env.PORT}`);
     });
 
-    //Poll the aws queue for any new message || TODO -> Separate server pr chalao
-    setInterval(processBids, 5000); // Poll every 5 seconds
+
+    worker.on('message', (message) => {
+      if (message === "done") {
+        console.log("Main Thread :: Worker finished processing bids");
+      }
+      else if (message === "error") {
+        console.error("Main Thead :: Worker encountered an error")
+      }
+    });
+
+    worker.on("error", (error) => {
+      console.error("Main Thead :: Worker Error : ", error);
+    });
+
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        console.error(`Main Thread :: Worker stopped with exit code ${code}`);
+      } else {
+        console.log("Main Thread :: Worker exited successfully.");
+      }
+    });
+
+
+    //from stackoverflow
+    process.on("SIGINT", () => {
+      console.log("Main Thread: Terminating worker...");
+      worker.postMessage("terminate");
+      worker.terminate();
+      process.exit(0);
+    });
+
   })
   .catch((err) => {
     console.log("DB Connection Error :: ", err);
+    process.exit(1);
   });

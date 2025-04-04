@@ -1,0 +1,149 @@
+/* Predictive Analytics Modal Styles */
+.predictive-analytics-content {
+    padding: 15px;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.section h4 i {
+    margin-right: 8px;
+    color: #007bff;
+}
+
+.metric-box {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.metric-box h5 {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #007bff;
+    margin: 10px 0;
+}
+
+.metric-box small {
+    color: #888;
+    font-size: 12px;
+}
+
+.insight-box {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.insight-box h5 {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.insight-box p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.insight-box ul li {
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.insight-box ul li i {
+    margin-right: 8px;
+    color: #007bff;
+}
+
+.recommendations-list {
+    margin-top: 10px;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.recommendation-item i {
+    color: #28a745;
+    margin-right: 10px;
+    margin-top: 3px;
+}
+
+.recommendation-item p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Loading State */
+.text-center {
+    padding: 30px;
+}
+
+.text-center i {
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.text-center p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Error State */
+.alert-danger {
+    margin: 15px 0;
+}
+
+.alert-danger i {
+    margin-right: 8px;
+}
+
+/* Modal Footer */
+.modal-footer {
+    border-top: 1px solid #e5e5e5;
+    padding: 15px;
+}
+
+.modal-footer .btn {
+    margin-left: 10px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .metric-box {
+        margin-bottom: 20px;
+    }
+    
+    .insight-box {
+        margin-bottom: 20px;
+    }
+    
+    .section {
+        margin-bottom: 30px;
+    }
+} 

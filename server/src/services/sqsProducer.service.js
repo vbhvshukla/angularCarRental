@@ -16,10 +16,10 @@ export const sendMessageToSQS = async (messageBody) => {
     };
 
     const result = await sqs.sendMessage(params).promise();
-    console.log("Message sent to SQS:", result);
+    console.log("SQS Producer :: Message sent to SQS:", result);
     return result;
   } catch (error) {
-    console.error("SQS Service :: Error sending message to SQS", error);
+    console.error("SQS Producer :: Error sending message to SQS", error);
     throw new Error("Failed to send message to SQS");
   }
 };

@@ -19,6 +19,7 @@ import cityRoutes from "./routes/city.routes.js";
 import availabilityRoutes from "./routes/caravailability.routes.js";
 import ownerAnalyticsRoutes from "./routes/ownerAnalytics.routes.js";
 import adminAnalyticsRoutes from "./routes/adminAnalytics.routes.js";
+import predictiveAnalyticsRoutes from "./routes/predictiveAnalytics.routes.js";
 
 /** For OpenAPI Docs */
 const __filename = fileURLToPath(import.meta.url);
@@ -75,6 +76,7 @@ app.use(`${API_PREFIX}/city`, cityRoutes);
 app.use(`${API_PREFIX}/caravailability`, availabilityRoutes);
 app.use(`${API_PREFIX}/owneranalytics`, ownerAnalyticsRoutes);
 app.use(`${API_PREFIX}/adminanalytics`, adminAnalyticsRoutes);
+app.use(`${API_PREFIX}/predictive`, predictiveAnalyticsRoutes);
 
 /** OpenAPI documentation*/
 const openapiPath = path.resolve(__dirname, '../docs/openapi.json');
