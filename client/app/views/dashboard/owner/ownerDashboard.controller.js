@@ -1,11 +1,19 @@
 /** @file Owner Dashboard's Page Controller */
 
 mainApp.controller('OwnerDashboardController', [
-    '$scope', '$state', 'authService',
-    function ($scope, $state, authService) {
+    function () {
         var vm = this;
+        
+        // Initialize sidebar visibility
+        vm.isSidebarVisible = false;
+
         vm.init = function(){
-            console.log("Hello world");
-        }
+            console.log("Owner Dashboard Initialized");
+        };
+
+        // Toggle sidebar function
+        vm.toggleSidebar = function() {
+            vm.isSidebarVisible = !vm.isSidebarVisible;
+        };
     }
 ]);

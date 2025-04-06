@@ -1,18 +1,51 @@
-<div class="navbar-container" ng-controller="NavbarController as vm" ng-init="vm.init()" style="display: flex; justify-content: center; width: 100%; padding: 0 20px;">
-    <div class="header bg-primary" style="position: sticky; top: 0; z-index: 1000; width: 78.4%; color: #fff; padding: 13px; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-radius: 2px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">
-        <div class="logo">
-            <a ui-sref="home">
-                <img src="app/assets/images/logo.png" alt="Car Rental Logo" style="height: 50px;">
+<nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarController as vm" ng-init="vm.init()"
+     style="background-color: #337ab7; border: none; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" ng-click="vm.isNavCollapsed = !vm.isNavCollapsed"
+                    style="border-color: rgba(255,255,255,0.5);">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar" style="background-color: white;"></span>
+                <span class="icon-bar" style="background-color: white;"></span>
+                <span class="icon-bar" style="background-color: white;"></span>
+            </button>
+            <!-- Logo -->
+            <a class="navbar-brand" ui-sref="home" style="padding: 5px 15px;">
+                <img src="app/assets/images/logo.png" alt="Car Rental Logo" 
+                     style="height: 40px; display: inline-block;">
             </a>
         </div>
-        <nav class="nav-links" style="display: flex; align-items: center;">
-            <a ng-repeat="link in vm.links" ui-sref="{{link.state}}" ui-sref-active="active" style="color: #d2d5d5; text-decoration: none; margin-left: 20px; transition: color 0.3s, transform 0.2s;">
-                {{link.label}}
-            </a>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a ng-if="vm.isLoggedIn" ng-click="vm.logout()" href="javascript:void(0)" class="logout-link" style="cursor: pointer; color: #e74c3c !important;">
-                Logout
-            </a>
-        </nav>
+
+        <!-- Nav Links -->
+        <div class="navbar-collapse" uib-collapse="vm.isNavCollapsed">
+            <ul class="nav navbar-nav navbar-right">
+                <li ng-repeat="link in vm.links" ui-sref-active="active">
+                    <a ui-sref="{{link.state}}" 
+                       style="color: #ffffff; transition: color 0.3s, background-color 0.3s;">
+                        {{link.label}}
+                    </a>
+                </li>
+                <li ng-if="vm.isLoggedIn">
+                    <a href="javascript:void(0)" 
+                       ng-click="vm.logout()" 
+                       style="color: #e74c3c !important; cursor: pointer;">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
+</nav>
+
+<!-- Add spacing below navbar -->
+<div style="margin-top: 70px;"></div>
+
+<style>
+    .navbar-default .navbar-nav > li.active > a,
+    .navbar-default .navbar-nav > li.active > a:hover,
+    .navbar-default .navbar-nav > li.active > a:focus {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+    }
+</style>

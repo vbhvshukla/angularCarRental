@@ -3,18 +3,18 @@
  * @description For Comparing two values.
  * @requires ngModel
  */
-mainApp.directive('compareTo', function() {
+mainApp.directive('compareTo', function () {
     return {
         require: 'ngModel',
         scope: {
             compareTo: '=' //Two way binding
         },
-        link: function(scope, element, attributes, ngModel) {
-            ngModel.$validators.compareTo = function(modelValue) {
+        link: function (scope, element, attributes, ngModel) {
+            ngModel.$validators.compareTo = function (modelValue) {
                 return modelValue === scope.compareTo;
             };
 
-            scope.$watch('compareTo', function() {
+            scope.$watch('compareTo', function () {
                 ngModel.$validate();
             });
         }

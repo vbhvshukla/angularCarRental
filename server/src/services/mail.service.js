@@ -15,7 +15,7 @@ export const sendEmail = async ({ to, subject, text, attachments }) => {
     to,
     subject,
     text,
-    attachments, // Add attachments support
+    attachments,
   };
 
   await transporter.sendMail(mailOptions);

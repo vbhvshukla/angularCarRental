@@ -2,10 +2,10 @@
 
 mainApp.controller('UserApprovalModalController', [
     '$uibModalInstance',
-    'userService',
+    'userFactory',
     'errorService',
     'selectedUser',
-    function ($uibModalInstance, userService, errorService,selectedUser) {
+    function ($uibModalInstance, userFactory, errorService, selectedUser) {
         /**
          * Variable Declarations
          */
@@ -18,11 +18,11 @@ mainApp.controller('UserApprovalModalController', [
          * Approve User Function
          * @function vm.approveUser()
          * @description Approves a user
-         * @requires userService
+         * @requires userFactory
          */
 
         vm.approveUser = function () {
-            userService.approveUser(vm.selectedUser._id)
+            userFactory.createUser(vm.selectedUser).approve()
                 .then(function () {
                     $uibModalInstance.close();
                 }).catch(err => errorService.handleError("UserApprovalModalController :: Error Approving User :: ", err));
@@ -32,11 +32,11 @@ mainApp.controller('UserApprovalModalController', [
          * Rejects a user
          * @function vm.rejectUser()
          * @description Rejects a user
-         * @requires userService
+         * @requires userFactory
          */
 
         vm.rejectUser = function () {
-            userService.rejectUser(vm.selectedUser._id)
+            userFactory.createUser(vm.selectedUser).reject()
                 .then(function () {
                     $uibModalInstance.close();
                 }).catch(err => errorService.handleError("UserApprovalModalController :: Error Rejecting User :: ", err));

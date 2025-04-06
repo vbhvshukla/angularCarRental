@@ -3,6 +3,7 @@ import { Booking } from "../models/booking.model.js";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
 
+//Get totals
 export const getTotals = async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
@@ -46,6 +47,7 @@ export const getTotals = async (req, res) => {
     }
 }
 
+//Revenue per city
 export const revenueByCity = async (req, res) => {
     const { numberOfDays = 7 } = req.body;
 
@@ -63,8 +65,8 @@ export const revenueByCity = async (req, res) => {
                             $gte: startDate,
                             $lte: today
                         },
-                        status:{
-                            $in:['confirmed','completed']
+                        status: {
+                            $in: ['confirmed', 'completed']
                         }
                     }
                 },
@@ -108,6 +110,7 @@ export const revenueByCity = async (req, res) => {
     }
 }
 
+//Revenue by rental type
 export const revenueByRentalType = async (req, res) => {
     const { numberOfDays = 7 } = req.body;
     try {
@@ -121,8 +124,8 @@ export const revenueByRentalType = async (req, res) => {
                         $gte: startDate,
                         $lte: today
                     },
-                    status:{
-                        $in:['confirmed','completed']
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -131,7 +134,7 @@ export const revenueByRentalType = async (req, res) => {
                     rentalType: 1,
                     totalRevenue: 1,
                     createdAt: 1,
-                    totalFare:1
+                    totalFare: 1
                 }
             },
             {
@@ -158,6 +161,7 @@ export const revenueByRentalType = async (req, res) => {
     }
 }
 
+//Bookings over time
 export const bookingTrends = async (req, res) => {
     const { numberOfDays = 30 } = req.body;
     try {
@@ -172,8 +176,8 @@ export const bookingTrends = async (req, res) => {
                         $gte: startDate,
                         $lte: today
                     },
-                    status:{
-                        $in:['confirmed','completed']
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -211,9 +215,9 @@ export const topPerformingOwners = async (req, res) => {
     try {
         const topOwners = await Booking.aggregate([
             {
-                $match:{
-                    status:{
-                        $in:['confirmed','completed']
+                $match: {
+                    status: {
+                        $in: ['confirmed', 'completed']
                     }
                 }
             },
@@ -258,8 +262,8 @@ export const carsPerCategory = async (req, res) => {
     try {
         const carsByCategory = await Car.aggregate([
             {
-                $project:{
-                    category:1
+                $project: {
+                    category: 1
                 }
             },
             {
@@ -274,5 +278,319 @@ export const carsPerCategory = async (req, res) => {
     } catch (error) {
         console.error("Error fetching cars per category:", error);
         res.status(500).json({ msg: "Error fetching cars per category", error: error.message });
+    }
+}
+
+export const customerRetentionAnalysis = async (req, res) => {
+    const { numberOfDays = 90 } = req.body;
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - numberOfDays);
+
+    try {
+        const retentionData = await Booking.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today },
+                    status: { $in: ['confirmed', 'completed'] }
+                }
+            },
+            {
+                $project: {
+                    "bid.user.userId": 1,
+                    "bid.user.username": 1,
+                    totalFare: 1
+                }
+            },
+            {
+                $group: {
+                    _id: "$bid.user.userId",
+                    customerName: { $first: "$bid.user.username" },
+                    totalRevenue: { $sum: "$totalFare" },
+                    totalBookings: { $sum: 1 }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    repeatCustomers: {
+                        $sum: {
+                            $cond: [{ $gt: ["$totalBookings", 1] }, 1, 0]
+                        }
+                    },
+                    totalCustomers: { $sum: 1 },
+                    totalRevenue: { $sum: "$totalRevenue" }
+                }
+            },
+            {
+                $project: {
+                    retentionRate: {
+                        $multiply: [{ $divide: ["$repeatCustomers", "$totalCustomers"] }, 100]
+                    },
+                    totalRevenue: 1
+                }
+            }
+        ]);
+
+        res.status(200).json(retentionData);
+    } catch (error) {
+        console.error("Error fetching customer retention analysis:", error);
+        res.status(500).json({ msg: "Error fetching customer retention analysis", error: error.message });
+    }
+};
+
+//Rental Duration Analytics
+export const getRentalDurationAnalytics = async (req, res) => {
+    const { numberOfDays = 30 } = req.body;
+    try {
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - numberOfDays);
+
+        const durationAnalytics = await Booking.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today },
+                    status: { $in: ['confirmed', 'completed'] }
+                }
+            },
+            {
+                $project: {
+                    rentalType: 1,
+                    duration: {
+                        $divide: [
+                            { $subtract: ["$toTimestamp", "$fromTimestamp"] },
+                            1000 * 60 * 60
+                        ]
+                    },
+                    totalFare: 1,
+                    "bid.car.category": 1,
+                    "bid.car.city": 1
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        rentalType: "$rentalType",
+                        city: "$bid.car.city",
+                        category: "$bid.car.category.categoryName"
+                    },
+                    averageDuration: { $avg: "$duration" },
+                    maxDuration: { $max: "$duration" },
+                    minDuration: { $min: "$duration" },
+                    totalBookings: { $sum: 1 },
+                    averageFarePerHour: {
+                        $avg: {
+                            $divide: ["$totalFare", "$duration"]
+                        }
+                    }
+                }
+            },
+            {
+                $sort: {
+                    "_id.city": 1,
+                    "averageDuration": -1
+                }
+            }
+        ]);
+        res.status(200).json(durationAnalytics);
+    } catch (error) {
+        console.error("Error fetching rental duration analytics:", error);
+        res.status(500).json({ msg: "Error fetching rental duration analytics", error: error.message });
+    }
+};
+
+//Category Performance Analytics
+export const getCategoryPerformance = async (req, res) => {
+    const { numberOfDays = 30 } = req.body;
+    try {
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - numberOfDays);
+
+        const categoryPerformance = await Booking.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today },
+                    status: { $in: ['confirmed', 'completed'] }
+                }
+            },
+            {
+                $project: {
+                    categoryName: "$bid.car.category.categoryName", // Extract categoryName
+                    createdAt: 1,
+                    totalFare: 1,
+                    rentalType: 1,
+                    userId: "$bid.user.userId" // Extract userId for unique customers
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        category: "$categoryName", // Group by categoryName
+                        date: {
+                            $dateToString: {
+                                format: "%Y-%m-%d",
+                                date: "$createdAt"
+                            }
+                        }
+                    },
+                    totalBookings: { $sum: 1 },
+                    totalRevenue: { $sum: "$totalFare" },
+                    uniqueCustomers: { $addToSet: "$userId" }, // Collect unique user IDs
+                    localBookings: {
+                        $sum: { $cond: [{ $eq: ["$rentalType", "local"] }, 1, 0] }
+                    },
+                    outstationBookings: {
+                        $sum: { $cond: [{ $eq: ["$rentalType", "outstation"] }, 1, 0] }
+                    }
+                }
+            },
+            {
+                $project: {
+                    totalBookings: 1,
+                    totalRevenue: 1,
+                    uniqueCustomerCount: { $size: "$uniqueCustomers" }, // Count unique customers
+                    revenuePerBooking: { $divide: ["$totalRevenue", "$totalBookings"] },
+                    localBookings: 1,
+                    outstationBookings: 1
+                }
+            },
+            {
+                $sort: {
+                    "_id.date": 1, // Sort by date
+                    "totalRevenue": -1 // Sort by revenue in descending order
+                }
+            }
+        ]);
+
+        res.status(200).json(categoryPerformance);
+    } catch (error) {
+        console.error("Error fetching category performance:", error);
+        res.status(500).json({ msg: "Error fetching category performance", error: error.message });
+    }
+};
+
+//Bid Success Rate Analytics
+export const getBidSuccessRate = async (req, res) => {
+    const { numberOfDays = 30 } = req.body;
+    try {
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - numberOfDays);
+
+        const bidAnalytics = await Bid.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        city: "$car.city",
+                        category: "$car.category.categoryName",
+                        date: {
+                            $dateToString: {
+                                format: "%Y-%m-%d",
+                                date: "$createdAt"
+                            }
+                        }
+                    },
+                    totalBids: { $sum: 1 },
+                    acceptedBids: {
+                        $sum: { $cond: [{ $eq: ["$status", "accepted"] }, 1, 0] }
+                    },
+                    rejectedBids: {
+                        $sum: { $cond: [{ $eq: ["$status", "rejected"] }, 1, 0] }
+                    },
+                    cancelledBids: {
+                        $sum: { $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0] }
+                    },
+                    averageBidAmount: { $avg: "$bidAmount" },
+                    totalBidAmount: { $sum: "$bidAmount" }
+                }
+            },
+            {
+                $project: {
+                    totalBids: 1,
+                    acceptedBids: 1,
+                    rejectedBids: 1,
+                    cancelledBids: 1,
+                    averageBidAmount: 1,
+                    totalBidAmount: 1,
+                    successRate: {
+                        $multiply: [
+                            { $divide: ["$acceptedBids", "$totalBids"] },
+                            100
+                        ]
+                    }
+                }
+            },
+            {
+                $sort: {
+                    "_id.date": 1,
+                    "successRate": -1
+                }
+            }
+        ]);
+        res.status(200).json(bidAnalytics);
+    } catch (error) {
+        console.error("Error fetching bid success rate:", error);
+        res.status(500).json({ msg: "Error fetching bid success rate", error: error.message });
+    }
+};
+
+//Peak Hours Analysis
+export const getPeakHoursAnalysis = async (req, res) => {
+    const { numberOfDays = 30 } = req.body;
+    try {
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - numberOfDays);
+
+        const peakHours = await Booking.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: today },
+                    status: { $in: ['confirmed', 'completed'] }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        hour: { $hour: "$createdAt" },
+                        dayOfWeek: { $dayOfWeek: "$createdAt" },
+                        date: {
+                            $dateToString: {
+                                format: "%Y-%m-%d",
+                                date: "$createdAt"
+                            }
+                        }
+                    },
+                    bookingCount: { $sum: 1 },
+                    totalRevenue: { $sum: "$totalFare" },
+                    localBookings: {
+                        $sum: { $cond: [{ $eq: ["$rentalType", "local"] }, 1, 0] }
+                    },
+                    outstationBookings: {
+                        $sum: { $cond: [{ $eq: ["$rentalType", "outstation"] }, 1, 0] }
+                    },
+                    averageFare: { $avg: "$totalFare" }
+                }
+            },
+            {
+                $sort: {
+                    "_id.date": 1,
+                    "_id.hour": 1,
+                    "bookingCount": -1
+                }
+            }
+        ]);
+        console.log(peakHours);
+        res.status(200).json(peakHours);
+    } catch (error) {
+        console.error("Error fetching peak hours analysis:", error);
+        res.status(500).json({ msg: "Error fetching peak hours analysis", error: error.message });
     }
 };

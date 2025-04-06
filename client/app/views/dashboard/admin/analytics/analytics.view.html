@@ -1,75 +1,271 @@
-<div class="analytics-wrap" ng-controller="AdminAnalyticsController as vm" ng-init="vm.loadAnalyticsData()"
-    style="flex: auto;">
-    <div class="analytics-main" style="width: 76%; max-width: 1158px; margin: 0 auto;">
-        <div class="analytics-section" style="width: 100%; background-color: #fff;">
-            <h2>Analytics</h2>
-            <div class="filter-container">
-                <label for="time-range">Filter by:</label>
-                <select id="time-range" ng-model="vm.selectedTimeRange" ng-change="vm.loadAnalyticsData()"
-                    class="form-control" style="display: inline-block; width: auto;">
-                    <option value="7">Last Week</option>
-                    <option value="30" selected>Last Month</option>
-                    <option value="365">Last Year</option>
-                    <option value="1095">Last 3 Years</option>
-                </select>
-            </div>
+<div class="container-fluid" style="width: 76%;" ng-controller="AdminAnalyticsController as vm"
+    ng-init="vm.loadAnalyticsData()">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default"
+                style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
 
-            <div class="cards-container" style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                <div class="card" ng-repeat="card in vm.cards"
-                    style="flex: 1; padding: 20px; background-color: #fff; border-radius: 8px; text-align: center; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3 style="margin-bottom: 10px; font-size: 1.2rem; color: #2c3e50;">{{card.title}}</h3>
-                    <p style="font-size: 2rem; font-weight: bold; color: #3498db;">{{card.value}}</p>
-                </div>
-            </div>
-
-            <div class="charts-grid" style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 100%; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Top Performing Owners</h3>
-                    <canvas id="topOwnersChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
-
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 100%; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Revenue by City <i class="fa fa-info-circle" uib-tooltip="RevenueByCity[city] = (Exisitng Revenue || 0) + Booking's total fare in the city.
-                        " tooltip-placement="right"></i></h3>
-                    <canvas id="totalRevenuePerCityChart"
-                        style="width: 100%; height: 100%; max-height: 350px;"></canvas>
+                <!-- Header Section -->
+                <div class="panel-heading" style="background: none; border: none; padding: 0 0 20px 0;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2 style="margin-top: 0;">Analytics</h2>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group text-right" style="margin-bottom: 0;">
+                                <label for="time-range" class="control-label">Filter by:</label>
+                                <button class="btn btn-primary btn-sm" ng-click="vm.openPredictiveModal()" style="margin-left: 15px; position: relative; top: -6.5px; height: 35px; padding:2px; width: 120px;">
+                                    <i class="fa fa-flask"></i> Predictive
+                                </button>
+                                <select id="time-range" ng-model="vm.selectedTimeRange"
+                                    ng-change="vm.loadAnalyticsData()" class="form-control input-sm"
+                                    style="display: inline-block; width: auto; min-height: 35px; margin-left: 10px;">
+                                    <option value="7">Last Week</option>
+                                    <option value="30">Last Month</option>
+                                    <option value="365">Last Year</option>
+                                    <option value="1095">Last 3 Years</option>
+                                </select>
+                               
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 100%; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Revenue Trends <i class="fa fa-info-circle" uib-tooltip="Revenue of Bookings Per Month"
-                            tooltip-placement="right"></i></h3>
-                    <canvas id="revenueTrendsChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
+                <!-- Stats Cards -->
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3" ng-repeat="card in vm.cards">
+                        <div class="stat-card"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin-bottom: 10px; font-size: 1.2rem; color: #2c3e50;">{{card.title}}</h3>
+                            <p style="font-size: 2rem; font-weight: bold; color: #3498db; margin: 0;">{{card.value}}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 100%; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Bookings Trend <i class="fa fa-info-circle" uib-tooltip="Number of bookings in a Month"
-                            tooltip-placement="right"></i></h3>
-                    <canvas id="bookingsOverTimeChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
-                </div>
+                <!-- Charts Grid -->
+                <div class="row">
+                    <!-- Top Performing Owners -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Top Performing Owners
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Shows top owners based on total revenue generated. Revenue is calculated from completed and confirmed bookings only. Includes both local and outstation bookings."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="topOwnersChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="chart-container"
-                    style="position: relative; flex: 1; min-width: 45%; height: 100%; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; transition: transform 0.3s, box-shadow 0.3s;">
-                    <h3>Cars by Category <i class="fa fa-info-circle" uib-tooltip="Number of cars per category"
-                            tooltip-placement="right"></i></h3>
-                    <canvas id="carsPerCategoryChart" style="width: 100%; height: 100%; max-height: 350px;"></canvas>
+                    <!-- Revenue by City -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Revenue by City
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Total revenue aggregated by city. Includes base fare, extra charges (km/hour/day), calculated from confirmed and completed bookings within the selected time range."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="totalRevenuePerCityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Trends -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Revenue Trends
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Daily revenue comparison between local and outstation rentals. Shows total fare including base fare and all extra charges, filtered by the selected date range."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="revenueTrendsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bookings Trend -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Bookings Trend
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Daily count of confirmed and completed bookings over time. Shows booking patterns and helps identify peak booking periods."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="bookingsOverTimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cars by Category -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Cars by Category
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Distribution of cars across different categories. Shows total number of active cars per category, excluding deleted cars."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="carsPerCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Retention -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel"
+                            style="background-color: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3>
+                                Customer Retention Analysis
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Shows retention rate (customers who made multiple bookings) vs churn rate (one-time customers). Calculated based on booking history within the selected time period."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="customerRetentionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rental Duration Analysis -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel">
+                            <h3>
+                                Rental Duration Analysis
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Average rental duration (in hours) by city and category. Calculated as (toTimestamp - fromTimestamp) for completed bookings. Also shows revenue per hour for each combination."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="rentalDurationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Performance -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel">
+                            <h3>
+                                Category Performance
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Daily revenue trends by car category. Includes total revenue, number of bookings, and unique customer count per category. Shows which categories are most profitable."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="categoryPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bid Success Rate -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel">
+                            <h3>
+                                Bid Success Rate
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Percentage of accepted bids vs total bids by city and category. Also shows average bid amounts and conversion rates. Success rate = (accepted bids / total bids) × 100."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="bidSuccessChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Peak Hours Analysis -->
+                    <div class="col-xs-12 col-md-6">
+                        <div class="chart-panel">
+                            <h3>
+                                Weekly Booking Trend
+                                <i class="fa fa-info-circle"
+                                    uib-tooltip="Shows booking patterns across days of the week. Compares number of bookings (bars) with revenue generated (line) to identify most profitable periods. Data aggregated from confirmed and completed bookings."
+                                    tooltip-placement="right">
+                                </i>
+                            </h3>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="peakHoursChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Loading Overlay -->
     <div class="loading-overlay" ng-if="vm.loading"
         style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-        <div class="spinner"
-            style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
-        </div>
+        <div class="spinner"></div>
     </div>
 </div>
 
 <style>
+    /* Responsive Styles */
+    @media (max-width: 767px) {
+        .panel {
+            padding: 15px !important;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            padding: 15px !important;
+        }
+
+        .chart-panel {
+            padding: 15px !important;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+
+        .form-group.text-right {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .form-group select {
+            margin-left: 10px;
+        }
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
     @keyframes spin {
         0% {
             transform: rotate(0deg);
@@ -78,5 +274,95 @@
         100% {
             transform: rotate(360deg);
         }
+    }
+
+    /* Chart Panel Hover Effects */
+    .chart-panel {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .chart-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Stat Card Hover Effects */
+    .stat-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 350px;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Specific styles for pie/doughnut charts */
+    #carsPerCategoryChart,
+    #customerRetentionChart {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Ensure charts are responsive */
+    canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Enhanced Typography */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    .chart-panel h3 {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .stat-card h3 {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+    }
+
+    .chart-panel {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Chart Title Icons */
+    .fa-info-circle {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-left: 8px;
+        transition: color 0.2s ease;
+    }
+
+    .fa-info-circle:hover {
+        color: #3498db;
+    }
+
+    /* Tooltip Styling */
+    .tooltip {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
     }
 </style>

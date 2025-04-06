@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs"
+import { sendEmail } from "../services/mail.service.js";
 /**
  * Get User by ID
  * @description Fetches a user by their ID.
@@ -56,6 +57,11 @@ const approveUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ msg: "User Controller :: User not found" });
         }
+        sendEmail({
+            to: user.email,
+            subject: "Account Approved",
+            text: "Your account has been approved",
+        })
         res.status(200).json({ msg: "User approved successfully", user });
     } catch (error) {
         console.error("User Controller :: Error approving user", error);

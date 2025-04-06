@@ -2,19 +2,20 @@
 
 mainApp.controller('AddCategoryModalController', [
     '$uibModalInstance',
-    'categoryService',
+    'categoryFactory',
     'errorService',
-    function ($uibModalInstance, categoryService, errorService) {
+    function ($uibModalInstance, categoryFactory, errorService) {
         var vm = this;
-        vm.newCategory = {};
+        vm.newCategory = categoryFactory.createCategory();
+
         /**
          * Create category function
          * @function createCategory()
-         * @requires categoryService
+         * @requires categoryFactory
          * @returns $uibModalInstance.close();
          */
         vm.createCategory = function () {
-            categoryService.createCategory(vm.newCategory)
+            vm.newCategory.create()
                 .then(function () {
                     $uibModalInstance.close();
                 }).catch(err => errorService.handleError("AddCategoryModalController :: Error Adding Category :: ", err));

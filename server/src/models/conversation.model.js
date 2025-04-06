@@ -5,7 +5,7 @@ const conversationSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        index:true
+        index: true
     },
     carId: {
         type: mongoose.Schema.Types.ObjectId,

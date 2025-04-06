@@ -49,7 +49,34 @@
   animation: spin 1s linear infinite;
 }
 
+.cars-container {
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: repeat(
+    3,
+    1fr
+  ) !important; /* Default: 3 cards per row */
+  gap: 5px;
+}
+
+@media (max-width: 1024px) {
+  /* For tablets */
+  .cars-container {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 cards per row */
+  }
+
+  .home-main {
+    width: 77%  !important; /* Set content width to 100% */
+    padding: 15px; /* Add padding for better spacing */
+  }
+}
+
 @media (max-width: 768px) {
+  /* For smaller tablets and large phones */
+  .cars-container {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 cards per row */
+  }
+
   .car-card {
     width: calc(50% - 10px);
   }
@@ -61,6 +88,23 @@
   .sidebar {
     width: 100%;
   }
+
+  .home-main {
+    width: 94%  !important; /* Set content width to 100% */
+    padding: 10px; /* Adjust padding */
+  }
+}
+
+@media (max-width: 576px) {
+  /* For iPhones and small devices */
+  .cars-container {
+    grid-template-columns: 1fr !important; /* 1 card per row */
+  }
+
+  .home-main {
+    width: 94% !important; /* Set content width to 100% */
+    padding: 8px; /* Adjust padding */
+  }
 }
 
 @keyframes spin {
@@ -70,4 +114,45 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+ /* Form Control Focus States */
+ .form-control:focus {
+  border-color: #337ab7;
+  box-shadow: none;
+  outline: none;
+}
+
+
+@media (max-width: 767px) {
+  .sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 85%;
+      height: 100%;
+      max-height: 100vh;
+      background-color: white;
+      z-index: 1050;
+      overflow-y: auto;
+      transition: left 0.3s ease;
+      padding: 20px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+      border-bottom: none;
+  }
+
+  .sidebar.visible-sidebar {
+      left: 0;
+  }
+
+  .sidebar form {
+      padding-bottom: 40px;
+  }
+}
+
+/* Button Hover Effect */
+.btn-primary:hover {
+  background-color: #286090;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

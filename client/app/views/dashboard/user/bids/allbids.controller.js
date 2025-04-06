@@ -1,7 +1,7 @@
 /** @file User Dashboard's Bid Page's Controller */
 
-mainApp.controller('UserBidsController', ['$state', 'bidService', 'authService', 'chatService', 'errorService',
-    function ($state, bidService, authService, chatService, errorService) {
+mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory', 'chatService', 'errorService',
+    function ($state, bidService, userFactory, chatService, errorService) {
 
         /** Variable declaration */
         let vm = this;
@@ -27,13 +27,13 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'authService',
          * Function :: Load User's Bids
          * @function loadUserBids()
          * @description Get the user logged in -> Fetch it's bids.
-         * @requires async,authService,bidService
+         * @requires async,userFactory,bidService
          */
 
         function loadUserBids() {
             async.waterfall([
                 function (callback) {
-                    authService.getUser()
+                    userFactory.getCurrentUser()
                         .then(user => callback(null, user))
                         .catch(err => callback(err));
                 },

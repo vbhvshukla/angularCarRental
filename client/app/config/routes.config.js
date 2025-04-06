@@ -49,9 +49,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'HomeController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state',
-                        function (authService, $state) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state',
+                        function (userFactory, $state) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -75,9 +75,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'LoginController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if ($stateParams.redirect) {
                                         return $state.go($stateParams.redirect,
@@ -105,9 +105,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'RegisterController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state',
-                        function (authService, $state) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state',
+                        function (userFactory, $state) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -131,9 +131,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'BiddingController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -162,9 +162,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'UserDashboardController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -189,9 +189,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'UserProfileController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -215,9 +215,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'UserBookingsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -241,9 +241,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'UserMessagesController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     switch (user.role) {
                                         case 'admin': return $state.go('admindashboard');
@@ -270,9 +270,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     chatId: null
                 },
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if ($stateParams.redirect) {
                                         return $state.go($stateParams.redirect,
@@ -301,9 +301,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'UserBidsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if ($stateParams.redirect) {
                                         return $state.go($stateParams.redirect,
@@ -332,9 +332,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'AdminController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state',
-                        function (authService, $state) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state',
+                        function (userFactory, $state) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if (user.role === 'admin') {
                                         return true; // Allow admins to access admin pages
@@ -357,9 +357,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'AdminAnalyticsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams',
-                        function (authService, $state, $stateParams) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams',
+                        function (userFactory, $state, $stateParams) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if ($stateParams.redirect) {
                                         return $state.go($stateParams.redirect,
@@ -386,9 +386,9 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerDashboardController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state',
-                        function (authService, $state) {
-                            return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state',
+                        function (userFactory, $state) {
+                            return userFactory.getCurrentUser().then(function (user) {
                                 if (user) {
                                     if (user.role === 'owner' && user.isApproved) {
                                         return true; // Allow approved owners to access owner pages
@@ -411,8 +411,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerHomeDashboardController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');
@@ -435,8 +435,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerListedCarsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');
@@ -462,8 +462,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                     carId: { value: null }
                 },
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');
@@ -486,8 +486,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerAllChatsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');
@@ -510,8 +510,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerChatController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');
@@ -534,8 +534,8 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 controller: 'OwnerAnalyticsController',
                 controllerAs: 'vm',
                 resolve: {
-                    redirectIfAuthenticated: ['authService', '$state', '$stateParams', function (authService, $state, $stateParams) {
-                        return authService.getUser().then(function (user) {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
                             if (user) {
                                 switch (user.role) {
                                     case 'admin': return $state.go('admindashboard');

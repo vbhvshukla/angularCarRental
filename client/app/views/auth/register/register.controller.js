@@ -1,20 +1,20 @@
-mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'errorService',
-    function ($scope, authService, $state, errorService) {
+mainApp.controller('RegisterController', ['$scope', 'userFactory', '$state', 'errorService',
+    function ($scope, userFactory, $state, errorService) {
         let vm = this;
 
         /**
          * Variable declarations
          */
 
-        vm.userData = {             //Holds the user object
+        vm.userData = {             // Holds the user object
             username: '',
             password: '',
             confirmPassword: '',
             email: '',
             role: 'customer'
         };
-        vm.errorMessage = '';       //Holds the error message to be displayed on UI.
-        vm.verificationFile = null; //Holds the verification file.
+        vm.errorMessage = '';       // Holds the error message to be displayed on UI.
+        vm.verificationFile = null; // Holds the verification file.
 
         /**
          * Function to register user
@@ -37,13 +37,16 @@ mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'er
                 errorService.handleError('Register Controller :: Verification Document Required');
                 return;
             }
-            authService.register(vm.userData, vm.verificationFile)
+
+
+            const user = userFactory.createUser(vm.userData, vm.verificationFile);
+            user.create()
                 .then(function () {
                     errorService.logSuccess('Register Controller :: User Registration Successful');
                     $state.go('login');
                 })
                 .catch(function (error) {
-                    vm.errorMessage = error;
+                    vm.errorMessage = error.message || 'Registration failed';
                     errorService.handleError(error, 'Register Controller :: User Registration Failed');
                 });
         };
@@ -51,7 +54,7 @@ mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'er
         /**
          * File Handler
          * @param {*} fileInput 
-         * @description Validates and attatches the file to the scope.
+         * @description Validates and attaches the file to the scope.
          */
 
         vm.handleFileSelect = function (fileInput) {
@@ -81,7 +84,5 @@ mainApp.controller('RegisterController', ['$scope', 'authService', '$state', 'er
                 errorService.logInfo('File selected: ' + file.name, 'File Upload');
             }
         };
-
-
     }
 ]);

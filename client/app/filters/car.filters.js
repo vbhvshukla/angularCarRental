@@ -65,7 +65,10 @@ mainApp.filter('carFilter', function () {
 
     .filter('starRating', function () {
         return function (rating) {
-            if (!rating) return '';
+            // Return 5 empty stars if rating is 0 or undefined
+            if (!rating || rating === 0) {
+                return "☆☆☆☆☆";
+            }
 
             const fullStars = Math.floor(rating);
             const halfStar = rating % 1 >= 0.5 ? 1 : 0;

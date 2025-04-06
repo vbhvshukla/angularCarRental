@@ -1,6 +1,6 @@
-mainApp.controller('NavbarController', ['$state', '$transitions', 'authService', 'errorService',
+mainApp.controller('NavbarController', ['$state', '$transitions', 'userFactory', 'errorService',
 
-    function ($state, $transitions, authService, errorService) {
+    function ($state, $transitions, userFactory, errorService) {
 
         /**
          * Variable declarations
@@ -14,15 +14,16 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'authService',
         vm.isLoggedIn = false;
         vm.currentUser = null;
         vm.links = [];
+        vm.isNavCollapsed = true;
 
         /**
          * Function : Initialization
-         * @requires authService
-         * @description Calls authService to get the user and assign it to @var vm.currentUser
+         * @requires userFactory
+         * @description Calls userFactory to get the user and assign it to @var vm.currentUser
          */
 
         vm.init = function () {
-            authService.getUser()
+            userFactory.getCurrentUser()
                 .then(user => {
                     vm.isLoggedIn = true;
                     vm.currentUser = user;
@@ -71,11 +72,11 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'authService',
 
         /**
          * Function : Logout
-         * @requires AuthService
+         * @requires userFactory
          */
 
         vm.logout = function () {
-            authService.logout()
+            userFactory.logout()
                 .then(function () {
                     vm.isLoggedIn = false;
                     vm.currentUser = null;
@@ -86,11 +87,20 @@ mainApp.controller('NavbarController', ['$state', '$transitions', 'authService',
         };
 
         /**
+         * Toggle menu
+         */
+
+        vm.toggleMenu = function() {
+            vm.isNavCollapsed = !vm.isNavCollapsed;
+        };
+
+        /**
          * Transition
          * @description If transaction is successful , as the navbar is static recall the init function.
          */
         
         $transitions.onSuccess({}, function () {
+            vm.isNavCollapsed = true;
             vm.init();
         });
     }

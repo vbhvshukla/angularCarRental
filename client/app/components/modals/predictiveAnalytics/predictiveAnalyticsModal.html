@@ -1,0 +1,134 @@
+<!-- Predictive Analytics Modal -->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="vm.close()"><span>&times;</span></button>
+    <h3 class="modal-title">Predictive Analytics Dashboard</h3>
+</div>
+<div class="modal-body" style="padding: 15px;">
+    <!-- Loading State -->
+    <div ng-if="vm.isLoading" style="text-align: center; padding: 30px;">
+        <i class="fa fa-spinner fa-spin fa-3x" style="color: #007bff; margin-bottom: 15px;"></i>
+        <p style="color: #666; font-size: 16px;">Generating insights...</p>
+    </div>
+
+    <!-- Error State -->
+    <div ng-if="vm.error" class="alert alert-danger" style="margin: 15px 0;">
+        <i class="fa fa-exclamation-circle" style="margin-right: 8px;"></i> {{vm.error}}
+    </div>
+
+    <!-- Content -->
+    <div ng-if="!vm.isLoading && !vm.error">
+        <!-- Platform Growth Section -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: #333; margin-bottom: 15px; font-weight: 600;">
+                <i class="fa fa-line-chart" style="margin-right: 8px; color: #007bff;"></i> Platform Growth
+            </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #666; font-size: 14px; margin-bottom: 10px;">Expected User Growth</h5>
+                                <p style="font-size: 24px; font-weight: 600; color: #007bff; margin: 10px 0;">{{vm.data.metrics.expectedUsers}}</p>
+                                <small style="color: #888; font-size: 12px;">Next 30 days</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #666; font-size: 14px; margin-bottom: 10px;">Revenue Projection</h5>
+                                <p style="font-size: 24px; font-weight: 600; color: #007bff; margin: 10px 0;">{{vm.data.metrics.revenueProjection | price}}</p>
+                                <small style="color: #888; font-size: 12px;">Next 30 days</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #666; font-size: 14px; margin-bottom: 10px;">Bid Success Rate</h5>
+                                <p style="font-size: 24px; font-weight: 600; color: #007bff; margin: 10px 0;">{{vm.data.metrics.bidSuccessRate}}%</p>
+                                <small style="color: #888; font-size: 12px;">Current rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Behavior Section -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: #333; margin-bottom: 15px; font-weight: 600;">
+                <i class="fa fa-users" style="margin-right: 8px; color: #007bff;"></i> User Behavior Analysis
+            </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #333; font-size: 16px; margin-bottom: 10px;">Customer Retention</h5>
+                                <p style="color: #666; font-size: 14px; line-height: 1.5;">{{vm.data.insights.retention}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #333; font-size: 16px; margin-bottom: 10px;">Churn Risk</h5>
+                                <p style="color: #666; font-size: 14px; line-height: 1.5;">{{vm.data.insights.churnRisk}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Analysis Section -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: #333; margin-bottom: 15px; font-weight: 600;">
+                <i class="fa fa-map-marker" style="margin-right: 8px; color: #007bff;"></i> Market Analysis
+            </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #333; font-size: 16px; margin-bottom: 10px;">Popular Cities</h5>
+                                <ul class="list-unstyled">
+                                    <li ng-repeat="city in vm.data.insights.popularCities" style="margin-bottom: 8px; color: #666;">
+                                        <i class="fa fa-building" style="margin-right: 8px; color: #007bff;"></i> {{city}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                                <h5 style="color: #333; font-size: 16px; margin-bottom: 10px;">Category Performance</h5>
+                                <ul class="list-unstyled">
+                                    <li ng-repeat="category in vm.data.insights.categoryPerformance" style="margin-bottom: 8px; color: #666;">
+                                        <i class="fa fa-car" style="margin-right: 8px; color: #007bff;"></i> {{category.name}}: {{category.performance}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: #333; margin-bottom: 15px; font-weight: 600;">
+                <i class="fa fa-lightbulb-o" style="margin-right: 8px; color: #007bff;"></i> Recommendations
+            </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div style="margin-top: 10px;">
+                        <div ng-repeat="rec in vm.data.recommendations" style="display: flex; align-items: flex-start; margin-bottom: 12px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                            <i class="fa fa-check-circle" style="color: #28a745; margin-right: 10px; margin-top: 3px;"></i>
+                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.5;">{{rec}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer" style="border-top: 1px solid #e5e5e5; padding: 15px;">
+    <button class="btn btn-primary" ng-click="vm.refreshData()" style="margin-left: 10px;">
+        <i class="fa fa-refresh"></i> Refresh
+    </button>
+</div> 

@@ -6,7 +6,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
     var service = this;
     const ITEMS_PER_PAGE = 5;
     const VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'];
-
+    const BASE_URL = 'http://127.0.0.1:8006/api/v1';
     /**
      * @function calculateBaseFare()
      * @description Calculates the base fare for a booking.
@@ -80,6 +80,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
      * @returns resolved/rejected promise.
      */
     service.createBooking = function (bookingData) {
+        console.log(bookingData);
         const deferred = $q.defer();
 
         try {
@@ -95,8 +96,6 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
             if (!bookingData._id || !bookingData.user || !bookingData.car) {
                 throw new Error('Invalid bid information');
             }
-
-            console.log(bookingData.car.carId, bookingData.fromTimestamp, bookingData.toTimestamp);
 
             // Create booking object
             const booking = {
@@ -130,17 +129,18 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
             )
                 .then(function (availabilityResponse) {
                     if (!availabilityResponse.isAvailable) {
-                        throw new Error('Car is not available for selected dates');
+                        deferred.reject('Car is not available for selected dates');
+                        return;
                     }
 
                     // Save booking to the backend
-                    return $http.post('http://127.0.0.1:8006/api/v1/booking/create', booking);
+                    return $http.post(`${BASE_URL}/booking/create`, booking);
                 })
                 .then(function (response) {
                     const createdBooking = response.data.newBooking;
 
                     // Update car availability in the backend
-                    return $http.post('http://127.0.0.1:8006/api/v1/caravailability/create', {
+                    return $http.post(`${BASE_URL}/caravailability/create`, {
                         carId: bookingData.car.carId,
                         fromTimestamp: bookingData.fromTimestamp,
                         toTimestamp: bookingData.toTimestamp
@@ -174,7 +174,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
         if (!VALID_STATUSES.includes(newStatus)) {
             deferred.reject(new Error('Invalid status'));
         } else {
-            $http.put(`http://127.0.0.1:8006/api/v1/booking/updatestatus/${bookingId}`, { newStatus })
+            $http.put(`${BASE_URL}/booking/updatestatus/${bookingId}`, { newStatus })
                 .then(response => deferred.resolve(response))
                 .catch(error => {
                     errorService.handleError('Booking Service :: Error updating booking status', error);
@@ -198,7 +198,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
 
         const deferred = $q.defer();
 
-        $http.post('http://127.0.0.1:8006/api/v1/caravailability/check', {
+        $http.post(`${BASE_URL}/caravailability/check`, {
             carId,
             fromTimestamp,
             toTimestamp
@@ -224,7 +224,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
         const deferred = $q.defer();
         const queryParams = new URLSearchParams({ page, ...filters }).toString();
 
-        $http.get(`http://127.0.0.1:8006/api/v1/booking/userbookings/${userId}?${queryParams}`)
+        $http.get(`${BASE_URL}/booking/userbookings/${userId}?${queryParams}`)
             .then(response => deferred.resolve(response.data))
             .catch(error => {
                 errorService.handleError('Booking Service :: Error fetching user bookings', error);
@@ -243,7 +243,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
     service.cancelBooking = function (bookingId) {
         const deferred = $q.defer();
 
-        $http.post(`http://127.0.0.1:8006/api/v1/booking/cancel/${bookingId}`)
+        $http.post(`${BASE_URL}/booking/cancel/${bookingId}`)
             .then(response => deferred.resolve(response.data))
             .catch(error => {
                 errorService.handleError('Booking Service :: Error cancelling booking', error);
@@ -262,7 +262,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
      */
 
     service.submitRating = function (carId, rating) {
-        return $http.post(`http://127.0.0.1:8006/api/v1/car/rate/${carId}`, { rating })
+        return $http.post(`${BASE_URL}/car/rate/${carId}`, { rating })
             .then(response => response)
             .catch(error => errorService.handleError('Booking Service :: Error submitting rating', error));
     };
@@ -279,7 +279,7 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
     service.addExtras = function (bookingId, extras) {
         const deferred = $q.defer();
         console.log(bookingId, extras);
-        $http.put(`http://127.0.0.1:8006/api/v1/booking/addextras/${bookingId}`, { extras })
+        $http.put(`${BASE_URL}/booking/addextras/${bookingId}`, { extras })
             .then(response => deferred.resolve(response))
             .catch(error => {
                 errorService.handleError('Booking Service :: Error adding extras', error)
@@ -304,13 +304,13 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
             limit,
             bookingType: filters.bookingType || 'all'
         };
-        return $http.get(`http://127.0.0.1:8006/api/v1/booking/ownerbookings/${ownerId}`, { params })
+        return $http.get(`${BASE_URL}/booking/ownerbookings/${ownerId}`, { params })
             .then(response => response);
     };
 
     service.generateInvoice = function (booking) {
         const deferred = $q.defer();
-        $http.get(`http://127.0.0.1:8006/api/v1/booking/generateinvoice/${booking}`).then((response) => {
+        $http.get(`${BASE_URL}/booking/generateinvoice/${booking}`).then((response) => {
             deferred.resolve(response.data);
         }).catch((error) => {
             errorService.handleError('Booking Service :: Error generating invoice', error);

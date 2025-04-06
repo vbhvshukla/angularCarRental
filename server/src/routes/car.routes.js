@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { createCar, deleteCar, getAllCars, getAvailableCars, getCarById, getCarsByCategory, getCarsByCity, getCarsByOwner, updateCar } from "../controllers/car.controller.js";
-import { validateCarCreation } from "../services/carValidator.service.js";
 import { authorize, authenticate } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
 

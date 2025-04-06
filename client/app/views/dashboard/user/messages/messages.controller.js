@@ -1,7 +1,7 @@
 /** @file User Messages Page's Controller */
 
-mainApp.controller('UserMessagesController', ['$state', 'authService', 'chatService',
-    function ($state, authService, chatService) {
+mainApp.controller('UserMessagesController', ['$state', 'userFactory', 'chatService',
+    function ($state, userFactory, chatService) {
     
         /**Variable declaration */
         var vm = this;
@@ -12,14 +12,14 @@ mainApp.controller('UserMessagesController', ['$state', 'authService', 'chatServ
          * Function :: Initialization function
          * @function vm.init()
          * @desceription Get all the conversations of the user.
-         * @requires async,authService,chatService
+         * @requires async,userFactory,chatService
          */
 
         vm.init = function () {
             //Stops if any one of the promises fail and callback is called immediately.
             async.waterfall([
                 function (callback) {
-                    authService.getUser()
+                    userFactory.getCurrentUser()
                         .then(user => callback(null, user))
                         .catch((err) => callback(err));
 

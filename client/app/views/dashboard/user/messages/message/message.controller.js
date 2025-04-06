@@ -1,5 +1,5 @@
-mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'authService', 'carService',
-    function ($scope, $q, $timeout, $stateParams, chatService, authService, carService) {
+mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'userFactory', 'carService',
+    function ($scope, $q, $timeout, $stateParams, chatService, userFactory, carService) {
 
         //Variable declaration
         let vm = this;
@@ -30,7 +30,7 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
         function loadData() {
             async.waterfall([
                 function (callback) {
-                    authService.getUser()
+                    userFactory.getCurrentUser()
                         .then(user => callback(null, user))
                         .catch((err) => callback(err));
                 },

@@ -86,7 +86,7 @@
 .chart-container {
   flex: 1;
   min-width: 45%;
-  height: 400px;
+  height: 500px;
 }
 
 .chart-row {
@@ -97,12 +97,13 @@
 
 .charts-grid canvas {
   margin-bottom: 10px;
-  /* width: 100% !important; */
-  height: 400px !important;
-  /* background: white; */
+  width: 100% !important;
+  height: 500px !important;
+  min-height: 400px !important;
+  background: white;
   border-radius: 8px;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-  /* padding: 10px; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -123,6 +124,11 @@
 @media (max-width: 768px) {
   .chart-row {
     flex-direction: column;
+  }
+  
+  .charts-grid canvas {
+    height: 300px !important;
+    min-height: 250px !important;
   }
 }
 
@@ -153,6 +159,7 @@
   border-radius: 8px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 15px;
 }
 
 .total-card h3 {
@@ -200,4 +207,27 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .charts-grid canvas {
+    height: 300px !important;
+    min-height: 250px !important;
+  }
+  
+  .container-fluid {
+    padding: 10px !important;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    float: none !important;
+    max-width: 100% !important;
+    margin-bottom: 15px;
+  }
 }

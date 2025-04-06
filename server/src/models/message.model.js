@@ -4,15 +4,20 @@ const messageSchema = new mongoose.Schema({
     chatId: {
         type: String,
         required: true,
-        index:true
+        index: true
     },
     message: {
         type: String,
         default: ""
     },
     attachment: {
-        type: String,
-        default: null
+        attachmentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Attachment",
+        },
+        url: {
+            type: String,
+        }
     },
     fromUser: {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

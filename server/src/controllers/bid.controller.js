@@ -1,15 +1,8 @@
-import AWS from "aws-sdk";
 import mongoose from "mongoose";
 import { Bid } from "../models/bid.model.js";
 import { Car } from "../models/car.model.js";
+import { sendMessageToSQS } from "../services/sqsProducer.service.js";
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
-});
-
-const sqs = new AWS.SQS();
-const QUEUE_URL = process.env.SQS_QUEUE_URL;
 /**
  * @function calculateEstimate
  * @description Calculate the estimate for a bid based on rental type and car details.
@@ -54,15 +47,16 @@ export const calculateEstimate = async (req, res) => {
           .json({ msg: "Car unavailable for outstation rental" });
       }
 
-      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
       const outstationOptions = car.rentalOptions.outstation;
-
-      basePrice = Math.max(
+      console.log(outstationOptions, days);
+      // basePrice = Math.max(
+      //   outstationOptions.pricePerDay * days,
+      //   outstationOptions.minimumKmChargeable * outstationOptions.pricePerKm
+      // );
+      basePrice =
         outstationOptions.pricePerDay * days,
-        outstationOptions.minimumKmChargeable * outstationOptions.pricePerKm
-      );
-
-      minBid = basePrice;
+        minBid = basePrice;
       maxBid = basePrice * 1.6;
     }
 
@@ -91,11 +85,18 @@ export const calculateEstimate = async (req, res) => {
 export const submitBid = async (req, res) => {
   try {
     const { carId, bidData, userData } = req.body;
-    console.log(carId, bidData, userData);
-
     const car = await Car.findById(carId);
     if (!car) {
       return res.status(404).json({ msg: "Car not found" });
+    }
+
+    let bidBaseFare = 0;
+    if (bidData.rentalType === "local") {
+      bidBaseFare = car.rentalOptions.local.pricePerHour;
+    } else if (bidData.rentalType === "outstation") {
+      bidBaseFare = car.rentalOptions.outstation.pricePerDay;
+    } else {
+      return res.status(400).json({ msg: "Invalid rental type" });
     }
 
     const bid = new Bid({
@@ -104,7 +105,7 @@ export const submitBid = async (req, res) => {
       status: "pending",
       bidAmount: bidData.bidAmount,
       rentalType: bidData.rentalType,
-      bidBaseFare: bidData.basePrice,
+      bidBaseFare, // Set the calculated bidBaseFare
       user: {
         userId: userData._id,
         username: userData.username,
@@ -132,28 +133,8 @@ export const submitBid = async (req, res) => {
       },
     });
 
-    // await bid.save();
-
-    //Make a message body for SQS
-
-    // const MessageBody = {
-    //   username: userData.username,
-    //   email: car.owner.email,
-    //   carName: car.carName,
-    //   bidAmount: bidData.bidAmount,
-    //   startDate: bidData.startDate,
-    //   endDate: bidData.endDate,
-    // };
-
-    //Push this data to aws queue
-    
-    await sqs
-      .sendMessage({
-        QueueUrl: QUEUE_URL,
-        MessageBody: JSON.stringify(bid),
-      })
-      .promise();
-
+    // Push this data to AWS SQS queue
+    sendMessageToSQS(bid);
     console.log("Message sent to SQS");
 
     res.status(201).json({ msg: "Bid submitted successfully", bid });

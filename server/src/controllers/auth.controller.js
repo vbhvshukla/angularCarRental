@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { sendEmail } from "../services/mail.service.js";
 
 /**
  * User Registration
@@ -34,6 +35,11 @@ const registerUser = async (req, res) => {
             }
         });
         await user.save();
+        await sendEmail({
+            to: email,
+            subject: "Carental - Registration Successful!",
+            text: `Hello ${username}, your account has been created successfully.`
+        })
         res.status(201).json({ msg: "User Registered Successfully" });
     } catch (error) {
         console.error("Auth Controller :: Error Registering User", error);

@@ -1,14 +1,16 @@
 mainApp.component('ownerSidebar', {
-    
     templateUrl: 'app/components/ownerSidebar/ownersidebar.template.html',
-    
-    controller: ['$state', function($state) {
+    bindings: {
+        isVisible: '=',
+        onToggle: '&'
+    },
+    controller: ['$state', '$transitions', function ($state, $transitions) {
+        let $ctrl = this;
         
         /**
          * Variable Declaration and Initialization
          */
 
-        let $ctrl = this;
         $ctrl.menuItems = [
             { state: 'ownerdashboard', icon: '🏠', label: 'Home' },
             { state: 'ownerdashboard.listedcars', icon: '🚗', label: 'My Cars' },
@@ -27,5 +29,17 @@ mainApp.component('ownerSidebar', {
         $ctrl.isActive = function(state) {
             return $state.includes(state);
         };
-    }],
+
+        // Close sidebar on state change in mobile view
+        $transitions.onSuccess({}, function() {
+            if (window.innerWidth < 768) {
+                $ctrl.isVisible = false;
+            }
+        });
+
+        // Toggle sidebar
+        $ctrl.toggleSidebar = function() {
+            $ctrl.onToggle();
+        };
+    }]
 });

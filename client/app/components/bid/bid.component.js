@@ -2,20 +2,20 @@ mainApp.component('bidForm', {
 
     templateUrl: 'app/components/bid/bid.template.html',
 
-    controller: ['bidService', 'errorService', 'authService',
+    controller: ['bidService', 'errorService', 'userFactory',
 
-        function (bidService, errorService, authService) {
+        function (bidService, errorService, userFactory) {
 
             let $ctrl = this;
             $ctrl.isStartOpen = false;
             $ctrl.isEndOpen = false;
-            
+
             var today = new Date();
             $ctrl.minDate = today.toISOString().split('T')[0];
-        
+
             /** Initialization function
              *@description Initializes the variables , Gets the current logged in user and sets it in @var $ctrl.currentUser
-             *@requires authService
+             *@requires userFactory
              *Available list of variables : 
              *@var $ctrl.rentalType {Holds the type of rental(local/outstation)}
              *@var $ctrl.isSubmitting {Loader boolean whilst bid submission}
@@ -43,20 +43,20 @@ mainApp.component('bidForm', {
                     rentalType: $ctrl.rentalType
                 };
 
-                authService.getUser()
+                userFactory.getCurrentUser()
                     .then(user => {
                         $ctrl.currentUser = user;
                     })
                     .catch(error => errorService.handleError(error, 'BidForm :: User Fetch Failed'));
             };
 
-            $ctrl.openCalendar = function(e) {
+            $ctrl.openCalendar = function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 $ctrl.isStartOpen = true;
             };
 
-            $ctrl.openEndCalendar = function(e){
+            $ctrl.openEndCalendar = function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 $ctrl.isEndOpen = true;
@@ -111,13 +111,13 @@ mainApp.component('bidForm', {
                 const end = new Date($ctrl.bid.endDate);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-            
 
-                if(start<today){
+
+                if (start < today) {
                     alert('Start date must be today or later');
                     errorService.handleError('Start Date Must Be Today or Later');
                     $ctrl.resetBidFields();
-                    $ctrl.isCalculating=false;
+                    $ctrl.isCalculating = false;
                     return;
                 }
 
@@ -147,7 +147,7 @@ mainApp.component('bidForm', {
                             $ctrl.bid.bidAmount = estimate.minBid;
                         }
                     })
-                    .catch(error => {$ctrl.resetBidFields();$ctrl.isCalculating = false;errorService.handleError(error, 'BidForm :: Estimate Failed')})
+                    .catch(error => { $ctrl.resetBidFields(); $ctrl.isCalculating = false; errorService.handleError(error, 'BidForm :: Estimate Failed') })
                     .finally(() => $ctrl.isCalculating = false);
             };
 
@@ -172,13 +172,10 @@ mainApp.component('bidForm', {
                 }
 
                 $ctrl.isSubmitting = true;
-
-                // Create a copy of bid data to prevent reference issues
                 const bidData = {
                     ...$ctrl.bid,
                     basePrice: $ctrl.estimate.basePrice
                 };
-
                 // send bid data through onBidSubmit
                 $ctrl.onBidSubmit({ bid: bidData });
             };
@@ -190,10 +187,10 @@ mainApp.component('bidForm', {
                     bidAmount: null,
                     rentalType: $ctrl.rentalType
                 };
-            
+
                 $ctrl.estimate = null;
                 $ctrl.isCalculating = false;
-            
+
                 if ($ctrl.bidForm) {
                     $ctrl.bidForm.$setPristine(); // Mark the form as pristine
                     $ctrl.bidForm.$setUntouched(); // Mark the form as untouched

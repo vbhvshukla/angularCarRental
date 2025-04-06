@@ -1,9 +1,23 @@
-<div class="panel panel-default owner-sidebar" style="width: 270px;  min-height: 100% !important; height: auto; padding: 20px; background-color: #fff; border-radius: 2px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+<div class="panel panel-default owner-sidebar" 
+    ng-class="{'active': $ctrl.isVisible}"
+    style="width: 270px; min-height: 100% !important; height: auto; padding: 20px; background-color: #fff; border-radius: 2px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+    
+    <div class="visible-xs text-right">
+        <button type="button" 
+                class="close" 
+                ng-click="$ctrl.onToggle()"
+                style="margin-bottom: 10px;">
+            <span>&times;</span>
+        </button>
+    </div>
+
     <div class="panel-body">
         <h3 style="margin-bottom: 15px; color: #2c3e50; font-size: 2.05rem;">Dashboard</h3>
         <ul class="nav nav-pills nav-stacked" style="list-style: none; padding: 0;">
             <li ng-repeat="item in $ctrl.menuItems" style="margin-bottom: 10px;">
-                <a ui-sref="{{item.state}}" ng-class="{'active': $ctrl.isActive(item.state)}" style="display: block; padding: 10px; background: #f4f4f4; color: #333; text-decoration: none; border-radius: 5px; transition: background 0.3s, transform 0.2s; font-weight: 500;">
+                <a ui-sref="{{item.state}}" 
+                   ng-class="{'active': $ctrl.isActive(item.state)}" 
+                   style="display: block; padding: 10px; background: #f4f4f4; color: #333; text-decoration: none; border-radius: 5px; transition: background 0.3s, transform 0.2s; font-weight: 500;">
                     <span class="icon">{{item.icon}}</span>
                     <span>{{item.label}}</span>
                 </a>
@@ -11,3 +25,31 @@
         </ul>
     </div>
 </div>
+
+<style>
+@media (max-width: 767px) {
+    .owner-sidebar {
+        position: fixed;
+        left: -270px;
+        top: 0;
+        bottom: 0;
+        z-index: 1040;
+        transition: left 0.3s ease-in-out;
+        margin: 0;
+        overflow-y: auto;
+    }
+
+    .owner-sidebar.active {
+        left: 0;
+    }
+
+    .owner-sidebar .panel-body {
+        padding-top: 0;
+    }
+
+    .nav-pills > li > a.active {
+        background-color: #3498db !important;
+        color: white !important;
+    }
+}
+</style>

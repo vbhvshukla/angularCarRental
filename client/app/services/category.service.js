@@ -8,7 +8,6 @@ mainApp.service('categoryService', function ($http, schemaValidator, idGenerator
      * Category Schema for validation
      */
     const categorySchema = {
-        categoryId: { type: 'string', required: true, minLength: 2 },
         categoryName: { type: 'string', required: true, minLength: 2, maxLength: 50 },
     };
 
@@ -41,9 +40,6 @@ mainApp.service('categoryService', function ($http, schemaValidator, idGenerator
      * @returns resolved or rejected promise.
      */
     this.createCategory = function (category) {
-        if (!category.categoryId) {
-            category.categoryId = idGenerator.generate();
-        }
         return schemaValidator.validate(category, categorySchema)
             .then(function (validatedCategory) {
                 return $http.post(`${BASE_URL}/create`, validatedCategory)

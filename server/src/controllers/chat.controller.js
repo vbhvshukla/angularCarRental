@@ -13,10 +13,10 @@ export const createChat = async (req, res) => {
 
     try {
         let chatId = null;
-        if(user._id){
+        if (user._id) {
             chatId = `${user._id}_${owner._id}_${carId}`;
         }
-        else{
+        else {
             chatId = `${user.userId}_${owner.userId}_${carId}`;
         }
         const existingChat = await Conversations.findOne({ chatId });
@@ -103,10 +103,14 @@ export const getMessages = async (req, res) => {
  */
 export const sendMessage = async (req, res) => {
     const { chatId, fromUser, toUser, message, attachment } = req.body;
-    console.log(chatId, fromUser, toUser, message, attachment);
+    
+    console.log(`Chat id :: ${chatId} | From User : ${fromUser} | To User : ${toUser} | Message : ${message} | Attachment : ${attachment}`);
+
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
+
+    
 
     try {
         const newMessage = new Messages({
@@ -143,6 +147,15 @@ export const sendMessage = async (req, res) => {
     }
 };
 
+
+/**
+ * Send Owner Message
+ * @description Currently not in use
+ * @async
+ * @param {*} req 
+ * @param {*} res 
+ * @returns {unknown} 
+ */
 export const sendOwnerMessage = async (req, res) => {
     const { chatId, fromUser, toUser, message, attachment } = req.body;
     if (!chatId || !fromUser || !toUser || !message) {

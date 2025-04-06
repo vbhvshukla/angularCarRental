@@ -74,11 +74,17 @@
     <script src="app/services/seed.service.js"></script>
     <script src="app/services/auth.service.js"></script>
     <script src="app/services/errorService.service.js"></script>
+    <script src="app/services/predictiveAnalyticsService.js"></script>
     <script src="app/services/bid.service.js"></script>
     <script src="app/services/chat.service.js"></script>
     <script src="app/services/user.service.js"></script>
     <script src="app/services/booking.service.js"></script>
     <script src="app/services/analytics.service.js"></script>
+    <script src="app/factories/user.factory.js"></script>
+    <script src="app/factories/bid.factory.js"></script>
+    <script src="app/factories/booking.factory.js"></script>
+    <script src="app/factories/car.factory.js"></script>
+    <script src="app/factories/category.factory.js"></script>
 
     <!-- Directives  -->
     <script src="app/directives/rating.directive.js"></script>
@@ -110,6 +116,7 @@
     <script src="app/components/modals/addCategory/addCategoryModal.controller.js"></script>
     <script src="app/components/modals/userApproval/userApprovalModal.controller.js"></script>
     <script src="app/components/modals/addKmModal/addKmModal.controller.js"></script>
+    <script src="app/components/modals/predictiveAnalytics/predictiveAnalyticsModal.js"></script>
     <!-- Components -->
     <script src="app/components/bid/bid.component.js"></script>
     <script src="app/components/chat/chat.component.js"></script>
@@ -131,17 +138,17 @@
 <body ng-app="mainApp">
     <div ng-include="'app/components/navbar/navbar.view.html'" ng-controller="NavbarController as vm"></div>
     <div ui-view></div>
-    <div class="container">
-        <div class="row">
-            <div style="width: 107%;
-            margin-left: -39px;
-            margin-right: auto;">
-                <div class="footer text-center bg-primary text-white w-76 rounded shadow">
-                    &copy; 2025 Car Rental. All rights reserved.
+    <footer class="navbar navbar-default" style="background-color: #337ab7; border: none; margin-bottom: 0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="text-center" style="color: #ffffff; margin: 15px 0; font-size: 14px;">
+                        &copy; 2025 Car Rental. All rights reserved.
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 </body>
 
 </html>

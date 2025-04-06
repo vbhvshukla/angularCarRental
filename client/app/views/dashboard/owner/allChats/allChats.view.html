@@ -1,25 +1,113 @@
-<div class="allChats-content" ng-controller="OwnerAllChatsController as vm" ng-init="vm.init()" style="width: 100%; padding: 20px; background: #fff; border-radius: 8px;">
-    <h2>All Conversations</h2>
-    <div id="message-list" class="message-list" style="margin-top: 20px;">
-        <div ng-if="vm.loading" class="loading-messages" style="display: flex; justify-content: center; align-items: center; min-height: 200px;">
-            <div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        </div>
-        
-        <div ng-if="!vm.loading && !vm.conversations.length" class="no-messages" style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 1.1em;">
-            No conversations yet
-        </div>
-
-        <div ng-repeat="chat in vm.conversations | orderBy:'-lastTimestamp'" class="message-item" ng-click="vm.goToChat(chat.chatId)" style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s ease;">
-            <img ng-src="{{chat.user.profileImage || '../../../app/assets/images/profile.jpg'}}" alt="{{chat.user.username}}'s profile" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover;">
-            <div class="message-content" style="flex: 1;">
-                <div class="message-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <span class="username" style="font-weight: 600; color: #2c3e50;">{{chat.user.username}}</span>
-                    <span class="timestamp" style="font-size: 0.85em; color: #7f8c8d;">{{chat.lastTimestamp | date:'MMM d, y h:mm a'}}</span>
+<div class="container-fluid" ng-controller="OwnerAllChatsController as vm" ng-init="vm.init()">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default" style="background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,0.1);">
+                <div class="panel-heading" style="background: transparent; border-bottom: 1px solid #eee;">
+                    <h2 style="margin: 0; font-size: 24px; color: #2c3e50;">All Conversations</h2>
                 </div>
-                <div class="last-message" ng-class="{'no-message': !chat.lastMessage}" style="color: #34495e; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px;">
-                    {{chat.lastMessage || 'No messages yet'}}
+
+                <div class="panel-body">
+                    <!-- Loading State -->
+                    <div ng-if="vm.loading" class="text-center" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                        <div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    </div>
+
+                    <!-- No Conversations State -->
+                    <div ng-if="!vm.loading && !vm.conversations.length" 
+                         class="text-center text-muted" 
+                         style="padding: 30px; font-size: 16px;">
+                        No conversations yet
+                    </div>
+
+                    <!-- Conversations List -->
+                    <div class="list-group" style="margin-bottom: 0;">
+                        <a ng-repeat="chat in vm.conversations | orderBy:'-lastTimestamp'" 
+                           ng-click="vm.goToChat(chat.chatId)"
+                           class="list-group-item" 
+                           style="border-left: none; border-right: none; cursor: pointer; padding: 15px;">
+                            
+                            <div class="row">
+                                <!-- Profile Image -->
+                                <div class="col-xs-2 col-sm-1" style="padding-right: 0;">
+                                    <img ng-src="{{chat.user.profileImage || '../../../app/assets/images/profile.jpg'}}" 
+                                         alt="{{chat.user.username}}'s profile" 
+                                         class="img-circle img-responsive" 
+                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                </div>
+
+                                <!-- Chat Content -->
+                                <div class="col-xs-10 col-sm-11">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                                <span style="font-weight: 600; color: #2c3e50;">
+                                                    {{chat.user.username}}
+                                                </span>
+                                                <small class="text-muted" style="font-size: 0.85em;">
+                                                    {{chat.lastTimestamp | date:'MMM d, y h:mm a'}}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <p class="list-group-item-text text-muted" 
+                                               style="margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                {{chat.lastMessage || 'No messages yet'}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Spinner Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* List Group Item Hover Effect */
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 767px) {
+    .panel-heading {
+        padding: 15px;
+    }
+
+    .panel-body {
+        padding: 0;
+    }
+
+    .list-group-item {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 20px !important;
+    }
+}
+
+/* Ensure consistent spacing */
+.list-group {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+/* Remove first and last borders */
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+</style>

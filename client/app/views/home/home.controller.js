@@ -1,5 +1,5 @@
-mainApp.controller('HomeController', ["$q", "$state", "carService", "categoryService", "cityService", "$filter",
-    function ($q, $state, carService, categoryService, cityService, $filter) {
+mainApp.controller('HomeController', ["$q", "$state", "carService", "categoryService", "cityService", "$filter", "$scope",
+    function ($q, $state, carService, categoryService, cityService, $filter, $scope) {
         var vm = this;
 
         // Variable declarations
@@ -23,6 +23,25 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             features: '',
             rating: ''
         };
+
+        // Initialize sidebar state
+        vm.isSidebarVisible = false;
+
+        // Update applyFilters to use the Angular binding
+        var originalApplyFilters = vm.applyFilters;
+        vm.applyFilters = function() {
+            if (originalApplyFilters) {
+                originalApplyFilters();
+            }
+            if (window.innerWidth < 768) {
+                vm.isSidebarVisible = false;
+            }
+        };
+
+        // Close sidebar on route change
+        $scope.$on('$stateChangeStart', function() {
+            vm.isSidebarVisible = false;
+        });
 
         // Initialize the controller
         vm.init = function () {
@@ -73,7 +92,7 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
             }
             vm.pagination.loading = true;
             vm.pagination.currentPage++;
-            
+
             carService.getAvailableCarsWithPagination(
                 vm.pagination.currentPage,
                 vm.pagination.itemsPerPage,
