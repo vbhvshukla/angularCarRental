@@ -17,11 +17,15 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
 
         /**
          * @function getAllUsers
-         * @description Fetches all users.
+         * @description Fetches all users with pagination.
+         * @param {number} page - Current page number
+         * @param {number} limit - Number of items per page
          * @returns resolved or rejected promise.
          */
-        this.getAllUsers = function () {
-            return $http.get(`${BASE_URL}`)
+        this.getAllUsers = function (page = 1, limit = 10) {
+            return $http.get(`${BASE_URL}`, {
+                params: { page, limit }
+            })
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'UserService :: Fetch All Users Failed'));
         };

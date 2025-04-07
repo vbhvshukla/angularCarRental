@@ -14,6 +14,16 @@ const attachmentSchema = new Schema(
             type: String,
             required: ['true', 'Ref Id is required']
         },
+        fromUser: {
+            userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+            username: { type: String, required: true },
+            email: { type: String, required: true }
+        },
+        toUser: {
+            userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+            username: { type: String, required: true },
+            email: { type: String, required: true }
+        }
     },
     {
         timestamps: true

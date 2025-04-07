@@ -64,14 +64,15 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @param {*} file 
          * @returns resolved or rejected promise.
          */
-        this.sendMessage = function (chatId, fromUser, toUser, message, file) {
+        this.sendMessage = function (chatId, fromUser, toUser, message, attachment) {
             const messageData = {
                 chatId,
                 fromUser,
                 toUser,
                 message,
-                attachment: file || null
+                attachment : attachment || null
             };
+            console.log('Chat Service :: ',messageData);
             return $http.post(`${BASE_URL}/messages/send`, messageData)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'ChatService :: Message Send Failed'));

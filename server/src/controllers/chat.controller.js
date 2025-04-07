@@ -103,15 +103,14 @@ export const getMessages = async (req, res) => {
  */
 export const sendMessage = async (req, res) => {
     const { chatId, fromUser, toUser, message, attachment } = req.body;
-    
+
     console.log(`Chat id :: ${chatId} | From User : ${fromUser} | To User : ${toUser} | Message : ${message} | Attachment : ${attachment}`);
 
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
 
-    
-
+    console.log(attachment);
     try {
         const newMessage = new Messages({
             chatId,
@@ -161,6 +160,8 @@ export const sendOwnerMessage = async (req, res) => {
     if (!chatId || !fromUser || !toUser || !message) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
+
+    console.log(attachment);
 
     try {
         const newMessage = new Messages({

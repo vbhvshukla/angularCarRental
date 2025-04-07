@@ -1,6 +1,6 @@
 mainApp.controller('OwnerChatController', [
-    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService',
-    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService) {
+    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService', 'uploadService',
+    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService, uploadService) {
         let vm = this;
         let socket = null;
 
@@ -12,10 +12,11 @@ mainApp.controller('OwnerChatController', [
         vm.currentUser = null;
         vm.showModal = false;
         vm.modalImage = '';
+        vm.isLoading = false;
 
         vm.init = function () {
             vm.loading = true;
-            socket = io('http://127.0.0.1:8006'); 
+            socket = io('http://127.0.0.1:8006');
             socket.emit('joinChat', vm.chatId);
             socket.on('newMessage', (message) => {
                 if (message.chatId === vm.chatId) {
@@ -60,8 +61,45 @@ mainApp.controller('OwnerChatController', [
 
         vm.sendMessage = function () {
             if (!vm.newMessage.trim() && !vm.selectedFile) return;
+
+            vm.isLoading = true;
+
+            // First get the participants
             chatService.getChatParticipants(vm.chatId)
-                .then(participants => {
+                .then((participants) => {
+                    const toUser = {
+                        _id: participants.user.userId,
+                        username: participants.user.username,
+                        email: participants.user.email
+                    };
+
+                    const fromUser = {
+                        _id: vm.currentUser._id,
+                        username: vm.currentUser.username,
+                        email: vm.currentUser.email
+                    };
+
+
+                    // Now handle file upload if there is a file
+                    const uploadPromise = vm.selectedFile
+                        ? uploadService.uploadFile(vm.selectedFile, vm.chatId, fromUser, toUser).then((res) => {
+                            console.log('Upload promise response :: ', res);
+                            return {
+                                attachmentId: res.newAttatchment._id,
+                                url: res.fileUrl
+                            };
+                        }).catch((err) => {
+                            errorService.handleError('Error uploading file', err);
+                            return $q.reject(err);
+                        })
+                        : $q.resolve(null);
+
+                    // Return both the upload result and the participants
+                    return uploadPromise.then((attachment) => {
+                        return { attachment, participants };
+                    });
+                })
+                .then(({ attachment, participants }) => {
                     return chatService.sendMessage(
                         vm.chatId,
                         vm.currentUser,
@@ -71,21 +109,25 @@ mainApp.controller('OwnerChatController', [
                             email: participants.user.email
                         },
                         vm.newMessage,
-                        vm.selectedFile
+                        attachment
                     );
                 })
                 .then(() => {
+                    // Reset the input fields
                     vm.newMessage = '';
                     vm.selectedFile = null;
                     vm.fileInput = null;
                     return chatService.getMessages(vm.chatId);
                 })
-                .then(messages => {
+                .then((messages) => {
                     vm.messages = messages;
                     chatService.scrollToBottom();
                 })
-                .catch(error => {
+                .catch((error) => {
                     errorService.handleError('Failed to send message', error);
+                })
+                .finally(() => {
+                    vm.isLoading = false;
                 });
         };
 

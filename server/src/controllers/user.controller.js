@@ -32,11 +32,23 @@ const getUserById = async (req, res) => {
 const getAllUsers = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
+        const skip = (page - 1) * limit;
+        
+        // Get total count
+        const total = await User.countDocuments({ role: { $ne: 'admin' } });
+        
+        // Get paginated users
         const users = await User.find({ role: { $ne: 'admin' } })
             .select("-password")
-            .skip((page - 1) * limit)
-            .limit(limit);
-        res.status(200).json(users);
+            .skip(skip)
+            .limit(parseInt(limit));
+            
+        res.status(200).json({
+            data: users,
+            total,
+            page: parseInt(page),
+            limit: parseInt(limit)
+        });
     } catch (error) {
         console.error("User Controller :: Error fetching all users", error);
         res.status(500).json({ msg: "Server Error", details: error.message });
