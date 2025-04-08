@@ -23,6 +23,6 @@ export const cacheMiddleware = (cacheKeyPrefix) => async (req, res, next) => {
         next(); // Proceed to the controller
     } catch (error) {
         console.error("Error in cache middleware:", error);
-        next(); // Proceed even if Redis fails
+        next();
     }
 };

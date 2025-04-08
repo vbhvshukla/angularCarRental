@@ -2,7 +2,7 @@
     style="display: flex; min-height: 350px; flex-direction: column; gap: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     <h3>Chat with {{vm.messages[0].fromUser.userId === vm.currentUser._id ? vm.messages[0].toUser.username :
         vm.messages[0].fromUser.username}}</h3>
-
+    <button ng-click="vm.getMedia()">All Media</button>
     <div id="chat-messages" class="chat-messages"
         style="flex-grow: 1; overflow-y: auto; max-height: 500px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
         <div ng-if="!vm.messages.length" class="no-messages" style="text-align: center; color: #6c757d; padding: 20px;">

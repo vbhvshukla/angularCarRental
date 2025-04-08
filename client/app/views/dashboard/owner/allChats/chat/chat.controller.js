@@ -13,7 +13,7 @@ mainApp.controller('OwnerChatController', [
         vm.showModal = false;
         vm.modalImage = '';
         vm.isLoading = false;
-
+        vm.media = null;
         vm.init = function () {
             vm.loading = true;
             socket = io('http://127.0.0.1:8006');
@@ -41,6 +41,11 @@ mainApp.controller('OwnerChatController', [
                     vm.loading = false;
                 });
         };
+
+        vm.getMedia = function () {
+            chatService.getAllMedia(vm.chatId).then((response) =>
+                console.log(response));
+        }
 
         $scope.$on('$destroy', function () {
             if (socket) {
@@ -149,5 +154,6 @@ mainApp.controller('OwnerChatController', [
             vm.showModal = false;
             vm.modalImage = '';
         };
+
     }
 ]);

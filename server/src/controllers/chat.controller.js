@@ -1,6 +1,6 @@
 import Conversations from "../models/conversation.model.js";
 import Messages from "../models/message.model.js";
-
+import { Attachment } from "../models/attatchment.model.js";
 /**
  * @function createChat
  * @description Create a new chat between a user and an owner for a specific car.
@@ -215,3 +215,37 @@ export const getChatParticipants = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch chat participants.", details: error.message });
     }
 };
+
+
+
+/**
+ * Get All The Media Files related to a particular chat.
+ * @function getChatParticipants
+ * @async
+ * @param {*} req 
+ * @param {*} res 
+ * @returns {*} 
+ */
+export const getAllMedia = async (req, res) => {
+    const { chatId } = req.query;
+    console.log(chatId);
+    try {
+        const data = await Attachment.aggregate(
+            [
+                {
+                    $match: {
+                        'refId': chatId
+                    }
+                },
+                {
+                    $project: {
+                        url: 1
+                    }
+                }
+            ]
+        )
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch media files.", details: error })
+    }
+}

@@ -70,9 +70,9 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
                 fromUser,
                 toUser,
                 message,
-                attachment : attachment || null
+                attachment: attachment || null
             };
-            console.log('Chat Service :: ',messageData);
+            console.log('Chat Service :: ', messageData);
             return $http.post(`${BASE_URL}/messages/send`, messageData)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'ChatService :: Message Send Failed'));
@@ -152,10 +152,10 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
         };
 
         /**
- * Function :: getCarIdFromChatId
- * @param {string} chatId - The chat ID in the format "userId_ownerId_carId".
- * @returns {string} - The extracted car ID.
- */
+         * Function :: getCarIdFromChatId
+         * @param {string} chatId - The chat ID in the format "userId_ownerId_carId".
+         * @returns {string} - The extracted car ID.
+         */
         this.getCarIdFromChatId = function (chatId) {
             if (!chatId || typeof chatId !== 'string') {
                 throw new Error('Invalid chatId');
@@ -165,6 +165,20 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
                 throw new Error('Invalid chatId format');
             }
             return parts[2]; // Return the carId (last part of the chatId)
+        }
+
+
+         /**
+         * Function :: Get All Media of a particular chat
+         * @requires chatId 
+         * @returns {string} - Data of all attachments
+         */
+        this.getAllMedia = function (chatId) {
+            if (!chatId) {
+                throw new Error('Invalid Chat Id');
+            }
+
+            return $http.get(`${BASE_URL}/conversationfiles?chatId=${chatId}`).then(response=>response.data).catch(err => errorService.handleError(err, 'ChatService :: Chat Participants Fetch Failed'));
         }
     }
 ]);

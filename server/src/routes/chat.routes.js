@@ -6,6 +6,7 @@ import {
     getMessages,
     sendMessage,
     getChatParticipants,
+    getAllMedia,
 } from "../controllers/chat.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 
@@ -22,5 +23,8 @@ router.get("/messages/:chatId", authenticate, getMessages);
 router.post("/messages/send", authenticate, sendMessage);
 
 router.get("/participants/:chatId", authenticate, getChatParticipants);
+
+router.get("/conversationfiles", authenticate, getAllMedia);
+
 
 export default router;

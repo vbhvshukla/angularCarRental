@@ -11,7 +11,7 @@ const bidSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'rejected','cancelled'],
+        enum: ['pending', 'accepted', 'rejected', 'cancelled'],
         default: 'pending'
     },
     bidAmount: {
@@ -30,7 +30,7 @@ const bidSchema = new mongoose.Schema({
     user: {
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref:'User',
+            ref: 'User',
             required: true
         },
         username: {
@@ -50,7 +50,7 @@ const bidSchema = new mongoose.Schema({
     car: {
         carId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref:'Car',
+            ref: 'Car',
             required: true
         },
         carName: {
@@ -90,7 +90,7 @@ const bidSchema = new mongoose.Schema({
         owner: {
             userId: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref:'User',
+                ref: 'User',
                 required: true
             },
             username: {
@@ -125,4 +125,4 @@ const bidSchema = new mongoose.Schema({
 });
 bidSchema.index({ "car.owner.userId": 1, createdAt: 1 });
 export const Bid = mongoose.model("Bid", bidSchema);
-export {bidSchema}
+export { bidSchema }

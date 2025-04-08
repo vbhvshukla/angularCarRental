@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
-import { app } from "./app.js";
-import connectDb from "./config/db.config.js";
 import http from 'http';
+import connectDb from "./config/db.config.js";
+import { app } from "./app.js";
 import { Server } from 'socket.io';
-import { processBids } from "./services/sqsConsumer.service.js";
 import { Worker } from "worker_threads";
 
 /** Global Configuration :: dotENV */
 dotenv.config({ path: ".env" });
+
 const worker = new Worker("./src/utils/sqsWorker.utils.js");
 
 /** DB Connection */
