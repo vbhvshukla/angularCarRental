@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import http from 'http';
 import connectDb from "./config/db.config.js";
 import { app } from "./app.js";
-import { Server } from 'socket.io';
 import { Worker } from "worker_threads";
+import { initializeSocket } from "./services/socket.service.js";
 
 /** Global Configuration :: dotENV */
 dotenv.config({ path: ".env" });
@@ -15,36 +15,11 @@ connectDb()
   .then(() => {
     //Create a socket.io server
     const server = http.createServer(app);
-    const io = new Server(server, {
-      cors: {
-        origin: 'http://127.0.0.1:5500',
-        methods: ['GET', 'POST']
-      }
-    });
-
-    // Set the io instance to be gobally be available for use
-    app.set('io', io);
-
-    io.on('connection', (socket) => {
-      console.log('A user connected:', socket.id);
-
-      // Join the room which is the chatid in the conversation.
-      socket.on('joinChat', (chatId) => {
-        socket.join(chatId);
-        console.log(`User joined chat: ${chatId}`);
-      });
-
-      // Handle disconnection
-      socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
-      });
-    });
-
+    const io = initializeSocket(server, app);
 
     server.listen(process.env.PORT || 8002, () => {
       console.log(`Server is running at port : ${process.env.PORT}`);
     });
-
 
     worker.on('message', (message) => {
       if (message === "done") {
@@ -67,8 +42,7 @@ connectDb()
       }
     });
 
-
-    //from stackoverflow
+    //explaination -> The SIGINT signal is sent to the process when the user interrupts it (e.g., by pressing Ctrl+C).
     process.on("SIGINT", () => {
       console.log("Main Thread: Terminating worker...");
       worker.postMessage("terminate");

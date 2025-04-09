@@ -48,6 +48,7 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
                 else {
                     vm.currentUser = results.user;
                     vm.messages = results.messages;
+                    vm.scrollToBottom();
                 }
             })
         }
@@ -117,6 +118,7 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
                 })
                 .then((messages) => {
                     vm.messages = messages;
+                    vm.scrollToBottom();
                 })
                 .catch((error) => {
                     console.log("Message controller :: Error in sending message :: ", error);
@@ -144,6 +146,15 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        };
+
+        vm.scrollToBottom = function () {
+            $timeout(() => {
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }, 0);
         };
 
         $scope.$on('$destroy', function () {

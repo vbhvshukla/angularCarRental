@@ -1,11 +1,10 @@
 <div class="chatbox" ng-controller="OwnerChatController as vm" ng-init="vm.init()"
-    style="display: flex; min-height: 350px; flex-direction: column; gap: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    style="display: flex; min-height: 350px; background-image:url('../../../../../assets/images/chatWallpaper.png');flex-direction: column; gap: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     <h3>Chat with {{vm.messages[0].fromUser.userId === vm.currentUser._id ? vm.messages[0].toUser.username :
-        vm.messages[0].fromUser.username}}</h3>
-    <button ng-click="vm.getMedia()">All Media</button>
-    <div id="chat-messages" class="chat-messages"
-        style="flex-grow: 1; overflow-y: auto; max-height: 500px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-        <div ng-if="!vm.messages.length" class="no-messages" style="text-align: center; color: #6c757d; padding: 20px;">
+        vm.messages[0].fromUser.username | capitalize}}</h3> 
+    <button ng-click="vm.showImageModal()" class="btn btn-primary col-md-2">All Media</button>
+    <div id="chat-messages" class="chat-messages" style="flex-grow: 1; overflow-y: auto; max-height: 500px; padding: 15px; background: #ffffff; border-radius: 8px; border: 1px solid #dee2e6;">
+        <div ng-if="!vm.messages.length" class="no-messages" style="text-align: center; color: #3f3f3f; padding: 20px;">
             No messages yet
         </div>
 
@@ -13,8 +12,8 @@
             ng-class="{'message-you': msg.fromUser.userId === vm.currentUser._id, 'message-other': msg.fromUser.userId !== vm.currentUser._id}"
             style="padding: 12px; margin-bottom: 12px; border-radius: 8px; max-width: 100%; word-wrap: break-word;">
             <div>
-                <strong>{{msg.fromUser.userId === vm.currentUser._id ? 'You' : msg.fromUser.username}}:</strong>
-                {{msg.message}}
+                <strong>{{msg.fromUser.userId === vm.currentUser._id ? 'You' : msg.fromUser.username | capitalize}}:</strong>
+                {{msg.message | capitalize}}
             </div>
             <div ng-if="msg.attachment" ng-style="{'display': 'flex', 'justify-content': msg.fromUser.userId === vm.currentUser._id ? 'flex-end' : 'flex-start'}">
                 <img ng-if="msg.attachment.url" ng-src="{{msg.attachment.url}}" class="chat-attachment"
@@ -46,6 +45,12 @@
 </div>
 
 <style>
+    .chatbox {
+         /* Replace with the actual path to the wallpaper */
+        background-size: cover;
+        background-position: center;
+    }
+
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
@@ -59,12 +64,12 @@
     }
 </style>
 
-<div id="imageModal" class="modal" ng-show="vm.showModal"
-    style="display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+<div ng-if="vm.showModal" id="imageModal" class="modal"  style="display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
     <div class="modal-content"
         style="background-color: #fff; border-radius: 8px; padding: 20px; max-width: 90%; max-height: 90%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <span class="close" ng-click="vm.closeModal()"
             style="cursor: pointer; font-size: 2em; color: #aaa;">&times;</span>
-        <img ng-src="{{vm.modalImage}}" style="width: 100%;">
+        <img ng-src="#" style="width: 100%;">
+        Testing modal
     </div>
 </div>

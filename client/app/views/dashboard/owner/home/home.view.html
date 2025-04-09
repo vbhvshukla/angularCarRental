@@ -133,11 +133,11 @@
                                     <td>{{booking.bid.car.carName}}</td>
                                     <td>{{booking.bid.bidAmount | price}}</td>
                                     <td>{{booking.totalFare | price}}</td>
-                                    <td>{{booking.bid.user.username}}</td>
-                                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.rentalType}}</td>
+                                    <td>{{booking.bid.user.username | capitalize}}</td>
+                                    <td>{{booking.fromTimestamp | date:'medium'}}</td>
+                                    <td>{{booking.toTimestamp | date:'medium'}}</td>
+                                    <td>{{booking.createdAt |date:'medium'}}</td>
+                                    <td>{{booking.rentalType | capitalize}}</td>
                                     <td>
                                         <button
                                             ng-if="vm.isBookingOver(booking) && booking.extraHourCharges === 0 && booking.extraKmCharges === 0"
@@ -147,8 +147,7 @@
                                         </button>
                                         <span ng-if="!vm.isBookingOver(booking)">N/A</span>
                                         <span
-                                            ng-if="vm.isBookingOver(booking) && (booking.extraHourCharges !== 0 || booking.extraKmCharges !== 0)">Additional
-                                            charges added</span>
+                                            ng-if="vm.isBookingOver(booking) && (booking.extraHourCharges !== 0 || booking.extraKmCharges !== 0)">Booking Completed</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -218,14 +217,14 @@
 
                                 <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids)"
                                     style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                                    <td>{{bid.car.carName}}</td>
+                                    <td>{{bid.car.carName | capitalize}}</td>
                                     <td>{{bid.bidBaseFare | price}}</td>
                                     <td>{{bid.bidAmount | price}}</td>
-                                    <td>{{bid.user.username}}</td>
-                                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{bid.rentalType}}</td>
-                                    <td>{{bid.status}}</td>
+                                    <td>{{bid.user.username | capitalize}}</td>
+                                    <td>{{bid.fromTimestamp | date:'medium'}}</td>
+                                    <td>{{bid.toTimestamp | date:'medium'}}</td>
+                                    <td>{{bid.rentalType | capitalize}}</td>
+                                    <td>{{bid.status | capitalize}}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -30,9 +30,9 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="user in vm.users | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentPage - 1) * vm.itemsPerPage">
-                                <td>{{user.username}}</td>
-                                <td>{{user.email}}</td>
-                                <td>{{user.role}}</td>
+                                <td>{{user.username | capitalize}}</td>
+                                <td>{{user.email | capitalize}}</td>
+                                <td>{{user.role | capitalize}}</td>
                                 <td class="hidden-xs">{{user.rating.avgRating}}</td>
                                 <td class="hidden-xs">{{user.rating.ratingCount}}</td>
                                 <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
@@ -90,10 +90,10 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="car in vm.cars | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCarPage - 1) * vm.itemsPerPage">
-                                <td>{{car.carName}}</td>
-                                <td>{{car.category.categoryName}}</td>
-                                <td>{{car.owner.username}}</td>
-                                <td class="hidden-xs">{{car.city}}</td>
+                                <td>{{car.carName | capitalize}}</td>
+                                <td>{{car.category.categoryName | capitalize}}</td>
+                                <td>{{car.owner.username | capitalize}}</td>
+                                <td class="hidden-xs">{{car.city | capitalize}}</td>
                                 <td>
                                     <div>Local: {{car.rentalOptions.local.pricePerHour | price}}</div>
                                     <div>Out: {{car.rentalOptions.outstation.pricePerDay | price}}</div>
@@ -140,7 +140,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="category in vm.categories | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCategoryPage - 1) * vm.itemsPerPage">
-                                <td>{{category.categoryName}}</td>
+                                <td>{{category.categoryName | capitalize}}</td>
                                 <td>
                                     <button class="btn btn-danger btn-sm" ng-click="vm.deleteCategory(category)">
                                         Delete

@@ -11,9 +11,10 @@ mainApp.controller('OwnerChatController', [
         vm.selectedFile = null;
         vm.currentUser = null;
         vm.showModal = false;
-        vm.modalImage = '';
+        vm.modalImages = [];
         vm.isLoading = false;
         vm.media = null;
+
         vm.init = function () {
             vm.loading = true;
             socket = io('http://127.0.0.1:8006');
@@ -32,7 +33,7 @@ mainApp.controller('OwnerChatController', [
                 .then(([user, messages]) => {
                     vm.currentUser = user;
                     vm.messages = messages;
-                    chatService.scrollToBottom();
+                    vm.scrollToBottom();
                 })
                 .catch(error => {
                     errorService.handleError('Failed to load chat', error);
@@ -43,8 +44,8 @@ mainApp.controller('OwnerChatController', [
         };
 
         vm.getMedia = function () {
-            chatService.getAllMedia(vm.chatId).then((response) =>
-                console.log(response));
+            return chatService.getAllMedia(vm.chatId).then((response) =>
+             response);
         }
 
         $scope.$on('$destroy', function () {
@@ -126,7 +127,7 @@ mainApp.controller('OwnerChatController', [
                 })
                 .then((messages) => {
                     vm.messages = messages;
-                    chatService.scrollToBottom();
+                    vm.scrollToBottom();
                 })
                 .catch((error) => {
                     errorService.handleError('Failed to send message', error);
@@ -136,8 +137,8 @@ mainApp.controller('OwnerChatController', [
                 });
         };
 
-        vm.showImageModal = function (imageUrl) {
-            vm.modalImage = imageUrl;
+        vm.showImageModal = function () {
+            vm.modalImages = vm.getMedia();
             vm.showModal = true;
         };
 
@@ -153,6 +154,15 @@ mainApp.controller('OwnerChatController', [
         vm.closeModal = function () {
             vm.showModal = false;
             vm.modalImage = '';
+        };
+
+        vm.scrollToBottom = function () {
+            $timeout(() => {
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }, 0);
         };
 
     }

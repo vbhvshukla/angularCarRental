@@ -21,6 +21,7 @@ import ownerAnalyticsRoutes from "./routes/ownerAnalytics.routes.js";
 import adminAnalyticsRoutes from "./routes/adminAnalytics.routes.js";
 import predictiveAnalyticsRoutes from "./routes/predictiveAnalytics.routes.js";
 import uploadRoute from "./routes/upload.routes.js";
+
 /** For OpenAPI Docs */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

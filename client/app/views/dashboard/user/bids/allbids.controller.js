@@ -5,14 +5,17 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
 
         /** Variable declaration */
         let vm = this;
-        vm.bids = {};
-        vm.filteredBids = {};
+        vm.bids = [];
+        vm.filteredBids = [];
+        vm.paginatedBids = [];
         vm.filters = {
             rentalType: '',
             status: ''
         };
-        vm.chatId = "";
 
+        // Pagination variables
+        vm.currentPage = 1;
+        vm.itemsPerPage = 5;
 
         /**
          * Function :: Initialization
@@ -26,7 +29,7 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
         /**
          * Function :: Load User's Bids
          * @function loadUserBids()
-         * @description Get the user logged in -> Fetch it's bids.
+         * @description Get the user logged in -> Fetch its bids.
          * @requires async,userFactory,bidService
          */
 
@@ -42,16 +45,14 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
                         .then(bids => callback(null, { bids }))
                         .catch(err => callback(err));
                 }
-
             ], function (err, results) {
                 if (err) {
-                    console.error('User Dashboard :: All Bids Controller :: Error Getting Bids :: ', err);
-                }
-                else {
+                    console.error('Error Getting Bids:', err);
+                } else {
                     vm.bids = results.bids;
                     vm.filterBids();
                 }
-            })
+            });
         }
 
         /**
@@ -72,6 +73,19 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
                 }
                 return matchRentalType && matchStatus;
             });
+            vm.updatePagination();
+        };
+
+        /**
+         * Function :: Update Pagination
+         * @function updatePagination()
+         * @description Updates the paginated bids based on the current page and items per page.
+         */
+
+        vm.updatePagination = function () {
+            const start = (vm.currentPage - 1) * vm.itemsPerPage;
+            const end = start + vm.itemsPerPage;
+            vm.paginatedBids = vm.filteredBids.slice(start, end);
         };
 
         /**
@@ -90,7 +104,7 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
                         vm.filterBids();
                     })
                     .catch(function (error) {
-                        console.error('User Dashboard :: All Bids Controller :: Error Cancelling Bids', error);
+                        console.error('Error Cancelling Bids', error);
                         bid.status = 'pending';
                     });
             }

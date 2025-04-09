@@ -4,10 +4,8 @@ import { Car } from "../models/car.model.js";
 import { Bid } from "../models/bid.model.js";
 import mongoose from 'mongoose';
 
-// Initialize Gemini API with safety settings
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Configure safety settings
 const safetySettings = [
     {
         category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -27,13 +25,11 @@ const safetySettings = [
     },
 ];
 
-// Initialize the model with safety settings
 const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     safetySettings: safetySettings
 });
 
-// Helper function to prepare historical data for owner
 const prepareOwnerHistoricalData = async (ownerId, timeframe) => {
     console.log(ownerId);
     ownerId = new mongoose.Types.ObjectId(ownerId);
@@ -88,7 +84,6 @@ const prepareOwnerHistoricalData = async (ownerId, timeframe) => {
     };
 };
 
-// Helper function to prepare historical data for admin
 const prepareAdminHistoricalData = async (timeframe) => {
     const startDate = new Date(Date.now() - timeframe);
 
@@ -133,7 +128,6 @@ const prepareAdminHistoricalData = async (timeframe) => {
     };
 };
 
-// Helper function to create owner prediction prompt
 const createOwnerPredictionPrompt = (historicalData) => {
     return `
         Analyze this car rental data and provide detailed predictions and recommendations for the car owner:
@@ -163,17 +157,13 @@ const createOwnerPredictionPrompt = (historicalData) => {
     `;
 };
 
-
 const createAdminPredictionPrompt = (historicalData) => {
 
-    // Calculate some basic metrics from historical data
     const totalBookings = historicalData.bookings.length;
     const totalRevenue = historicalData.bookings.reduce((sum, booking) => sum + booking.revenue, 0);
     const uniqueUsers = new Set(historicalData.bookings.map(booking => booking.userId)).size;
     const uniqueCities = new Set(historicalData.bookings.map(booking => booking.city)).size;
     const categories = [...new Set(historicalData.bookings.map(booking => booking.category))];
-
-    // Calculate bid success rate
     const totalBids = historicalData.bids.length;
     const acceptedBids = historicalData.bids.filter(bid => bid.status === 'accepted').length;
     const bidSuccessRate = (acceptedBids / totalBids) * 100;
@@ -229,7 +219,6 @@ const createAdminPredictionPrompt = (historicalData) => {
     `;
 };
 
-
 const generateContentWithRetry = async (prompt, maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
@@ -242,7 +231,6 @@ const generateContentWithRetry = async (prompt, maxRetries = 3) => {
         }
     }
 };
-
 
 export const getOwnerPredictions = async (req, res) => {
     try {

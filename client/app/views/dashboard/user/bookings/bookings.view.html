@@ -47,15 +47,15 @@
                         <tbody>
                             <tr ng-repeat="booking in vm.bookings"
                                 style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                                <td class="hidden-xs">{{booking.bid.car.carName}}</td>
-                                <td class="hidden-xs">{{booking.bid.car.owner.username}}</td>
+                                <td class="hidden-xs">{{booking.bid.car.carName | capitalize}}</td>
+                                <td class="hidden-xs">{{booking.bid.car.owner.username | capitalize}}</td>
                                 <td>{{booking.bid.bidAmount | price}}</td>
                                 <td class="hidden-xs">{{booking.fromTimestamp | date:'MM/dd/yyyy'}}</td>
                                 <td class="hidden-xs">{{booking.toTimestamp | date:'MM/dd/yyyy'}}</td>
                                 <td class="hidden-xs hidden-sm">{{booking.createdAt | date:'MM/dd/yyyy'}}</td>
                                 <td>{{booking.totalFare | price}}</td>
                                 <td>
-                                    {{booking.status}}
+                                    {{booking.status | capitalize}}
                                 </td>
                                 <td style="white-space: nowrap;">
                                     <button ng-if="booking.status !== 'cancelled'"

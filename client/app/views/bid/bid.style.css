@@ -53,7 +53,7 @@
   padding: 8px;
   margin-bottom: 10px;
   border-radius: 4px;
-  background-color: #e9ecef;
+  background-color: #e5f0fc;
   max-width: 100%;
 }
 
@@ -84,11 +84,11 @@
 }
 
 .message-you {
-  background-color: #e5f0fc;
+  background-color:#8ec4ff5c ;
   text-align: right;
 }
 .message-owner {
-  background-color: #e9ecef;
+  background-color: #e5f0fc;
   text-align: left;
 }
 .chat-input {
