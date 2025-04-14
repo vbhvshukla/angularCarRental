@@ -7,6 +7,7 @@ import {
     updatePassword,
     validatePassword
 } from "../controllers/user.controller.js";
+import { authenticate, authorize } from "../middlewares/auth.middleware.js";
 
 /** Router Instance */
 const router = Router();
@@ -14,14 +15,14 @@ const router = Router();
 /** Routes */
 router.get("/:userId", getUserById);
 
-router.get("/", getAllUsers);
+router.get("/", authenticate, authorize("admin"), getAllUsers);
 
-router.put("/approve/:userId", approveUser);
+router.put("/approve/:userId", authenticate, authorize("admin"), approveUser);
 
-router.put("/reject/:userId", rejectUser);
+router.put("/reject/:userId", authenticate, authorize("admin"), rejectUser);
 
-router.put("/password/:userId", updatePassword);
+router.put("/password/:userId", authenticate, updatePassword);
 
-router.post('/validatepassword', validatePassword);
+router.post('/validatepassword', authenticate, validatePassword);
 
 export default router;

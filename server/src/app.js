@@ -21,6 +21,7 @@ import ownerAnalyticsRoutes from "./routes/ownerAnalytics.routes.js";
 import adminAnalyticsRoutes from "./routes/adminAnalytics.routes.js";
 import predictiveAnalyticsRoutes from "./routes/predictiveAnalytics.routes.js";
 import uploadRoute from "./routes/upload.routes.js";
+import packageRoutes from "./routes/package.routes.js";
 
 /** For OpenAPI Docs */
 const __filename = fileURLToPath(import.meta.url);
@@ -79,6 +80,7 @@ app.use(`${API_PREFIX}/owneranalytics`, ownerAnalyticsRoutes);
 app.use(`${API_PREFIX}/adminanalytics`, adminAnalyticsRoutes);
 app.use(`${API_PREFIX}/predictive`, predictiveAnalyticsRoutes);
 app.use(`${API_PREFIX}/upload`, uploadRoute);
+app.use(`${API_PREFIX}/packages`, packageRoutes);
 
 /** OpenAPI documentation*/
 const openapiPath = path.resolve(__dirname, '../docs/openapi.json');

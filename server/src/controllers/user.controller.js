@@ -66,6 +66,7 @@ const approveUser = async (req, res) => {
     try {
         const { userId } = req.params;
         const user = await User.findByIdAndUpdate(userId, { isApproved: true }, { new: true });
+        console.log(user);
         if (!user) {
             return res.status(404).json({ msg: "User Controller :: User not found" });
         }

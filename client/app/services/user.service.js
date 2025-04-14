@@ -54,7 +54,7 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
         this.updatePassword = function (newPassword) {
             return authService.getUser()
                 .then(user => {
-                    return $http.put(`${BASE_URL}/updatepassword/${user.userId}`, { newPassword })
+                    return $http.put(`${BASE_URL}/password/${user._id}`, { newPassword })
                         .then(response => response.data)
                         .catch(error => errorService.handleError(error, 'UserService :: Password Update Failed'));
                 });

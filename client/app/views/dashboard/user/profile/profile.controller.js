@@ -27,13 +27,12 @@ mainApp.controller('UserProfileController', [
                 return;
             }
 
-            if (typeof vm.user.validatePassword !== 'function') {
-                vm.oldPasswordError = 'Password validation is not supported.';
-                console.error("Profile Controller :: validatePassword method is missing on user object.");
-                return;
-            }
-
-            vm.user.validatePassword(vm.oldPassword)
+            // if (typeof vm.user.validatePassword !== 'function') {
+            //     vm.oldPasswordError = 'Password validation is not supported.';
+            //     console.error("Profile Controller :: validatePassword method is missing on user object.");
+            //     return;
+            // }
+            userFactory.createUser(vm.user).validatePassword(vm.oldPassword)
                 .then(isValid => {
                     vm.showNewPasswordField = isValid;
                     vm.oldPasswordError = isValid ? '' : 'Incorrect old password.';
@@ -54,7 +53,7 @@ mainApp.controller('UserProfileController', [
             if (!vm.validateNewPassword()) return;
 
             vm.isUpdating = true;
-            vm.user.updatePassword(vm.newPassword)
+            userFactory.createUser(vm.user).updatePassword(vm.newPassword)
                 .then(() => {
                     errorService.logSuccess('Password updated successfully!');
                     vm.newPassword = '';
