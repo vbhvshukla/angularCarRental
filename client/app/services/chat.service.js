@@ -1,7 +1,9 @@
 mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
     function ($http, $q, errorService, $timeout) {
+        
+        // Local const BASE_URL = 'http://127.0.0.1:8006/api/v1/chat';
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/chat';
 
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/chat';
 
         /**
          * @function generateChatId()

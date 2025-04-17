@@ -8,7 +8,8 @@
 mainApp.service('predictiveAnalyticsService', [
     '$q', '$http',
     function ($q, $http) {
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/predictive';
+        // const BASE_URL = 'http://127.0.0.1:8006/api/v1/predictive';
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/predictive';
 
         /**
          * Function : Get Admin Predictions

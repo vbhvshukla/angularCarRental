@@ -1,5 +1,7 @@
 mainApp.service('packageService', ['$http', '$q', function ($http, $q) {
-    const BASE_URL = 'http://127.0.0.1:8006/api/v1/packages';
+
+    // const BASE_URL = 'http://127.0.0.1:8006/api/v1/packages';
+    const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/packages';
 
     // Fetch all packages with optional query parameters
     this.getAllPackages = function (page = 1, limit = 10, from = null, to = null) {

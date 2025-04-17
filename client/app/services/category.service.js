@@ -2,7 +2,9 @@ mainApp.service('categoryService', function ($http, schemaValidator, idGenerator
     /**
      * Global Variable
      */
-    const BASE_URL = 'http://127.0.0.1:8006/api/v1/category';
+    // const BASE_URL = 'http://127.0.0.1:8006/api/v1/category';
+    
+    const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/category';
 
     /**
      * Category Schema for validation

@@ -6,7 +6,9 @@ mainApp.service('bookingService', ['$http', '$q', 'dbService', 'errorService', '
     var service = this;
     const ITEMS_PER_PAGE = 5;
     const VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'];
-    const BASE_URL = 'http://127.0.0.1:8006/api/v1';
+    // Local :: const BASE_URL = 'http://127.0.0.1:8006/api/v1';
+    const BASE_URL = 'https://carental-12t8.onrender.com/api/v1';
+    
     /**
      * @function calculateBaseFare()
      * @description Calculates the base fare for a booking.

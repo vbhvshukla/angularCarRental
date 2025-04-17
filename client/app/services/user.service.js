@@ -1,8 +1,8 @@
 mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
     function ($http, $q, authService, errorService) {
+        // const BASE_URL = 'http://127.0.0.1:8006/api/v1/user';
 
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/user';
-
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/user';
         /**
          * @function getUser
          * @description Fetches a user by their ID.
@@ -36,7 +36,7 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
          * @param {*} password 
          * @returns resolved or rejected promise.
          */
-        this.validatePassword = function (userId,password) {
+        this.validatePassword = function (userId, password) {
             return authService.getUser()
                 .then(user => {
                     return $http.post(`${BASE_URL}/validatepassword`, { userId: userId, password })

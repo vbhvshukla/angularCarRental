@@ -20,8 +20,10 @@ mainApp.service('analyticsService', [
          *              }     
          *          }
         */
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/ownerAnalytics';
-        const BASE_ADMIN_URL = 'http://127.0.0.1:8006/api/v1/adminanalytics';
+        //  Local :: const BASE_URL = 'http://127.0.0.1:8006/api/v1/ownerAnalytics';
+        
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/ownerAnalytics';
+        const BASE_ADMIN_URL = 'https://carental-12t8.onrender.com/api/v1/adminanalytics';
         this.getOwnerAnalytics = function (ownerId, days = 30) {
             const body = { ownerId, numberOfDays: days };
             console.log(body);
