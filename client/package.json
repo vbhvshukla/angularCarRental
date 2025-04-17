@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "jsdoc -c jsdoc.json",
-    "build": "echo 'No build step required for static files'",
+    "build": "npm install && bower install",
     "start": "serve -s ."
   },
   "author": "",
@@ -24,6 +24,7 @@
     "toastr": "^2.1.4"
   },
   "devDependencies": {
-    "serve": "^14.2.4"
+    "serve": "^14.2.4",
+    "bower": "^1.8.14"
   }
 }
