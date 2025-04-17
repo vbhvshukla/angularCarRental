@@ -5,7 +5,9 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "."
+        "distDir": ".",
+        "installCommand": "npm install && bower install",
+        "buildCommand": "echo 'Build complete'"
       }
     }
   ],
@@ -14,5 +16,9 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
+  ],
+  "ignore": [
+    "node_modules/**",
+    "bower_components/**"
   ]
 } 
