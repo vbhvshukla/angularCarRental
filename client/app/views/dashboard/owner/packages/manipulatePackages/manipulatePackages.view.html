@@ -1,0 +1,115 @@
+<div class="package-form-container" ng-controller="ManipulatePackageController as vm" ng-init="vm.init()">
+
+    <h2>{{vm.isEditMode ? 'Edit Package' : 'Add New Package'}}</h2>
+
+    <form name="packageForm" novalidate ng-submit="vm.submitForm(packageForm.$valid)" class="package-form">
+        <section class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-group">
+                <label for="packageName">Package Name *</label>
+                <input type="text" id="packageName" name="packageName" ng-model="vm.package.name" required ng-minlength="3" ng-maxlength="100">
+                <div class="error-messages" ng-messages="packageForm.packageName.$error" ng-if="packageForm.packageName.$touched && packageForm.packageName.$invalid">
+                    <span ng-message="required">Package name is required</span>
+                    <span ng-message="minlength">Package name must be at least 3 characters</span>
+                    <span ng-message="maxlength">Package name cannot exceed 100 characters</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="packagePrice">Package Price *</label>
+                <input type="number" id="packagePrice" name="packagePrice" ng-model="vm.package.packagePrice" required min="1">
+                <div class="error-messages" ng-messages="packageForm.packagePrice.$error" ng-if="packageForm.packagePrice.$touched && packageForm.packagePrice.$invalid">
+                    <span ng-message="required">Package price is required</span>
+                    <span ng-message="min">Package price must be greater than 0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fromLocation">From Location *</label>
+                <input type="text" id="fromLocation" name="fromLocation" ng-model="vm.package.from" required
+                    uib-typeahead="city for city in vm.cities | filter:$viewValue | limitTo:8"
+                    typeahead-editable="false" typeahead-select-on-blur="true" class="form-control">
+                <div class="error-messages" ng-if="packageForm.fromLocation.$touched && !vm.validateCity(vm.package.from)">
+                    <span>Invalid city selected</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="toLocation">To Location *</label>
+                <input type="text" id="toLocation" name="toLocation" ng-model="vm.package.to" required
+                    uib-typeahead="city for city in vm.cities | filter:$viewValue | limitTo:8"
+                    typeahead-editable="false" typeahead-select-on-blur="true" class="form-control">
+                <div class="error-messages" ng-if="packageForm.toLocation.$touched && !vm.validateCity(vm.package.to)">
+                    <span>Invalid city selected</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" ng-model="vm.package.description" required ng-minlength="10" ng-maxlength="1000"></textarea>
+                <div class="error-messages" ng-messages="packageForm.description.$error" ng-if="packageForm.description.$touched && packageForm.description.$invalid">
+                    <span ng-message="required">Description is required</span>
+                    <span ng-message="minlength">Description must be at least 10 characters</span>
+                    <span ng-message="maxlength">Description cannot exceed 1000 characters</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Package Images *</h3>
+            <div class="form-group">
+                <input type="file" accept="image/*" multiple ng-model="vm.newImages" onchange="angular.element(this).scope().vm.handleImageUpload(this.files)">
+                <div class="image-preview" ng-if="vm.package.images.length">
+                    <div ng-repeat="image in vm.package.images track by $index" class="image-item">
+                        <img ng-src="{{image}}" alt="Package image {{$index + 1}}" style="max-width: 100px; max-height: 100px;">
+                        <button type="button" ng-click="vm.removeImage($index)">Remove</button>
+                    </div>
+                </div>
+                <div class="error-message" ng-if="vm.imageError">{{vm.imageError}}</div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Routes (Max 5)</h3>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" ng-click="vm.openAddRouteModal()" ng-disabled="vm.package.routes.length >= 5">
+                    Add Route
+                </button>
+            </div>
+
+            <div class="route-list" ng-if="vm.package.routes.length > 0">
+                <div class="route-item" ng-repeat="route in vm.package.routes track by $index">
+                    <strong>From:</strong> {{route.from}}, <strong>To:</strong> {{route.to}}, 
+                    <strong>Distance:</strong> {{route.distance}} km, <strong>Duration:</strong> {{route.duration}}, 
+                    <strong>Stay:</strong> {{route.stayDuration}}
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="vm.removeRoute($index)">Remove</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Select Car *</h3>
+            <div class="form-group">
+                <label for="car">Available Cars</label>
+                <select id="car" class="form-control" ng-model="vm.package.car" ng-options="car as car.carName for car in vm.cars track by car._id" required>
+                    <option value="" selected>Select a car</option>
+                </select>
+                <div class="error-messages" ng-if="packageForm.car.$touched && !vm.package.car">
+                    <span>Please select a car for the package</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="submit" ng-disabled="packageForm.$invalid || vm.isSubmitting">
+                {{vm.isEditMode ? 'Update Package' : 'Add Package'}}
+            </button>
+            <button type="button" ng-click="vm.cancel()">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div class="loading-overlay" ng-if="vm.loading">
+    <div class="spinner"></div>
+</div>

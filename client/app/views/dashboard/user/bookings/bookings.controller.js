@@ -1,5 +1,5 @@
-mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'userFactory',
-    function ($state, bookingService, userFactory) {
+mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'carService', 'userFactory', '$uibModal',
+    function ($state, bookingService, carService, userFactory, $uibModal) {
 
         /**Variable Declarations */
         let vm = this;
@@ -83,6 +83,29 @@ mainApp.controller('UserBookingsController', ['$state', 'bookingService', 'userF
         vm.changePage = function (newPage) {
             vm.currentPage = newPage;
             vm.loadBookings();
+        };
+
+        vm.rateCar = function(bookingId, carId) {
+            var modalInstance = $uibModal.open({
+                templateUrl: 'app/components/modals/addRating/addRating.template.html',
+                controller: 'AddRatingController',
+                resolve: {
+                    bookingId: function() {
+                        return bookingId;
+                    },
+                    carId: function() {
+                        return carId;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(response) {
+                // Refresh the bookings list after successful rating
+                vm.loadBookings();
+            }, function() {
+                // Modal dismissed
+                console.log('Modal dismissed');
+            });
         };
 
     }]);

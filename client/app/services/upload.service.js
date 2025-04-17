@@ -10,8 +10,6 @@ mainApp.service('uploadService', ['$http', '$q', function ($http, $q) {
     this.uploadFile = function (file, chatId, fromUser, toUser) {
         const deferred = $q.defer();
 
-
-
         const formData = new FormData();
         formData.append('file', file);
         formData.append('chatId', chatId);
@@ -37,6 +35,31 @@ mainApp.service('uploadService', ['$http', '$q', function ($http, $q) {
             .catch(error => {
                 console.error('UploadService :: File upload failed:', error);
                 return deferred.reject(error);
+            });
+    };
+
+    /**
+     * @function getAttachments
+     * @description Get all attachments for a specific chat
+     * @param {String} chatId - The ID of the chat to fetch attachments for
+     * @returns {Promise} - Resolves with attachment data or rejects with an error
+     */
+    this.getAttachments = function(chatId) {
+        return $http.get(`http://127.0.0.1:8006/api/v1/chat/attachments/${chatId}`)
+            .then(response => {
+                if (response.data && response.data.success) {
+                    return {
+                        success: true,
+                        count: response.data.count,
+                        data: response.data.data
+                    };
+                } else {
+                    return $q.reject('Failed to fetch attachments');
+                }
+            })
+            .catch(error => {
+                console.error('UploadService :: Failed to fetch attachments:', error);
+                return $q.reject(error);
             });
     };
 }]);

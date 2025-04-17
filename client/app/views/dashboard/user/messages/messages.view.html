@@ -4,7 +4,29 @@
             <div class="messages-content" ng-controller="UserMessagesController" ng-init="vm.init()" 
                 style="padding: 20px; width: 100%; border-radius: 8px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1); min-height: 450px; display: flex; flex-direction: column;  background-color: #fff;">
                 
-                <h2 class="page-header" style="margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">All Conversations</h2>
+                <div class="page-header" style="margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <h2 style="margin: 0;">All Conversations</h2>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="input-group" style="margin-top: 5px;">
+                                <input type="text" 
+                                       class="form-control" 
+                                       ng-model="vm.searchQuery" 
+                                       ng-model-options="{debounce: 500}"                                    
+                                       ng-change="vm.searchConversations()"
+                                       placeholder="Search by owner name..."
+                                       style="border-radius: 4px; border: 1px solid #ddd;">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="vm.searchConversations()">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Loading State -->
                 <div ng-if="vm.loading" class="text-center" style="padding: 20px;">
@@ -18,7 +40,7 @@
                     <!-- No Messages State -->
                     <p class="no-messages text-center" ng-if="!vm.messages.length" 
                         style="font-size: 16px; color: #888; padding: 30px 0;">
-                        No conversations
+                        No conversations found
                     </p>
 
                     <!-- Message Items -->
@@ -27,7 +49,7 @@
                         
                         <!-- Profile Image -->
                         <div class="col-xs-2 col-sm-1" style="padding-right: 0;">
-                            <img ng-src="{{vm.message.otherParticipant.profileImage || '../../../app/assets/images/profile.jpg'}}" 
+                            <img ng-src="{{message.owner.profileImage || '../../../app/assets/images/profile.jpg'}}" 
                                 alt="Profile" 
                                 class="img-circle" 
                                 style="width: 50px; height: 50px; object-fit: cover;">
@@ -98,6 +120,10 @@
     .timestamp {
         font-size: 0.8em !important;
     }
+
+    .input-group {
+        margin-top: 10px !important;
+    }
 }
 
 /* Ensure consistent spacing */
@@ -109,5 +135,23 @@
 /* Message item spacing */
 .message-list .row:last-child {
     border-bottom: none;
+}
+
+/* Search bar styling */
+.input-group {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.input-group .form-control {
+    border-right: none;
+}
+
+.input-group .btn {
+    border-left: none;
+    background-color: #fff;
+}
+
+.input-group .btn:hover {
+    background-color: #f8f9fa;
 }
 </style>

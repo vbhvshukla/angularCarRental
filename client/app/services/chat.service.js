@@ -168,17 +168,32 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
         }
 
 
-         /**
-         * Function :: Get All Media of a particular chat
-         * @requires chatId 
-         * @returns {string} - Data of all attachments
-         */
+        /**
+        * Function :: Get All Media of a particular chat
+        * @requires chatId 
+        * @returns {string} - Data of all attachments
+        */
         this.getAllMedia = function (chatId) {
             if (!chatId) {
                 throw new Error('Invalid Chat Id');
             }
 
-            return $http.get(`${BASE_URL}/conversationfiles?chatId=${chatId}`).then(response=>response.data).catch(err => errorService.handleError(err, 'ChatService :: Chat Participants Fetch Failed'));
+            return $http.get(`${BASE_URL}/conversationfiles?chatId=${chatId}`).then(response => response.data).catch(err => errorService.handleError(err, 'ChatService :: Chat Participants Fetch Failed'));
+        }
+
+
+        this.searchOwnerConversation = function (ownerId, searchQuery) {
+            if (!searchQuery) {
+                throw new Error('Invalid Search Parameter');
+            }
+            return $http.get(`${BASE_URL}/owner/search/${ownerId}?searchQuery=${searchQuery}`).then(response => response.data).catch(error => errorService.handleError('ChatService :: Failed to search vonersations', error))
+        }
+
+        this.searchUserConversation = function (userId, searchQuery) {
+            if (!searchQuery) {
+                throw new Error('Invalid Search Parameter');
+            }
+            return $http.get(`${BASE_URL}/user/search/${userId}?searchQuery=${searchQuery}`).then(response => response.data).catch(error => errorService.handleError('ChatService :: Failed to search vonersations', error))
         }
     }
 ]);

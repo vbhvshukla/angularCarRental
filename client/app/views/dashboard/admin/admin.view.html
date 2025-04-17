@@ -1,166 +1,150 @@
-    <div class="container-fluid" style="width: 76%;" ng-controller="AdminController as vm" ng-init="vm.init()">
-    <!-- Users Section -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-default" 
-                style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                <div class="panel-heading" style="background: none; border: none;">
-                    <h3 style="margin-top: 0;">Users</h3>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th ng-click="vm.sortBy('role')" class="sortable" style="cursor: pointer;">
-                                    Role <span class="caret"></span>
-                                </th>
-                                <th ng-click="vm.sortBy('rating')" class="sortable hidden-xs" style="cursor: pointer;">
-                                    Rating <span class="caret"></span>
-                                </th>
-                                <th ng-click="vm.sortBy('ratingCount')" class="sortable hidden-xs" style="cursor: pointer;">
-                                    Rating Count <span class="caret"></span>
-                                </th>
-                                <th ng-click="vm.sortBy('isApproved')" class="sortable" style="cursor: pointer;">
-                                    Approved <span class="caret"></span>
-                                </th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="user in vm.users | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentPage - 1) * vm.itemsPerPage">
-                                <td>{{user.username | capitalize}}</td>
-                                <td>{{user.email | capitalize}}</td>
-                                <td>{{user.role | capitalize}}</td>
-                                <td class="hidden-xs">{{user.rating.avgRating}}</td>
-                                <td class="hidden-xs">{{user.rating.ratingCount}}</td>
-                                <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" ng-click="vm.showUserApprovalModal(user)">
-                                        Manage
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <ul uib-pagination 
-                            total-items="vm.totalUsers" 
-                            ng-model="vm.currentPage" 
-                            max-size="5" 
-                            items-per-page="5"
-                            class="pagination pagination-sm"
-                            boundary-links="true">
-                        </ul>
+<div class="container-fluid" style="width: 76%; min-height: 100vh;" ng-controller="AdminController as vm" ng-init="vm.init()">
+    <div class="panel panel-default" 
+        style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh;">
+        <div class="panel-heading" style="background: none; border: none; padding: 0 0 20px 0;">
+            <uib-tabset active="active" class="admin-tabs">
+                <uib-tab heading="Users">
+                    <div class="panel-body table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th ng-click="vm.sortBy('role')" class="sortable" style="cursor: pointer;">
+                                        Role <span class="caret"></span>
+                                    </th>
+                                    <th ng-click="vm.sortBy('rating')" class="sortable hidden-xs" style="cursor: pointer;">
+                                        Rating <span class="caret"></span>
+                                    </th>
+                                    <th ng-click="vm.sortBy('ratingCount')" class="sortable hidden-xs" style="cursor: pointer;">
+                                        Rating Count <span class="caret"></span>
+                                    </th>
+                                    <th ng-click="vm.sortBy('isApproved')" class="sortable" style="cursor: pointer;">
+                                        Approved <span class="caret"></span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="user in vm.users | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentPage - 1) * vm.itemsPerPage">
+                                    <td>{{user.username | capitalize}}</td>
+                                    <td>{{user.email | capitalize}}</td>
+                                    <td>{{user.role | capitalize}}</td>
+                                    <td class="hidden-xs">{{user.rating.avgRating}}</td>
+                                    <td class="hidden-xs">{{user.rating.ratingCount}}</td>
+                                    <td>{{user.isApproved ? 'Yes' : 'No'}}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" ng-click="vm.showUserApprovalModal(user)">
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <ul uib-pagination 
+                                total-items="vm.totalUsers" 
+                                ng-model="vm.currentPage" 
+                                max-size="5" 
+                                items-per-page="5"
+                                class="pagination pagination-sm"
+                                boundary-links="true">
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </uib-tab>
 
-    <!-- Cars Section -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-default" 
-                style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                <div class="panel-heading" style="background: none; border: none;">
-                    <h3 style="margin-top: 0;">Cars</h3>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Car Name</th>
-                                <th ng-click="vm.sortBy('categoryName')" class="sortable" style="cursor: pointer;">
-                                    Category <span class="caret"></span>
-                                </th>
-                                <th>Owner</th>
-                                <th class="hidden-xs">City</th>
-                                <th ng-click="vm.sortBy('basePrice')" class="sortable" style="cursor: pointer;">
-                                    Base Price <span class="caret"></span>
-                                </th>
-                                <th ng-click="vm.sortBy('rating')" class="sortable hidden-xs" style="cursor: pointer;">
-                                    Rating <span class="caret"></span>
-                                </th>
-                                <th ng-click="vm.sortBy('availability')" class="sortable" style="cursor: pointer;">
-                                    Available <span class="caret"></span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="car in vm.cars | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCarPage - 1) * vm.itemsPerPage">
-                                <td>{{car.carName | capitalize}}</td>
-                                <td>{{car.category.categoryName | capitalize}}</td>
-                                <td>{{car.owner.username | capitalize}}</td>
-                                <td class="hidden-xs">{{car.city | capitalize}}</td>
-                                <td>
-                                    <div>Local: {{car.rentalOptions.local.pricePerHour | price}}</div>
-                                    <div>Out: {{car.rentalOptions.outstation.pricePerDay | price}}</div>
-                                </td>
-                                <td class="hidden-xs">{{car.rating.avgRating}}</td>
-                                <td>
-                                    <div>Local: {{car.isAvailableForLocal ? 'Yes' : 'No'}}</div>
-                                    <div>Out: {{car.isAvailableForOutstation ? 'Yes' : 'No'}}</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <ul uib-pagination 
-                            total-items="vm.totalCars" 
-                            ng-model="vm.currentCarPage" 
-                            max-size="5"
-                            items-per-page="vm.itemsPerPage" 
-                            class="pagination pagination-sm"
-                            boundary-links="true">
-                        </ul>
+                <uib-tab heading="Cars">
+                    <div class="panel-body table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Car Name</th>
+                                    <th ng-click="vm.sortBy('categoryName')" class="sortable" style="cursor: pointer;">
+                                        Category <span class="caret"></span>
+                                    </th>
+                                    <th>Owner</th>
+                                    <th class="hidden-xs">City</th>
+                                    <th ng-click="vm.sortBy('basePrice')" class="sortable" style="cursor: pointer;">
+                                        Base Price <span class="caret"></span>
+                                    </th>
+                                    <th ng-click="vm.sortBy('rating')" class="sortable hidden-xs" style="cursor: pointer;">
+                                        Rating <span class="caret"></span>
+                                    </th>
+                                    <th ng-click="vm.sortBy('availability')" class="sortable" style="cursor: pointer;">
+                                        Available <span class="caret"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="car in vm.cars | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCarPage - 1) * vm.itemsPerPage">
+                                    <td>{{car.carName | capitalize}}</td>
+                                    <td>{{car.category.categoryName | capitalize}}</td>
+                                    <td>{{car.owner.username | capitalize}}</td>
+                                    <td class="hidden-xs">{{car.city | capitalize}}</td>
+                                    <td>
+                                        <div>Local: {{car.rentalOptions.local.pricePerHour | price}}</div>
+                                        <div>Out: {{car.rentalOptions.outstation.pricePerDay | price}}</div>
+                                    </td>
+                                    <td class="hidden-xs">{{car.rating.avgRating}}</td>
+                                    <td>
+                                        <div>Local: {{car.isAvailableForLocal ? 'Yes' : 'No'}}</div>
+                                        <div>Out: {{car.isAvailableForOutstation ? 'Yes' : 'No'}}</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <ul uib-pagination 
+                                total-items="vm.totalCars" 
+                                ng-model="vm.currentCarPage" 
+                                max-size="5"
+                                items-per-page="vm.itemsPerPage" 
+                                class="pagination pagination-sm"
+                                boundary-links="true">
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </uib-tab>
 
-    <!-- Categories Section -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-default" 
-                style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                <div class="panel-heading" style="background: none; border: none;">
-                    <h3 style="margin-top: 0;">Categories</h3>
-                    <button class="btn btn-info" ng-click="vm.showAddCategoryModal()">Add Category</button>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Category Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="category in vm.categories | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCategoryPage - 1) * vm.itemsPerPage">
-                                <td>{{category.categoryName | capitalize}}</td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" ng-click="vm.deleteCategory(category)">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <ul uib-pagination 
-                            total-items="vm.totalCategories" 
-                            ng-model="vm.currentCategoryPage" 
-                            max-size="5"
-                            items-per-page="5" 
-                            class="pagination pagination-sm"
-                            boundary-links="true">
-                        </ul>
+                <uib-tab heading="Categories">
+                    <div class="panel-body table-responsive">
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-xs-12">
+                                <button class="btn btn-info" ng-click="vm.showAddCategoryModal()">Add Category</button>
+                            </div>
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="category in vm.categories | orderBy:vm.sortField:vm.reverseSort | limitTo: vm.itemsPerPage : (vm.currentCategoryPage - 1) * vm.itemsPerPage">
+                                    <td>{{category.categoryName | capitalize}}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" ng-click="vm.deleteCategory(category)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <ul uib-pagination 
+                                total-items="vm.totalCategories" 
+                                ng-model="vm.currentCategoryPage" 
+                                max-size="5"
+                                items-per-page="5" 
+                                class="pagination pagination-sm"
+                                boundary-links="true">
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </uib-tab>
+            </uib-tabset>
         </div>
     </div>
 </div>
@@ -229,5 +213,46 @@
 .pagination > .active > a {
     background-color: #337ab7;
     border-color: #337ab7;
+}
+
+/* Tab styles */
+.admin-tabs {
+    margin-bottom: 0;
+}
+
+.admin-tabs .nav-tabs {
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.admin-tabs .nav-tabs > li {
+    margin-bottom: -2px;
+}
+
+.admin-tabs .nav-tabs > li > a {
+    color: #555;
+    border: none;
+    margin-right: 2px;
+    border-radius: 4px 4px 0 0;
+    padding: 10px 15px;
+    font-weight: 500;
+}
+
+.admin-tabs .nav-tabs > li > a:hover {
+    background-color: #f5f5f5;
+    border: none;
+}
+
+.admin-tabs .nav-tabs > li.active > a,
+.admin-tabs .nav-tabs > li.active > a:hover,
+.admin-tabs .nav-tabs > li.active > a:focus {
+    color: #337ab7;
+    background-color: #fff;
+    border: none;
+    border-bottom: 2px solid #337ab7;
+}
+
+.admin-tabs .tab-content {
+    padding: 0;
 }
 </style>

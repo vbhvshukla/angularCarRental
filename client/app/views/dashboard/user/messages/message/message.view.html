@@ -1,9 +1,12 @@
 <div class="chatbox" ng-controller="UserMessageController" ng-init="vm.init()"
     style="display: flex; min-height: 350px; flex-direction: column; gap: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h3 style="margin-bottom: 10px; color: #2c3e50;">
-        Chat with {{vm.messages.length > 0 && (vm.messages[0].fromUser.userId === vm.currentUser._id
-        ? vm.messages[0].toUser.username : vm.messages[0].fromUser.username | capitalize)}}
-    </h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="margin-bottom: 0; color: #2c3e50;">
+            Chat with {{vm.messages.length > 0 && (vm.messages[0].fromUser.userId === vm.currentUser._id
+            ? vm.messages[0].toUser.username : vm.messages[0].fromUser.username | capitalize)}}
+        </h3>
+        <button ng-click="vm.openImagesModal()" class="btn btn-primary btn-sm">All Media</button>
+    </div>
 
     <div id="chat-messages" class="chat-messages"
         style="overflow-wrap: break-word; flex-grow: 1; overflow-y: auto; max-height: 500px; padding: 15px; background: #ffffff; border-radius: 8px; border: 1px solid #dee2e6;">
@@ -15,7 +18,8 @@
             ng-class="{'message-you': msg.fromUser.userId === vm.currentUser._id, 'message-owner': msg.fromUser.userId !== vm.currentUser._id}"
             style="padding: 12px; margin-bottom: 12px; border-radius: 8px; max-width: 100%; word-wrap: break-word;">
             <div>
-                <strong>{{msg.fromUser.userId === vm.currentUser._id ? 'You' : msg.fromUser.username | capitalize}}:</strong>
+                <strong>{{msg.fromUser.userId === vm.currentUser._id ? 'You' : msg.fromUser.username |
+                    capitalize}}:</strong>
                 {{msg.message | capitalize}}
             </div>
             <div ng-if="msg.attachment"

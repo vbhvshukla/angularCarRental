@@ -1,6 +1,6 @@
 mainApp.controller('OwnerChatController', [
-    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService', 'uploadService',
-    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService, uploadService) {
+    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService', 'uploadService', '$uibModal',
+    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService, uploadService, $uibModal) {
         let vm = this;
         let socket = null;
 
@@ -45,7 +45,7 @@ mainApp.controller('OwnerChatController', [
 
         vm.getMedia = function () {
             return chatService.getAllMedia(vm.chatId).then((response) =>
-             response);
+                response);
         }
 
         $scope.$on('$destroy', function () {
@@ -163,6 +163,31 @@ mainApp.controller('OwnerChatController', [
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
             }, 0);
+        };
+
+        /**
+        * Opens a modal to display all images from a specific chat
+        * @param {String} chatId - The ID of the chat to display images for
+        * @param {Event} event - The click event (to prevent propagation)
+        */
+        vm.openImagesModal = function ( event) {
+            // Prevent navigating to chat when clicking the images button
+            if (event) {
+                event.stopPropagation();
+            }
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'app/components/modals/allAttachment/allattachment.template.html',
+                controller: 'AllAttachmentModalController',
+                controllerAs: 'vm',
+                size: 'lg',
+                resolve: {
+                    chatId: function () {
+                        return vm.chatId;
+                    }
+                }
+            });
         };
 
     }

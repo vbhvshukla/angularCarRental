@@ -6,7 +6,6 @@ mainApp.controller('HomeController', ["$q", "$state", "carService", "categorySer
         vm.cars = [];         // Holds the cars fetched (paginated)
         vm.categories = [];   // Holds all the categories
         vm.cities = [];       // Holds all the cities
-
         vm.pagination = {
             currentPage: 1,
             itemsPerPage: 6,

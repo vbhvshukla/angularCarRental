@@ -8,8 +8,8 @@ import { validateLogin, validateRegister } from "../services/authValidator.servi
 /** Router Instance */
 const router = Router();
 
-router.post('/register', upload.single('verificationFile'), registerUser)
-router.post('/login', loginUser);
+router.post('/register', upload.single('verificationFile'), validateRegister, registerUser)
+router.post('/login', validateLogin ,loginUser);
 router.post('/logout', logout);
 router.get('/regenerateToken', regenerateToken);
 router.get('/getcurrentuser', getCurrentUser);

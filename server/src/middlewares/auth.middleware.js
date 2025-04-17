@@ -48,6 +48,7 @@ const authorize = (...roles) => {
             console.log('Authorized');
             next(); // Proceed to the next middleware or route handler
         } catch (error) {
+            console.log('Not Authorized')
             console.error("Authorization Error :: Error in authorize middleware:", error);
             return res.status(403).json({ msg: "Authorization Error :: Invalid token" });
         }

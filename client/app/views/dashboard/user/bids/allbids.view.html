@@ -28,14 +28,17 @@
                             </select>
                         </div>
                         <div class="col-xs-6 col-sm-3" style="text-align: center;">
-                            <button class="btn" style="height: 34px;"><svg
-                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            <button class="btn"
+                                style="height: 34px; width:50px; border: 1px solid #bdc3c7; border-radius: 5px; background-color: white; "
+                                ng-click="vm.reload()">
+                                <svg xmlns=" http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-bootstrap-reboot" viewBox="0 0 16 16">
                                     <path
                                         d="M1.161 8a6.84 6.84 0 1 0 6.842-6.84.58.58 0 1 1 0-1.16 8 8 0 1 1-6.556 3.412l-.663-.577a.58.58 0 0 1 .227-.997l2.52-.69a.58.58 0 0 1 .728.633l-.332 2.592a.58.58 0 0 1-.956.364l-.643-.56A6.8 6.8 0 0 0 1.16 8z" />
                                     <path
                                         d="M6.641 11.671V8.843h1.57l1.498 2.828h1.314L9.377 8.665c.897-.3 1.427-1.106 1.427-2.1 0-1.37-.943-2.246-2.456-2.246H5.5v7.352zm0-3.75V5.277h1.57c.881 0 1.416.499 1.416 1.32 0 .84-.504 1.324-1.386 1.324z" />
-                                </svg></button>
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
@@ -56,9 +59,9 @@
                                     class="hidden-xs">End Date</th>
                                 <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;"
                                     class="hidden-xs hidden-sm">Placed At</th>
-                                <th
+                                <!-- <th
                                     style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
-                                    Total Amount</th>
+                                    Total Amount</th> -->
                                 <th
                                     style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">
                                     Type</th>
@@ -82,17 +85,19 @@
                                 <td class="hidden-xs">{{bid.fromTimestamp | date:'short'}}</td>
                                 <td class="hidden-xs">{{bid.toTimestamp | date:'short'}}</td>
                                 <td class="hidden-xs hidden-sm">{{bid.createdAt | date:'short'}}</td>
-                                <td>{{bid.bidBaseFare | price}}</td>
+                                <!-- <td>{{bid.bidBaseFare | price}}</td> -->
                                 <td>{{bid.rentalType | capitalize}}</td>
                                 <td>{{bid.status | capitalize}}</td>
                                 <td style="white-space: nowrap;">
-                                    <button ng-click="vm.goToMessagePage(bid)"
+                                    <!-- <button ng-click="vm.goToMessagePage(bid)"
                                         style="font-size: 13px; background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; margin-right: 5px;">
                                         <span class="hidden-xs">Chat</span>
                                         <span class="visible-xs glyphicon glyphicon-comment"></span>
-                                    </button>
-                                    <button ng-if="bid.status === 'pending'" ng-click="vm.cancelBid(bid)"
-                                        style="font-size: 13px; background: linear-gradient(135deg, #d9534f, #c9302c); color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, transform 0.2s;">
+                                    </button> -->
+                                    
+                                    <button ng-click="vm.cancelBid(bid)" ng-disabled="bid.status !== 'pending'"
+                                        style="font-size: 13px; background: linear-gradient(135deg, #d9534f, #c9302c); color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; opacity: 0.6;"
+                                        ng-style="{'opacity': bid.status === 'pending' ? '1' : '0.6', 'cursor': bid.status === 'pending' ? 'pointer' : 'not-allowed'}">
                                         <span class="hidden-xs">Cancel</span>
                                         <span class="visible-xs glyphicon glyphicon-remove"></span>
                                     </button>
@@ -100,16 +105,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    <!-- <div class="pagination-container text-center" style="margin-top: 20px;">
-                        <ul uib-pagination 
-                            total-items="vm.filteredBids.length" 
-                            ng-model="vm.currentPage" 
-                            max-size="5"
-                            boundary-links="true" 
-                            items-per-page="vm.itemsPerPage" 
-                            ng-change="vm.updatePagination()">
-                        </ul>
-                    </div> -->
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Car } from "../models/car.model.js";
+import { Booking } from "../models/booking.model.js";
 
 /**
  * Adding a new car.
@@ -197,7 +198,7 @@ export const getAvailableCars = async (req, res) => {
 
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
-
+        console.log(pageNumber, limitNumber);
         const query = {
             isDeleted: false,
             ...(availability
@@ -220,8 +221,9 @@ export const getAvailableCars = async (req, res) => {
         if (features) query.features = { $regex: features, $options: "i" };
         if (rating) query["rating.avgRating"] = { $gte: parseInt(rating) };
 
-        console.log(query); 
+
         const skip = (pageNumber - 1) * limitNumber;
+        console.log(query);
         const cars = await Car.aggregate([
             { $match: query },
             {
@@ -231,7 +233,6 @@ export const getAvailableCars = async (req, res) => {
                 }
             }
         ]);
-
         const total = cars[0]?.total[0]?.count || 0;
         res.status(200).json({ cars: cars[0]?.cars || [], total });
     } catch (error) {
@@ -239,3 +240,50 @@ export const getAvailableCars = async (req, res) => {
         res.status(500).json({ msg: "Server Error", details: error.message });
     }
 };
+
+export const rateCar = async (req, res) => {
+    try {
+        const { rating, bookingId } = req.body;
+        const { carId } = req.params;
+
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ msg: "Rating must be between 1 and 5" });
+        }
+
+        const car = await Car.findById(carId);
+        if (!car) {
+            return res.status(404).json({ msg: "Car not found" });
+        }
+
+        const oldRating = car.rating;
+        const newRatingCount = oldRating.ratingCount + 1;
+        const newAvgRating = ((oldRating.avgRating * oldRating.ratingCount) + rating) / newRatingCount;
+
+        const updatedRating = {
+            avgRating: newAvgRating,
+            ratingCount: newRatingCount
+        };
+
+        const updatedCar = await Car.findByIdAndUpdate(
+            carId,
+            { rating: updatedRating },
+            { new: true }
+        );
+
+        const updatedBooking = await Booking.findByIdAndUpdate(
+            bookingId,
+            { isRated: true },
+            { new: true }
+        )
+        console.log('Rated');
+        res.status(200).json({
+            msg: "Rating added successfully",
+            car: updatedCar,
+            booking : updatedBooking
+        });
+
+    } catch (error) {
+        console.error("Car Controller :: Error adding rating", error);
+        res.status(500).json({ msg: "Server Error", details: error.message });
+    }
+}

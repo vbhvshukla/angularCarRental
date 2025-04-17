@@ -1,0 +1,48 @@
+<div class="modal-header">
+    <h3 class="modal-title">Rate Your Experience</h3>
+</div>
+<div class="modal-body">
+    <div class="rating-container">
+        <div class="stars">
+            <span ng-repeat="star in [1,2,3,4,5]"
+                  ng-class="{'star-filled': star <= (ratingHover || rating)}"
+                  ng-click="setRating(star)"
+                  ng-mouseenter="setHoverRating(star)"
+                  ng-mouseleave="setHoverRating(0)">
+                <i class="fa fa-star"></i>
+            </span>
+        </div>
+        <div class="rating-message" ng-if="ratingMessage">{{ratingMessage}}</div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="submitRating()">Submit Rating</button>
+    <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+</div>
+
+<style>
+.rating-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.stars {
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.stars span {
+    cursor: pointer;
+    color: #ddd;
+    margin: 0 5px;
+}
+
+.stars span.star-filled {
+    color: #ffd700;
+}
+
+.rating-message {
+    color: #ff0000;
+    margin-top: 10px;
+}
+</style>

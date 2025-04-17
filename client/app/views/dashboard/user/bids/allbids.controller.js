@@ -51,6 +51,7 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
                 } else {
                     vm.bids = results.bids;
                     vm.filterBids();
+                    console.log('Loaded')
                 }
             });
         }
@@ -138,5 +139,9 @@ mainApp.controller('UserBidsController', ['$state', 'bidService', 'userFactory',
         vm.formatDate = function (date) {
             return new Date(date).toLocaleDateString();
         };
+
+        vm.reload = function(){
+            loadUserBids();
+        }
     }
 ]);

@@ -64,6 +64,12 @@
                                         <span class="hidden-xs">Cancel</span>
                                         <span class="visible-xs glyphicon glyphicon-remove"></span>
                                     </button>
+                                    <button ng-if="booking.status === 'completed' && !booking.isRated"
+                                        ng-click="vm.rateCar(booking._id, booking.bid.car.carId)" class="action-btn"
+                                        style="margin: 2px; padding: 6px 10px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; font-weight: 400; transition: background 0.3s ease; white-space: nowrap; background: #2c3e50; color: white;">
+                                        <span class="hidden-xs">Rate</span>
+                                        <span class="visible-xs glyphicon glyphicon-star"></span>
+                                    </button>
                                 </td>
                             </tr>
                             <tr ng-if="vm.bookings.length === 0">

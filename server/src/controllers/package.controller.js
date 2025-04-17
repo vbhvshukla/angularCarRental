@@ -11,8 +11,12 @@ import { Package } from "../models/packages.model.js";
 export const createPackage = async (req, res) => {
     try {
 
-        const packageData = req.body;
-        const imageUrls = packageData.images
+        let {packageData,images} = req.body;
+        const imageUrls = req.files;
+        packageData = JSON.parse(packageData);
+        console.log(packageData);
+        
+
         const newPackage = new Package({
             name: packageData.name,
             packagePrice: packageData.packagePrice,
@@ -166,3 +170,27 @@ export const markPackageInactive = async (req, res) => {
         res.status(500).json({ msg: "Server error", details: error.message });
     }
 }
+
+/**
+ * Get Package By ID
+ * @description Fetch a package by its ID
+ * @async
+ * @param {*} req
+ * @param {*} res
+ * @returns {*}
+ */
+export const getPackageById = async (req, res) => {
+    try {
+        const { packageId } = req.params;
+
+        const packageData = await Package.findById(packageId);
+        if (!packageData) {
+            return res.status(404).json({ msg: "Package not found" });
+        }
+
+        res.status(200).json({ package: packageData });
+    } catch (error) {
+        console.error("Package Controller :: Error fetching package by ID", error);
+        res.status(500).json({ msg: "Server Error", details: error.message });
+    }
+};

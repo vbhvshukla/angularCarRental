@@ -106,7 +106,7 @@ export const sendMessage = async (req, res) => {
 
     console.log(`Chat id :: ${chatId} | From User : ${fromUser} | To User : ${toUser} | Message : ${message} | Attachment : ${attachment}`);
 
-    if (!chatId || !fromUser || !toUser || !message) {
+    if (!chatId || !fromUser || !toUser) {
         return res.status(400).json({ error: "Missing required fields: chatId, fromUser, toUser, or message." });
     }
 
@@ -114,7 +114,7 @@ export const sendMessage = async (req, res) => {
     try {
         const newMessage = new Messages({
             chatId,
-            message,
+            message: message || '',
             attachment: attachment || null,
             fromUser: {
                 userId: fromUser._id,
@@ -227,25 +227,93 @@ export const getChatParticipants = async (req, res) => {
  * @returns {*} 
  */
 export const getAllMedia = async (req, res) => {
-    const { chatId } = req.query;
-    console.log(chatId);
     try {
-        const data = await Attachment.aggregate(
-            [
-                {
-                    $match: {
-                        'refId': chatId
-                    }
-                },
-                {
-                    $project: {
-                        url: 1
-                    }
-                }
-            ]
-        )
-        res.status(200).json(data);
+        const { chatId } = req.params;
+        console.log(chatId);
+
+        // Find all attachments where refId matches chatId, limit to 100 documents
+        // Sort by createdAt in descending order to get the most recent first
+        const attachments = await Attachment.find({ refId: chatId })
+            .sort({ createdAt: -1 })
+            .limit(100);
+
+        res.status(200).json({
+            success: true,
+            count: attachments.length,
+            data: attachments
+        });
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch media files.", details: error })
+        console.error("Error fetching attachments:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching attachments",
+            error: error.message
+        });
     }
 }
+
+/**
+ * @function searchConversations
+ * @description Search owner's conversations by username
+ */
+export const searchConversations = async (req, res) => {
+    const { ownerId } = req.params;
+    const { searchQuery } = req.query;
+
+    if (!searchQuery) {
+        return res.status(400).json({ error: "Search query is required." });
+    }
+
+    try {
+        // Create a case-insensitive regex pattern for the search
+        const searchPattern = new RegExp(searchQuery, 'i');
+        
+        // Find conversations where:
+        // 1. The owner is the current owner
+        // 2. The user's username matches the search pattern
+        const conversations = await Conversations.find({
+            "owner.userId": ownerId,
+            "user.username": { $regex: searchPattern }
+        }).sort({ lastTimestamp: -1 });
+
+        res.status(200).json(conversations);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to search conversations.", details: error.message });
+    }
+};
+
+/**
+ * @function Search user conversations
+ * @description Search user conversations
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+export const searchUserConversations = async (req, res) => {
+    const { userId } = req.params;
+    const { searchQuery } = req.query;
+
+    if (!searchQuery) {
+        return res.status(400).json({ error: "Search query is required." });
+    }
+
+    try {
+        // Create a case-insensitive regex pattern for the search
+        const searchPattern = new RegExp(searchQuery, 'i');
+        
+        // Find conversations where:
+        // 1. The owner is the current owner
+        // 2. The user's username matches the search pattern
+        const conversations = await Conversations.find({
+            "user.userId": userId,
+            "owner.username": { $regex: searchPattern }
+        }).sort({ lastTimestamp: -1 });
+
+        res.status(200).json(conversations);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to search conversations.", details: error.message });
+    }
+};
+
+
+

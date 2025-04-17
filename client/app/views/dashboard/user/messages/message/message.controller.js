@@ -1,5 +1,5 @@
-mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'userFactory', 'carService', 'errorService', 'uploadService',
-    function ($scope, $q, $timeout, $stateParams, chatService, userFactory, carService, errorService, uploadService) {
+mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'userFactory', 'carService', 'errorService', 'uploadService', '$uibModal',
+    function ($scope, $q, $timeout, $stateParams, chatService, userFactory, carService, errorService, uploadService, $uibModal) {
 
         //Variable declaration
         let vm = this;
@@ -155,6 +155,30 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
             }, 0);
+        };
+
+        /**
+        * Opens a modal to display all images from a specific chat
+        * @param {Event} event - The click event (to prevent propagation)
+        */
+        vm.openImagesModal = function (event) {
+            // Prevent navigating to chat when clicking the images button
+            if (event) {
+                event.stopPropagation();
+            }
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'app/components/modals/allAttachment/allattachment.template.html',
+                controller: 'AllAttachmentModalController',
+                controllerAs: 'vm',
+                size: 'lg',
+                resolve: {
+                    chatId: function () {
+                        return vm.chatId;
+                    }
+                }
+            });
         };
 
         $scope.$on('$destroy', function () {

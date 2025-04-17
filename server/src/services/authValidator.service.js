@@ -39,5 +39,6 @@ export const validateLogin = [
                 errors: errors.array()
             })
         }
+        next();
     }
 ]

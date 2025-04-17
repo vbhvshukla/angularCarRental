@@ -85,7 +85,7 @@ userSchema.methods.generateTokens = function () {
         id: this._id,
         role: this.role
     };
-    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2d' });
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_TOKEN, { expiresIn: '7d' });
     return { accessToken, refreshToken }
 }

@@ -1,13 +1,31 @@
 /** @file Owner Dashboard's Home Controller */
 
 mainApp.controller('OwnerHomeDashboardController', [
-    '$http', 'bidService', 'userFactory','bookingFactory', 'bookingService', 'errorService', 'chatService', '$uibModal', '$q',
-    function ($http, bidService, userFactory,bookingFactory, bookingService, errorService, chatService, $uibModal, $q) {
+    '$http', 'bidService', 'userFactory', 'bookingFactory', 'bookingService', 'errorService', 'chatService', 'carService', '$uibModal', '$q',
+    function ($http, bidService, userFactory, bookingFactory, bookingService, errorService, chatService, carService, $uibModal, $q) {
 
         /**
          * Variable declaration
          */
         let vm = this;
+        vm.activeTab = 0; // Default to first tab (Pending Bids)
+
+        // Sort configuration
+        vm.sortConfig = {
+            pendingBids: {
+                field: 'bidAmount',
+                reverse: false
+            },
+            bookings: {
+                field: 'totalFare',
+                reverse: false
+            },
+            allBids: {
+                field: 'bidAmount',
+                reverse: false
+            }
+        };
+
         vm.pagination = {
             bookings: {
                 currentPage: 1,
@@ -40,9 +58,12 @@ mainApp.controller('OwnerHomeDashboardController', [
         vm.filters = {
             bookingType: 'all',
             bidStatus: 'all',
-            pendingType: 'all'
+            pendingType: 'all',
+            pendingCarId: '',
+            allBidsCarId: '',
+            bookingCarId: ''
         };
-
+        vm.cars = [];
         /**
          * Function :: Initialization
          * @function vm.init()
@@ -56,7 +77,6 @@ mainApp.controller('OwnerHomeDashboardController', [
         };
 
         /**
-         * Function :: Get All Data
          * @param {*} userId 
          * @description Fetches all bookings and bids for the current logged-in user.
          * @requires bookingService, bidService
@@ -74,25 +94,41 @@ mainApp.controller('OwnerHomeDashboardController', [
                 userId,
                 vm.pagination.allBids.currentPage,
                 vm.pagination.allBids.itemsPerPage,
-                vm.filters
+                {
+                    bidStatus: vm.filters.bidStatus,
+                    carId: vm.filters.allBidsCarId
+                }
             );
 
-            // Use $q.all to execute both promises in parallel
-            $q.all([bookingsPromise, bidsPromise])
-                .then(([bookingsResult, bidsResult]) => {
+            const pendingBidsPromise = bidService.getBidsForOwner(
+                userId,
+                vm.pagination.pendingBids.currentPage,
+                vm.pagination.pendingBids.itemsPerPage,
+                {
+                    bidStatus: 'pending',
+                    carId: vm.filters.pendingCarId
+                }
+            );
+
+            const carsPromise = carService.getCarsByOwner(userId);
+
+            // Use $q.all to execute all promises in parallel
+            $q.all([bookingsPromise, bidsPromise, pendingBidsPromise, carsPromise])
+                .then(([bookingsResult, bidsResult, pendingBidsResult, carsResult]) => {
                     // Handle bookings result
                     vm.bookings = bookingsResult.data.bookings || [];
                     vm.pagination.bookings.totalItems = bookingsResult.data.totalItems || 0;
-                    // console.log(bidsResult)
-                    // Handle bids result
+
+                    // Handle all bids result
                     vm.allBids = bidsResult.bids || [];
-                    // console.log(vm.allBids)
                     vm.pagination.allBids.totalItems = bidsResult.totalItems || 0;
 
-                    // Filter pending bids
-                    vm.pendingBids = vm.allBids.filter(bid => bid.status.toLowerCase() === "pending");
+                    // Handle pending bids result
+                    vm.pendingBids = pendingBidsResult.bids || [];
+                    vm.pagination.pendingBids.totalItems = pendingBidsResult.totalItems || 0;
 
-                    console.log(vm.pendingBids)
+                    vm.cars = carsResult;
+
                     // Apply filters after fetching data
                     vm.applyFilters();
                 })
@@ -108,17 +144,35 @@ mainApp.controller('OwnerHomeDashboardController', [
          * @description Applies filters to the bookings and bids.
          */
         vm.applyFilters = function () {
-            vm.filteredBookings = vm.bookings.filter(booking =>
-                vm.filters.bookingType === 'all' || booking.rentalType === vm.filters.bookingType
-            );
+            // Filter bookings by type and car
+            vm.filteredBookings = vm.bookings.filter(booking => {
+                const typeMatch = vm.filters.bookingType === 'all' || booking.rentalType === vm.filters.bookingType;
+                const carMatch = !vm.filters.bookingCarId || booking.bid.car.carId === vm.filters.bookingCarId;
+                return typeMatch && carMatch;
+            });
 
-            vm.filteredAllBids = vm.allBids.filter(bid =>
-                vm.filters.bidStatus === 'all' || bid.status === vm.filters.bidStatus
-            );
+            // Filter all bids by status and car
+            vm.filteredAllBids = vm.allBids.filter(bid => {
+                const statusMatch = vm.filters.bidStatus === 'all' || bid.status === vm.filters.bidStatus;
+                const carMatch = !vm.filters.allBidsCarId || bid.car.carId === vm.filters.allBidsCarId;
+                return statusMatch && carMatch;
+            });
 
-            vm.filteredPendingBids = vm.pendingBids.filter(bid =>
-                vm.filters.pendingType === 'all' || bid.rentalType === vm.filters.pendingType
-            );
+            // Filter pending bids by type and car
+            vm.filteredPendingBids = vm.pendingBids.filter(bid => {
+                const typeMatch = vm.filters.pendingType === 'all' || bid.rentalType === vm.filters.pendingType;
+                const carMatch = !vm.filters.pendingCarId || bid.car.carId === vm.filters.pendingCarId;
+                return typeMatch && carMatch;
+            });
+
+            // // Trigger data refresh when filters change
+            // if (userFactory.getCurrentUser()) {
+            //     userFactory.getCurrentUser()
+            //         .then(user => {
+            //             vm.getAllData(user._id);
+            //         })
+            //         .catch(err => console.error("Owner controller :: Error Getting User :: ", err));
+            // }
         };
 
         /**
@@ -136,7 +190,7 @@ mainApp.controller('OwnerHomeDashboardController', [
             vm.isProcessing = true;
             const bookingInstance = bookingFactory.createBooking(bid);
             bookingInstance.create()
-                .then(() =>  bidService.updateBidStatus(bid._id, 'accepted'))
+                .then(() => bidService.updateBidStatus(bid._id, 'accepted'))
                 .then(() => {
                     errorService.logSuccess('Bid accepted and booking created successfully');
                     return vm.getAllData(bid.car.owner.userId);
@@ -193,6 +247,45 @@ mainApp.controller('OwnerHomeDashboardController', [
             }, function () {
                 console.log('Modal dismissed');
             });
+        };
+
+        /**
+         * Function :: Apply Sort
+         * @param {string} type - The type of data to sort (pendingBids, bookings, allBids)
+         * @param {string} field - The field to sort by
+         */
+        vm.applySort = function (type, field) {
+            if (vm.sortConfig[type].field === field) {
+                // Toggle sort direction if clicking the same field
+                vm.sortConfig[type].reverse = !vm.sortConfig[type].reverse;
+            } else {
+                // Set new sort field and default to ascending
+                vm.sortConfig[type].field = field;
+                vm.sortConfig[type].reverse = false;
+            }
+            // Reset to first page when sorting changes
+            vm.pagination[type].currentPage = 1;
+        };
+
+        /**
+         * Function :: Get Sort Icon
+         * @param {string} type - The type of data
+         * @param {string} field - The field to check
+         * @returns {string} - The appropriate sort icon
+         */
+        vm.getSortIcon = function (type, field) {
+            if (vm.sortConfig[type].field !== field) return '';
+            return vm.sortConfig[type].reverse ? '▼' : '▲';
+        };
+
+        /**
+         * Function :: Get Sort Expression
+         * @param {string} type - The type of data
+         * @returns {string} - The sort expression for orderBy filter
+         */
+        vm.getSortExpression = function (type) {
+            const config = vm.sortConfig[type];
+            return config.reverse ? '-' + config.field : config.field;
         };
 
         /**
