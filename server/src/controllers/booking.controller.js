@@ -251,8 +251,8 @@ export const addExtras = async (req, res) => {
         booking.extraHourCharges += extraHourCharges;
         booking.extraDayCharges += extraDayCharges;
         booking.totalFare += extraKmCharges + extraHourCharges + extraDayCharges;
-        booking.status='completed';
-        
+        booking.status = 'completed';
+
         await booking.save();
         res.status(200).json({ msg: "Extras added successfully", booking });
     } catch (error) {
@@ -297,14 +297,16 @@ export const submitRating = async (req, res) => {
 export const getBookingsForOwner = async (req, res) => {
     try {
         const { ownerId } = req.params;
-        const { page = 1, limit = 10, bookingType } = req.query;
+        const { page = 1, limit = 10, bookingType, carId } = req.query;
 
         // Build the query
         const query = { "bid.car.owner.userId": ownerId };
         if (bookingType && bookingType !== 'all') {
             query.rentalType = bookingType;
         }
-
+        if (carId) {
+            query["bid.car.carId"] = carId;
+        }
         // Fetch total count and paginated bookings
         const totalItems = await Booking.countDocuments(query);
         const bookings = await Booking.find(query)

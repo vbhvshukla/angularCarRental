@@ -2,8 +2,28 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default" style="background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,0.1);">
-                <div class="panel-heading" style="background: transparent; border-bottom: 1px solid #eee;">
-                    <h2 style="margin: 0; font-size: 24px; color: #2c3e50;">All Conversations</h2>
+                <div class="panel-heading" style="background: transparent; border-bottom: 0.5px solid #eee;">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <h2 style="margin: 0; font-size: 24px; color: #2c3e50;">All Conversations</h2>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="input-group" style="margin-top: 5px;">
+                                <input type="text" 
+                                       class="form-control" 
+                                       ng-model="vm.searchQuery" 
+                                       ng-change="vm.searchConversations()"
+                                       placeholder="Search by username..."
+                                       ng-model-options="{debounce: 500}"                                    
+                                       style="border-radius: 4px; border: 1px solid #ddd;">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="vm.searchConversations()">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel-body">
@@ -16,7 +36,7 @@
                     <div ng-if="!vm.loading && !vm.conversations.length" 
                          class="text-center text-muted" 
                          style="padding: 30px; font-size: 16px;">
-                        No conversations yet
+                        No conversations found
                     </div>
 
                     <!-- Conversations List -->
@@ -41,7 +61,7 @@
                                         <div class="col-xs-12">
                                             <div style="display: flex; justify-content: space-between; align-items: baseline;">
                                                 <span style="font-weight: 600; color: #2c3e50;">
-                                                    {{chat.user.username}}
+                                                    {{chat.user.username | capitalize}}
                                                 </span>
                                                 <small class="text-muted" style="font-size: 0.85em;">
                                                     {{chat.lastTimestamp | date:'MMM d, y h:mm a'}}
@@ -51,7 +71,7 @@
                                         <div class="col-xs-12">
                                             <p class="list-group-item-text text-muted" 
                                                style="margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                {{chat.lastMessage || 'No messages yet'}}
+                                                {{chat.lastMessage || 'No messages yet' | capitalize}}
                                             </p>
                                         </div>
                                     </div>
@@ -94,6 +114,10 @@
     h2 {
         font-size: 20px !important;
     }
+
+    .input-group {
+        margin-top: 10px !important;
+    }
 }
 
 /* Ensure consistent spacing */
@@ -109,5 +133,23 @@
 
 .list-group-item:last-child {
     border-bottom: none;
+}
+
+/* Search bar styling */
+.input-group {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.input-group .form-control {
+    border-right: none;
+}
+
+.input-group .btn {
+    border-left: none;
+    background-color: #fff;
+}
+
+.input-group .btn:hover {
+    background-color: #f8f9fa;
 }
 </style>

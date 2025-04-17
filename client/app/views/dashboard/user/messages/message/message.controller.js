@@ -1,5 +1,5 @@
-mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'userFactory', 'carService',
-    function ($scope, $q, $timeout, $stateParams, chatService, userFactory, carService) {
+mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$stateParams', 'chatService', 'userFactory', 'carService', 'errorService', 'uploadService', '$uibModal',
+    function ($scope, $q, $timeout, $stateParams, chatService, userFactory, carService, errorService, uploadService, $uibModal) {
 
         //Variable declaration
         let vm = this;
@@ -11,7 +11,9 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
         vm.newMessage = '';
         vm.selectedFile = null;
         vm.currentUser = null;
-
+        vm.showModal = false;
+        vm.modalImage = '';
+        vm.isLoading = false;
 
         //Message Controller Inititialization Function 
         vm.init = function () {
@@ -46,35 +48,67 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
                 else {
                     vm.currentUser = results.user;
                     vm.messages = results.messages;
+                    vm.scrollToBottom();
                 }
             })
-
         }
 
-        $scope.handleFileSelect = function (files) {
-            vm.selectedFile = files[0];
+        vm.handleFileSelect = function (files) {
+            if (files && files.length) {
+                vm.selectedFile = files[0];
+                if (vm.selectedFile.size > 5000000) {
+                    errorService.handleError('File is too large. Maximum size is 5MB');
+                    vm.selectedFile = null;
+                    vm.fileInput = null;
+                }
+            }
         };
 
-
         vm.sendMessage = function () {
-
             if (!vm.newMessage.trim() && !vm.selectedFile)
                 return;
+
+            vm.isLoading = true;
 
             //Get the carID
             const carId = chatService.getCarIdFromChatId(vm.chatId);
 
-            const formData = new FormData();
-
             //Fetch the car by carID.
             carService.getCarById(carId).then(car => {
-                return chatService.sendMessage(
-                    vm.chatId,
-                    vm.currentUser,
-                    car.owner,
-                    vm.newMessage,
-                    vm.selectedFile
-                );
+                const toUser = {
+                    _id: car.owner._id,
+                    username: car.owner.username,
+                    email: car.owner.email
+                };
+
+                const fromUser = {
+                    _id: vm.currentUser._id,
+                    username: vm.currentUser.username,
+                    email: vm.currentUser.email
+                };
+
+                // Handle file upload if there is a file
+                const uploadPromise = vm.selectedFile
+                    ? uploadService.uploadFile(vm.selectedFile, vm.chatId, fromUser, toUser).then((res) => {
+                        return {
+                            attachmentId: res.newAttatchment._id,
+                            url: res.fileUrl
+                        };
+                    }).catch((err) => {
+                        errorService.handleError('Error uploading file', err);
+                        return $q.reject(err);
+                    })
+                    : $q.resolve(null);
+
+                return uploadPromise.then((attachment) => {
+                    return chatService.sendMessage(
+                        vm.chatId,
+                        vm.currentUser,
+                        car.owner,
+                        vm.newMessage,
+                        attachment
+                    );
+                });
             })
                 .then(() => {
                     vm.newMessage = '';
@@ -84,10 +118,25 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
                 })
                 .then((messages) => {
                     vm.messages = messages;
+                    vm.scrollToBottom();
                 })
                 .catch((error) => {
                     console.log("Message controller :: Error in sending message :: ", error);
+                    errorService.handleError('Failed to send message', error);
                 })
+                .finally(() => {
+                    vm.isLoading = false;
+                });
+        };
+
+        vm.showImageModal = function (imageUrl) {
+            vm.modalImage = imageUrl;
+            vm.showModal = true;
+        };
+
+        vm.closeModal = function () {
+            vm.showModal = false;
+            vm.modalImage = '';
         };
 
         vm.downloadPdf = function (dataUrl, filename) {
@@ -97,6 +146,39 @@ mainApp.controller('UserMessageController', ['$scope', '$q', '$timeout', '$state
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        };
+
+        vm.scrollToBottom = function () {
+            $timeout(() => {
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }, 0);
+        };
+
+        /**
+        * Opens a modal to display all images from a specific chat
+        * @param {Event} event - The click event (to prevent propagation)
+        */
+        vm.openImagesModal = function (event) {
+            // Prevent navigating to chat when clicking the images button
+            if (event) {
+                event.stopPropagation();
+            }
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'app/components/modals/allAttachment/allattachment.template.html',
+                controller: 'AllAttachmentModalController',
+                controllerAs: 'vm',
+                size: 'lg',
+                resolve: {
+                    chatId: function () {
+                        return vm.chatId;
+                    }
+                }
+            });
         };
 
         $scope.$on('$destroy', function () {

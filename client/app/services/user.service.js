@@ -1,8 +1,8 @@
 mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
     function ($http, $q, authService, errorService) {
+        // const BASE_URL = 'http://127.0.0.1:8006/api/v1/user';
 
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/user';
-
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/user';
         /**
          * @function getUser
          * @description Fetches a user by their ID.
@@ -17,11 +17,15 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
 
         /**
          * @function getAllUsers
-         * @description Fetches all users.
+         * @description Fetches all users with pagination.
+         * @param {number} page - Current page number
+         * @param {number} limit - Number of items per page
          * @returns resolved or rejected promise.
          */
-        this.getAllUsers = function () {
-            return $http.get(`${BASE_URL}`)
+        this.getAllUsers = function (page = 1, limit = 10) {
+            return $http.get(`${BASE_URL}`, {
+                params: { page, limit }
+            })
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'UserService :: Fetch All Users Failed'));
         };
@@ -32,7 +36,7 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
          * @param {*} password 
          * @returns resolved or rejected promise.
          */
-        this.validatePassword = function (userId,password) {
+        this.validatePassword = function (userId, password) {
             return authService.getUser()
                 .then(user => {
                     return $http.post(`${BASE_URL}/validatepassword`, { userId: userId, password })
@@ -50,7 +54,7 @@ mainApp.service('userService', ['$http', '$q', 'authService', 'errorService',
         this.updatePassword = function (newPassword) {
             return authService.getUser()
                 .then(user => {
-                    return $http.put(`${BASE_URL}/updatepassword/${user.userId}`, { newPassword })
+                    return $http.put(`${BASE_URL}/password/${user._id}`, { newPassword })
                         .then(response => response.data)
                         .catch(error => errorService.handleError(error, 'UserService :: Password Update Failed'));
                 });

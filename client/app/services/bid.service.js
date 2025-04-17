@@ -1,6 +1,8 @@
 mainApp.service('bidService', ['$http', '$q', 'carService', 'errorService',
     function ($http, $q, carService, errorService) {
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/bid';
+        
+        // const BASE_URL = 'http://127.0.0.1:8006/api/v1/bid';
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/bid';
         /**
          * Estimate calculation for bid
          * @param {*} carId 
@@ -136,8 +138,10 @@ mainApp.service('bidService', ['$http', '$q', 'carService', 'errorService',
             const params = {
                 page,
                 limit,
-                bidStatus: filters.bidStatus || 'all'
+                bidStatus: filters.bidStatus || 'all',
+                carId: filters.carId || ''
             };
+            console.log('Paramas :: ' ,params)
             $http.get(`${BASE_URL}/ownerbids/${ownerId}`, { params })
                 .then(response => deferred.resolve(response.data))
                 .catch(error => {

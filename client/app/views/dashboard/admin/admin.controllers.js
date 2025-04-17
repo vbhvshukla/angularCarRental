@@ -53,10 +53,10 @@ mainApp.controller('AdminController', [
         vm.loadAllData = function () {
             async.parallel([
                 function (callback) {
-                    userFactory.getAllUsers()
+                    userFactory.getAllUsers(vm.currentPage, vm.itemsPerPage)
                         .then(function (response) {
-                            vm.users = response;
-                            vm.totalUsers = response.length;
+                            vm.users = response.data;
+                            vm.totalUsers = response.total;
                             callback(null);
                         }).catch(err => {
                             errorService.handleError("Admin Controller :: Error Getting All Users :: ", err);
@@ -97,15 +97,14 @@ mainApp.controller('AdminController', [
         /**
          * Function :: Load All Users
          * @function vm.loadUsers()
-         * @description Loads all users
+         * @description Loads all users with pagination
          * @requires userFactory
          */
-
         vm.loadUsers = function () {
-            userFactory.getAllUsers()
+            userFactory.getAllUsers(vm.currentPage, vm.itemsPerPage)
                 .then(function (response) {
-                    vm.users = response;
-                    vm.totalUsers = response.length;
+                    vm.users = response.data;
+                    vm.totalUsers = response.total;
                 }).catch(err => errorService.handleError("Admin Controller :: Error Getting All Users :: ", err));
         }
 

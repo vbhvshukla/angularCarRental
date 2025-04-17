@@ -1,6 +1,6 @@
 mainApp.controller('OwnerChatController', [
-    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService',
-    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService) {
+    '$scope', '$timeout', '$q', '$stateParams', 'chatService', 'userFactory', 'errorService', 'uploadService', '$uibModal',
+    function ($scope, $timeout, $q, $stateParams, chatService, userFactory, errorService, uploadService, $uibModal) {
         let vm = this;
         let socket = null;
 
@@ -11,11 +11,13 @@ mainApp.controller('OwnerChatController', [
         vm.selectedFile = null;
         vm.currentUser = null;
         vm.showModal = false;
-        vm.modalImage = '';
+        vm.modalImages = [];
+        vm.isLoading = false;
+        vm.media = null;
 
         vm.init = function () {
             vm.loading = true;
-            socket = io('http://127.0.0.1:8006'); 
+            socket = io('http://127.0.0.1:8006');
             socket.emit('joinChat', vm.chatId);
             socket.on('newMessage', (message) => {
                 if (message.chatId === vm.chatId) {
@@ -31,7 +33,7 @@ mainApp.controller('OwnerChatController', [
                 .then(([user, messages]) => {
                     vm.currentUser = user;
                     vm.messages = messages;
-                    chatService.scrollToBottom();
+                    vm.scrollToBottom();
                 })
                 .catch(error => {
                     errorService.handleError('Failed to load chat', error);
@@ -40,6 +42,11 @@ mainApp.controller('OwnerChatController', [
                     vm.loading = false;
                 });
         };
+
+        vm.getMedia = function () {
+            return chatService.getAllMedia(vm.chatId).then((response) =>
+                response);
+        }
 
         $scope.$on('$destroy', function () {
             if (socket) {
@@ -60,8 +67,45 @@ mainApp.controller('OwnerChatController', [
 
         vm.sendMessage = function () {
             if (!vm.newMessage.trim() && !vm.selectedFile) return;
+
+            vm.isLoading = true;
+
+            // First get the participants
             chatService.getChatParticipants(vm.chatId)
-                .then(participants => {
+                .then((participants) => {
+                    const toUser = {
+                        _id: participants.user.userId,
+                        username: participants.user.username,
+                        email: participants.user.email
+                    };
+
+                    const fromUser = {
+                        _id: vm.currentUser._id,
+                        username: vm.currentUser.username,
+                        email: vm.currentUser.email
+                    };
+
+
+                    // Now handle file upload if there is a file
+                    const uploadPromise = vm.selectedFile
+                        ? uploadService.uploadFile(vm.selectedFile, vm.chatId, fromUser, toUser).then((res) => {
+                            console.log('Upload promise response :: ', res);
+                            return {
+                                attachmentId: res.newAttatchment._id,
+                                url: res.fileUrl
+                            };
+                        }).catch((err) => {
+                            errorService.handleError('Error uploading file', err);
+                            return $q.reject(err);
+                        })
+                        : $q.resolve(null);
+
+                    // Return both the upload result and the participants
+                    return uploadPromise.then((attachment) => {
+                        return { attachment, participants };
+                    });
+                })
+                .then(({ attachment, participants }) => {
                     return chatService.sendMessage(
                         vm.chatId,
                         vm.currentUser,
@@ -71,26 +115,30 @@ mainApp.controller('OwnerChatController', [
                             email: participants.user.email
                         },
                         vm.newMessage,
-                        vm.selectedFile
+                        attachment
                     );
                 })
                 .then(() => {
+                    // Reset the input fields
                     vm.newMessage = '';
                     vm.selectedFile = null;
                     vm.fileInput = null;
                     return chatService.getMessages(vm.chatId);
                 })
-                .then(messages => {
+                .then((messages) => {
                     vm.messages = messages;
-                    chatService.scrollToBottom();
+                    vm.scrollToBottom();
                 })
-                .catch(error => {
+                .catch((error) => {
                     errorService.handleError('Failed to send message', error);
+                })
+                .finally(() => {
+                    vm.isLoading = false;
                 });
         };
 
-        vm.showImageModal = function (imageUrl) {
-            vm.modalImage = imageUrl;
+        vm.showImageModal = function () {
+            vm.modalImages = vm.getMedia();
             vm.showModal = true;
         };
 
@@ -107,5 +155,40 @@ mainApp.controller('OwnerChatController', [
             vm.showModal = false;
             vm.modalImage = '';
         };
+
+        vm.scrollToBottom = function () {
+            $timeout(() => {
+                const chatMessages = document.getElementById('chat-messages');
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }, 0);
+        };
+
+        /**
+        * Opens a modal to display all images from a specific chat
+        * @param {String} chatId - The ID of the chat to display images for
+        * @param {Event} event - The click event (to prevent propagation)
+        */
+        vm.openImagesModal = function ( event) {
+            // Prevent navigating to chat when clicking the images button
+            if (event) {
+                event.stopPropagation();
+            }
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'app/components/modals/allAttachment/allattachment.template.html',
+                controller: 'AllAttachmentModalController',
+                controllerAs: 'vm',
+                size: 'lg',
+                resolve: {
+                    chatId: function () {
+                        return vm.chatId;
+                    }
+                }
+            });
+        };
+
     }
 ]);

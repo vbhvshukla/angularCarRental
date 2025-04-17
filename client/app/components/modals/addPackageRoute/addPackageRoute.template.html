@@ -1,0 +1,72 @@
+<div class="modal-header">
+    <h3 class="modal-title">Add Route</h3>
+    <button type="button" class="close" ng-click="vm.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <form name="addRouteForm" ng-submit="vm.addRoute()" novalidate>
+        <div class="form-group">
+            <label for="from">From</label>
+            <input type="text" id="from" class="form-control" ng-model="vm.newRoute.from" name="from" required
+                uib-typeahead="city for city in vm.cities | filter:$viewValue | limitTo:8"
+                typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Enter starting location">
+            <span class="help-block" ng-show="addRouteForm.from.$touched && !vm.cities.includes(vm.newRoute.from)">
+                Invalid city selected.
+            </span>
+        </div>
+        <div class="form-group">
+            <label for="to">To</label>
+            <input type="text" id="to" class="form-control" ng-model="vm.newRoute.to" name="to" required
+                uib-typeahead="city for city in vm.cities | filter:$viewValue | limitTo:8"
+                typeahead-editable="false" typeahead-select-on-blur="true" placeholder="Enter destination">
+            <span class="help-block" ng-show="addRouteForm.to.$touched && !vm.cities.includes(vm.newRoute.to)">
+                Invalid city selected.
+            </span>
+        </div>
+        <div class="form-group"
+            ng-class="{'has-error': addRouteForm.distance.$touched && addRouteForm.distance.$invalid}">
+            <label for="distance">Distance (in km)</label>
+            <input type="number" id="distance" class="form-control" ng-model="vm.newRoute.distance" name="distance"
+                required min="1" placeholder="Enter distance">
+            <span class="help-block"
+                ng-show="addRouteForm.distance.$touched && addRouteForm.distance.$error.required">Distance is
+                required.</span>
+            <span class="help-block"
+                ng-show="addRouteForm.distance.$touched && addRouteForm.distance.$error.min">Distance must be at least 1
+                km.</span>
+        </div>
+        <div class="form-group"
+            ng-class="{'has-error': addRouteForm.duration.$touched && addRouteForm.duration.$invalid}">
+            <label for="duration">Duration</label>
+            <input type="text" id="duration" class="form-control" ng-model="vm.newRoute.duration" name="duration"
+                required placeholder="Enter duration (e.g., 5 hours)">
+            <span class="help-block"
+                ng-show="addRouteForm.duration.$touched && addRouteForm.duration.$error.required">Duration is
+                required.</span>
+        </div>
+        <div class="form-group"
+            ng-class="{'has-error': addRouteForm.stayDuration.$touched && addRouteForm.stayDuration.$invalid}">
+            <label for="stayDuration">Stay Duration</label>
+            <input type="text" id="stayDuration" class="form-control" ng-model="vm.newRoute.stayDuration"
+                name="stayDuration" required placeholder="Enter stay duration (e.g., 2 days)">
+            <span class="help-block"
+                ng-show="addRouteForm.stayDuration.$touched && addRouteForm.stayDuration.$error.required">Stay duration
+                is required.</span>
+        </div>
+        <div class="form-group"
+            ng-class="{'has-error': addRouteForm.description.$touched && addRouteForm.description.$invalid}">
+            <label for="description">Description</label>
+            <textarea id="description" class="form-control" ng-model="vm.newRoute.description" name="description"
+                required minlength="10" placeholder="Enter route description"></textarea>
+            <span class="help-block"
+                ng-show="addRouteForm.description.$touched && addRouteForm.description.$error.required">Description is
+                required.</span>
+            <span class="help-block"
+                ng-show="addRouteForm.description.$touched && addRouteForm.description.$error.minlength">Description
+                must be at least 10 characters long.</span>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-disabled="addRouteForm.$invalid">Add Route</button>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" ng-click="vm.closeModal()">Cancel</button>
+</div>

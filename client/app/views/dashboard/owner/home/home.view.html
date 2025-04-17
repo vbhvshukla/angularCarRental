@@ -1,252 +1,295 @@
 <div class="container-fluid" ng-init="vm.init()" ng-controller="OwnerHomeDashboardController as vm">
     <div class="row">
         <div class="col-xs-12">
-            <div class="panel panel-default" style="background-color: #fff; border-radius: 8px; min-height: 450px;">
-                <!-- Pending Bids Section -->
+            <div class="panel panel-default" style="background-color: #fff; border-radius: 8px; min-height: 100vh;">
                 <div class="panel-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3>Pending Bids</h3>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <select ng-model="vm.filters.pendingType" 
-                                        ng-change="vm.applyFilters()" 
-                                        class="form-control input-sm pull-right" 
-                                        style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
-                                    <option value="all">All</option>
-                                    <option value="local">Local</option>
-                                    <option value="outstation">Outstation</option>
-                                </select>
+                    <uib-tabset active="vm.activeTab" ng-change="vm.onTabChange(vm.activeTab)">
+                        <!-- Pending Bids Tab -->
+                        <uib-tab index="0" heading="Pending Bids">
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-sm-6">
+                                    <h3>Pending Bids</h3>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" style="display: flex; justify-content: flex-end; gap: 10px;">
+                                        <select ng-model="vm.filters.pendingCarId" ng-change="vm.loadTabData(0)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="">All Cars</option>
+                                            <option ng-repeat="car in vm.cars" value="{{car._id}}">{{car.carName}}</option>
+                                        </select>
+                                        <select ng-model="vm.filters.pendingType" ng-change="vm.loadTabData(0)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="all">All Types</option>
+                                            <option value="local">Local</option>
+                                            <option value="outstation">Outstation</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="background-color: #2c3e50; color: white;">Car Name</th>
-                                    <th style="background-color: #2c3e50; color: white;">Bid Amount</th>
-                                    <th style="background-color: #2c3e50; color: white;">Total Amount</th>
-                                    <th style="background-color: #2c3e50; color: white;">User</th>
-                                    <th class="hidden-xs" style="background-color: #2c3e50; color: white;">From</th>
-                                    <th class="hidden-xs" style="background-color: #2c3e50; color: white;">To</th>
-                                    <th style="background-color: #2c3e50; color: white;">Type</th>
-                                    <th style="background-color: #2c3e50; color: white;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-if="vm.filteredPendingBids.length === 0">
-                                    <td colspan="8" class="text-center">No pending bids found.</td>
-                                </tr>
-                                <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredPendingBids, vm.pagination.pendingBids)">
-                                    <td>{{bid.car.carName}}</td>
-                                    <td>{{bid.bidAmount | price}}</td>
-                                    <td>{{bid.bidBaseFare | price}}</td>
-                                    <td>{{bid.user.username}}</td>
-                                    <td class="hidden-xs">{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
-                                    <td class="hidden-xs">{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
-                                    <td>{{bid.rentalType}}</td>
-                                    <td>
-                                        <div class="btn-group btn-group-xs">
-                                            <button ng-click="vm.acceptBid(bid)" 
-                                                    ng-disabled="vm.isProcessing && vm.processingBidId === bid.bidId" 
-                                                    class="btn btn-success"
-                                                    style="background: linear-gradient(135deg, #28a745, #218838);">
-                                                {{vm.isProcessing ? 'Processing...' : 'Accept'}}
-                                            </button>
-                                            <button ng-click="vm.rejectBid(bid)" 
-                                                    class="btn btn-danger"
-                                                    style="background: linear-gradient(135deg, #d9534f, #c9302c);">
-                                                Reject
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <div class="table-responsive" ng-if="!vm.loading.pendingBids">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="background-color: #2c3e50; color: white;">Car Name</th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('pendingBids', 'bidAmount')">
+                                                Bid Amount {{vm.getSortIcon('pendingBids', 'bidAmount')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('pendingBids', 'bidBaseFare')">
+                                                Total Amount {{vm.getSortIcon('pendingBids', 'bidBaseFare')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">User</th>
+                                            <th class="hidden-xs" style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('pendingBids', 'fromTimestamp')">
+                                                From {{vm.getSortIcon('pendingBids', 'fromTimestamp')}}
+                                            </th>
+                                            <th class="hidden-xs" style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('pendingBids', 'toTimestamp')">
+                                                To {{vm.getSortIcon('pendingBids', 'toTimestamp')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">Type</th>
+                                            <th style="background-color: #2c3e50; color: white;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-if="vm.filteredPendingBids.length === 0">
+                                            <td colspan="8" class="text-center">No pending bids found.</td>
+                                        </tr>
+                                        <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredPendingBids, vm.pagination.pendingBids) | orderBy:vm.getSortExpression('pendingBids')">
+                                            <td>{{bid.car.carName}}</td>
+                                            <td>{{bid.bidAmount | price}}</td>
+                                            <td>{{bid.bidBaseFare | price}}</td>
+                                            <td>{{bid.user.username}}</td>
+                                            <td class="hidden-xs">{{bid.fromTimestamp | date:'MM/dd/yyyy'}}</td>
+                                            <td class="hidden-xs">{{bid.toTimestamp | date:'MM/dd/yyyy'}}</td>
+                                            <td>{{bid.rentalType}}</td>
+                                            <td>
+                                                <div class="btn-group btn-group-xs">
+                                                    <button ng-click="vm.acceptBid(bid)"
+                                                        ng-disabled="vm.isProcessing && vm.processingBidId === bid.bidId"
+                                                        class="btn btn-success"
+                                                        style="background: linear-gradient(135deg, #28a745, #218838);">
+                                                        {{vm.isProcessing ? 'Processing...' : 'Accept'}}
+                                                    </button>
+                                                    <button ng-click="vm.rejectBid(bid)" class="btn btn-danger"
+                                                        style="background: linear-gradient(135deg, #d9534f, #c9302c);">
+                                                        Reject
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center" ng-if="vm.loading.pendingBids">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p>Loading pending bids...</p>
+                            </div>
 
-                    <!-- Pending Bids Pagination -->
-                    <div class="text-center" ng-if="vm.shouldShowPagination('pendingBids')">
-                        <ul uib-pagination 
-                            total-items="vm.pagination.pendingBids.totalItems"
-                            ng-model="vm.pagination.pendingBids.currentPage"
-                            max-size="5"
-                            items-per-page="vm.pagination.pendingBids.itemsPerPage"
-                            class="pagination-sm"
-                            boundary-links="true"
-                            previous-text="&lsaquo;"
-                            next-text="&rsaquo;"
-                            first-text="&laquo;"
-                            last-text="&raquo;"
-                            ng-change="vm.pageChanged('pendingBids')">
-                        </ul>
-                    </div>
+                            <div class="text-center" ng-if="vm.shouldShowPagination('pendingBids')">
+                                <ul uib-pagination total-items="vm.pagination.pendingBids.totalItems"
+                                    ng-model="vm.pagination.pendingBids.currentPage" max-size="5"
+                                    items-per-page="vm.pagination.pendingBids.itemsPerPage" class="pagination-sm"
+                                    boundary-links="true" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+                                    last-text="&raquo;" ng-change="vm.pageChanged('pendingBids')">
+                                </ul>
+                            </div>
+                        </uib-tab>
 
-                    <!-- Active Bookings Section -->
-                    <div class="row" style="margin-top: 30px;">
-                        <div class="col-sm-6">
-                            <h3>Active Bookings</h3>
-                        </div>
-                        <div class="col-sm-6">
-                            <select ng-model="vm.filters.bookingType" 
-                                    ng-change="vm.applyFilters()" 
-                                    class="form-control input-sm pull-right" 
-                                    style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
-                                <option value="all">All</option>
-                                <option value="local">Local</option>
-                                <option value="outstation">Outstation</option>
-                            </select>
-                        </div>
-                    </div>
+                        <!-- Active Bookings Tab -->
+                        <uib-tab index="1" heading="Active Bookings">
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-sm-6">
+                                    <h3>Active Bookings</h3>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" style="display: flex; justify-content: flex-end; gap: 10px;">
+                                        <select ng-model="vm.filters.bookingCarId" ng-change="vm.loadTabData(1)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="">All Cars</option>
+                                            <option ng-repeat="car in vm.cars" value="{{car._id}}">{{car.carName}}</option>
+                                        </select>
+                                        <select ng-model="vm.filters.bookingType" ng-change="vm.loadTabData(1)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="all">All Types</option>
+                                            <option value="local">Local</option>
+                                            <option value="outstation">Outstation</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Similar pattern for Active Bookings table -->
-                    <div class="table-responsive" style="overflow-x: auto; ">
-                        <table id="bookings-table" class="table table-hover"
-                            style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                            <thead>
-                                <tr>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Car Name
-                                    </th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Bid Price
-                                    </th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Total
-                                        Amount</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">User</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">From</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">To</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Created At
-                                    </th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Rental
-                                        Type</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <td ng-if="vm.filteredBookings.length === 0" style="text-align: center; margin-top: 10px;">No bookings
-                                    found.</td>
-                                <tr ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings) track by booking._id | orderBy : '-createdAt'"
-                                    style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                                    <td>{{booking.bid.car.carName}}</td>
-                                    <td>{{booking.bid.bidAmount | price}}</td>
-                                    <td>{{booking.totalFare | price}}</td>
-                                    <td>{{booking.bid.user.username}}</td>
-                                    <td>{{booking.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.createdAt | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{booking.rentalType}}</td>
-                                    <td>
-                                        <button
-                                            ng-if="vm.isBookingOver(booking) && booking.extraHourCharges === 0 && booking.extraKmCharges === 0"
-                                            ng-click="vm.openAddKmModal(booking)" class="extra-charges-btn"
-                                            style="font-size: 13px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.3s, transform 0.2s;">
-                                            Add Additional(Km/Hr)
-                                        </button>
-                                        <span ng-if="!vm.isBookingOver(booking)">N/A</span>
-                                        <span
-                                            ng-if="vm.isBookingOver(booking) && (booking.extraHourCharges !== 0 || booking.extraKmCharges !== 0)">Additional
-                                            charges added</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <div class="table-responsive" ng-if="!vm.loading.bookings">
+                                <table id="bookings-table" class="table table-hover"
+                                    style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="background-color: #2c3e50; color: white;">Car Name</th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('bookings', 'bid.bidAmount')">
+                                                Bid Price {{vm.getSortIcon('bookings', 'bid.bidAmount')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('bookings', 'totalFare')">
+                                                Total Amount {{vm.getSortIcon('bookings', 'totalFare')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">User</th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('bookings', 'fromTimestamp')">
+                                                From {{vm.getSortIcon('bookings', 'fromTimestamp')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('bookings', 'toTimestamp')">
+                                                To {{vm.getSortIcon('bookings', 'toTimestamp')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('bookings', 'createdAt')">
+                                                Created At {{vm.getSortIcon('bookings', 'createdAt')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">Rental Type</th>
+                                            <th style="background-color: #2c3e50; color: white;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-if="vm.filteredBookings.length === 0">
+                                            <td colspan="9" class="text-center">No bookings found.</td>
+                                        </tr>
+                                        <tr ng-repeat="booking in vm.getPaginatedData(vm.filteredBookings, vm.pagination.bookings) | orderBy:vm.getSortExpression('bookings') track by booking._id"
+                                            style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
+                                            <td>{{booking.bid.car.carName}}</td>
+                                            <td>{{booking.bid.bidAmount | price}}</td>
+                                            <td>{{booking.totalFare | price}}</td>
+                                            <td>{{booking.bid.user.username | capitalize}}</td>
+                                            <td>{{booking.fromTimestamp | date:'medium'}}</td>
+                                            <td>{{booking.toTimestamp | date:'medium'}}</td>
+                                            <td>{{booking.createdAt |date:'medium'}}</td>
+                                            <td>{{booking.rentalType | capitalize}}</td>
+                                            <td>
+                                                <button ng-if="vm.isBookingOver(booking) && booking.extraHourCharges === 0 && booking.extraKmCharges === 0"
+                                                    ng-click="vm.openAddKmModal(booking)" class="extra-charges-btn"
+                                                    style="font-size: 13px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.3s, transform 0.2s;">
+                                                    Add Additional(Km/Hr)
+                                                </button>
+                                                <span ng-if="!vm.isBookingOver(booking)">N/A</span>
+                                                <span ng-if="vm.isBookingOver(booking) && (booking.extraHourCharges !== 0 || booking.extraKmCharges !== 0)">Booking Completed</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center" ng-if="vm.loading.bookings">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p>Loading bookings...</p>
+                            </div>
 
-                    <!-- Active Bookings Pagination -->
-                    <div class="text-center" ng-if="!vm.shouldShowPagination('bookings')">
-                        <ul uib-pagination 
-                            total-items="vm.pagination.bookings.totalItems"
-                            ng-model="vm.pagination.bookings.currentPage"
-                            max-size="5"
-                            items-per-page="vm.pagination.bookings.itemsPerPage"
-                            class="pagination-sm"
-                            boundary-links="true"
-                            previous-text="&lsaquo;"
-                            next-text="&rsaquo;"
-                            first-text="&laquo;"
-                            last-text="&raquo;"
-                            ng-change="vm.pageChanged('bookings')">
-                        </ul>
-                    </div>
+                            <div class="text-center" ng-if="!vm.shouldShowPagination('bookings')">
+                                <ul uib-pagination total-items="vm.pagination.bookings.totalItems"
+                                    ng-model="vm.pagination.bookings.currentPage" max-size="5"
+                                    items-per-page="vm.pagination.bookings.itemsPerPage" class="pagination-sm"
+                                    boundary-links="true" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+                                    last-text="&raquo;" ng-change="vm.pageChanged('bookings')">
+                                </ul>
+                            </div>
+                        </uib-tab>
 
-                    <!-- All Bids Section -->
-                    <div class="row" style="margin-top: 30px;">
-                        <div class="col-sm-6">
-                            <h3>All Bids</h3>
-                        </div>
-                        <div class="col-sm-6">
-                            <select ng-model="vm.filters.bidStatus" 
-                                    ng-change="vm.applyFilters()" 
-                                    class="form-control input-sm pull-right" 
-                                    style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
-                                <option value="all">All</option>
-                                <option value="pending">Pending</option>
-                                <option value="accepted">Accepted</option>
-                                <option value="rejected">Rejected</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
+                        <!-- All Bids Tab -->
+                        <uib-tab index="2" heading="All Bids">
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-sm-6">
+                                    <h3>All Bids</h3>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" style="display: flex; justify-content: flex-end; gap: 10px;">
+                                        <select ng-model="vm.filters.allBidsCarId" ng-change="vm.loadTabData(2)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="">All Cars</option>
+                                            <option ng-repeat="car in vm.cars" value="{{car._id}}">{{car.carName}}</option>
+                                        </select>
+                                        <select ng-model="vm.filters.bidStatus" ng-change="vm.loadTabData(2)"
+                                            class="form-control input-sm"
+                                            style="width: auto; background-color: white; border: 1px solid #bdc3c7;">
+                                            <option value="all">All Status</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="accepted">Accepted</option>
+                                            <option value="rejected">Rejected</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Similar pattern for All Bids table -->
-                    <div class="table-responsive" style="overflow-x: auto;">
-                        <table id="all-bids-table" class="table table-hover"
-                            style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                            <thead>
-                                <tr>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Car Name
-                                    </th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Bid Amount
-                                    </th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Total
-                                        Amount</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">User</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">From</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">To</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Rental
-                                        Type</th>
-                                    <th style="background-color: #2c3e50; color: white; cursor: pointer; position: relative;">Status
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <td ng-if="vm.filteredAllBids.length === 0" style="text-align: center; margin-top: 10px;">No bookings
-                                    found.</td>
+                            <div class="table-responsive" ng-if="!vm.loading.allBids">
+                                <table id="all-bids-table" class="table table-hover"
+                                    style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="background-color: #2c3e50; color: white;">Car Name</th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('allBids', 'bidAmount')">
+                                                Bid Amount {{vm.getSortIcon('allBids', 'bidAmount')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('allBids', 'bidBaseFare')">
+                                                Total Amount {{vm.getSortIcon('allBids', 'bidBaseFare')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">User</th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('allBids', 'fromTimestamp')">
+                                                From {{vm.getSortIcon('allBids', 'fromTimestamp')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white; cursor: pointer;" 
+                                                ng-click="vm.applySort('allBids', 'toTimestamp')">
+                                                To {{vm.getSortIcon('allBids', 'toTimestamp')}}
+                                            </th>
+                                            <th style="background-color: #2c3e50; color: white;">Rental Type</th>
+                                            <th style="background-color: #2c3e50; color: white;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-if="vm.filteredAllBids.length === 0">
+                                            <td colspan="8" class="text-center">No bids found.</td>
+                                        </tr>
+                                        <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids) | orderBy:vm.getSortExpression('allBids')">
+                                            <td>{{bid.car.carName | capitalize}}</td>
+                                            <td>{{bid.bidBaseFare | price}}</td>
+                                            <td>{{bid.bidAmount | price}}</td>
+                                            <td>{{bid.user.username | capitalize}}</td>
+                                            <td>{{bid.fromTimestamp | date:'medium'}}</td>
+                                            <td>{{bid.toTimestamp | date:'medium'}}</td>
+                                            <td>{{bid.rentalType | capitalize}}</td>
+                                            <td>{{bid.status | capitalize}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center" ng-if="vm.loading.allBids">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p>Loading all bids...</p>
+                            </div>
 
-                                <tr ng-repeat="bid in vm.getPaginatedData(vm.filteredAllBids, vm.pagination.allBids)"
-                                    style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">
-                                    <td>{{bid.car.carName}}</td>
-                                    <td>{{bid.bidBaseFare | price}}</td>
-                                    <td>{{bid.bidAmount | price}}</td>
-                                    <td>{{bid.user.username}}</td>
-                                    <td>{{bid.fromTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{bid.toTimestamp | date:'MM/dd/yyyy HH:mm'}}</td>
-                                    <td>{{bid.rentalType}}</td>
-                                    <td>{{bid.status}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- All Bids Pagination -->
-                    <div class="text-center" style="margin: 1rem 0; text-align: center;">
-                        <ul uib-pagination 
-                            total-items="vm.pagination.allBids.totalItems"
-                            ng-model="vm.pagination.allBids.currentPage"
-                            max-size="5"
-                            items-per-page="vm.pagination.allBids.itemsPerPage"
-                            class="pagination-sm"
-                            boundary-links="true"
-                            previous-text="&lsaquo;"
-                            next-text="&rsaquo;"
-                            first-text="&laquo;"
-                            last-text="&raquo;"
-                            ng-change="vm.pageChanged('allBids')">
-                        </ul>
-                    </div>
+                            <div class="text-center" style="margin: 1rem 0; text-align: center;">
+                                <ul uib-pagination total-items="vm.pagination.allBids.totalItems"
+                                    ng-model="vm.pagination.allBids.currentPage" max-size="5"
+                                    items-per-page="vm.pagination.allBids.itemsPerPage" class="pagination-sm"
+                                    boundary-links="true" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+                                    last-text="&raquo;" ng-change="vm.pageChanged('allBids')">
+                                </ul>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
                 </div>
             </div>
         </div>
@@ -254,64 +297,113 @@
 </div>
 
 <style>
-/* Table Styles */
-.table > thead > tr > th {
-    vertical-align: middle;
-    padding: 12px 8px;
-}
-
-.table > tbody > tr > td {
-    vertical-align: middle;
-    padding: 12px 8px;
-}
-
-/* Button Group Styles */
-.btn-group-xs > .btn {
-    padding: 3px 8px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-}
-
-/* Select Styles */
-.form-control.input-sm {
-    height: 30px;
-    padding: 5px 10px;
-    font-size: 12px;
-}
-
-/* Mobile Optimizations */
-@media (max-width: 767px) {
-    .table-responsive {
-        border: 0;
-        margin-bottom: 0;
+    /* Table Styles */
+    .table>thead>tr>th {
+        vertical-align: middle;
+        padding: 12px 8px;
     }
 
-    .btn-group-xs > .btn {
-        padding: 4px 8px;
+    .table>tbody>tr>td {
+        vertical-align: middle;
+        padding: 12px 8px;
     }
 
+    /* Button Group Styles */
+    .btn-group-xs>.btn {
+        padding: 3px 8px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    /* Select Styles */
     .form-control.input-sm {
-        margin-bottom: 10px;
-        width: 100% !important; /* Override inline width on mobile */
-        max-width: 200px;
-        float: none !important; /* Override pull-right on mobile */
-        margin-left: auto;
-        margin-right: auto;
+        height: 30px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    /* Tab Styles */
+    .nav-tabs {
+        border-bottom: 2px solid #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .nav-tabs>li>a {
+        color: #2c3e50;
+        font-weight: 500;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 5px;
+        border-radius: 4px 4px 0 0;
+    }
+
+    .nav-tabs>li.active>a,
+    .nav-tabs>li.active>a:hover,
+    .nav-tabs>li.active>a:focus {
+        color: #fff;
+        background-color: #2c3e50;
+        border: none;
+    }
+
+    .nav-tabs>li>a:hover {
+        background-color: #f8f9fa;
+        border: none;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 767px) {
+        .table-responsive {
+            border: 0;
+            margin-bottom: 0;
+        }
+
+        .btn-group-xs>.btn {
+            padding: 4px 8px;
+        }
+
+        .form-control.input-sm {
+            margin-bottom: 10px;
+            width: 100% !important;
+            max-width: 200px;
+            float: none !important;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .col-sm-6 {
+            text-align: center;
+        }
+
+        .nav-tabs>li {
+            float: none;
+            display: inline-block;
+        }
+
+        .nav-tabs>li>a {
+            padding: 8px 15px;
+        }
+    }
+
+    /* Pagination Styles */
+    .pagination {
+        margin: 10px 0;
+    }
+
+    .pagination>li>a {
+        padding: 4px 10px;
+    }
+
+    /* Loading Spinner Styles */
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        margin: 20px auto;
+        display: block;
     }
     
-    /* Adjust column layout on mobile */
-    .col-sm-6 {
-        text-align: center;
+    .text-center p {
+        margin-top: 10px;
+        color: #666;
     }
-}
-
-/* Pagination Styles */
-.pagination {
-    margin: 10px 0;
-}
-
-.pagination > li > a {
-    padding: 4px 10px;
-}
 </style>

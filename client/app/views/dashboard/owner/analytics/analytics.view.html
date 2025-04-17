@@ -1,16 +1,13 @@
-<div class="container-fluid" ng-controller="OwnerAnalyticsController as vm" ng-init="vm.init()" 
+<div class="container-fluid" ng-controller="OwnerAnalyticsController as vm" ng-init="vm.init()"
     style="padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    
-    <!-- Header Section -->
+
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-sm-8">
             <h2>Analytics Dashboard</h2>
         </div>
         <div class="col-sm-4">
-            <select ng-model="vm.selectedDays" 
-                    ng-change="vm.updateTimeRange()" 
-                    class="form-control"
-                    style="max-width: 200px; float: right;">
+            <select ng-model="vm.selectedDays" ng-change="vm.updateTimeRange()" class="form-control"
+                style="max-width: 200px; float: right;">
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
                 <option value="90">Last 90 days</option>
@@ -19,126 +16,131 @@
         </div>
     </div>
 
-    <!-- Totals Grid -->
     <div class="row" style="margin-bottom: 30px;">
         <div class="col-sm-4">
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
+            <div
+                style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
                 <h3 style="margin: 0; color: #6c757d; font-size: 0.9em; text-transform: uppercase;">Total Revenue</h3>
-                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">{{vm.totals.formattedRevenue}}</p>
+                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">
+                    {{vm.totals.formattedRevenue}}</p>
             </div>
         </div>
         <div class="col-sm-4">
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
+            <div
+                style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
                 <h3 style="margin: 0; color: #6c757d; font-size: 0.9em; text-transform: uppercase;">Total Bookings</h3>
-                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">{{vm.totals.totalBookings}}</p>
+                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">
+                    {{vm.totals.totalBookings}}</p>
             </div>
         </div>
         <div class="col-sm-4">
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
+            <div
+                style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
                 <h3 style="margin: 0; color: #6c757d; font-size: 0.9em; text-transform: uppercase;">Total Cars</h3>
-                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">{{vm.totals.totalCars}}</p>
+                <p style="margin: 10px 0 0; font-size: 2em; font-weight: bold; color: #2c3e50;">{{vm.totals.totalCars}}
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- Charts Grid -->
+
     <div class="row">
-        <!-- Monthly Revenue -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Monthly Revenue</h3>
                 <canvas id="monthlyRevenueChart"></canvas>
             </div>
         </div>
 
-        <!-- Bookings per Car -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Bookings per Car</h3>
                 <canvas id="bookingsPerCarChart"></canvas>
             </div>
         </div>
 
-        <!-- Rental Duration -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Rental Duration</h3>
                 <canvas id="rentalDurationChart"></canvas>
             </div>
         </div>
 
-        <!-- Bid Amount -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Bid Amount per Car</h3>
                 <canvas id="bidAmountChart"></canvas>
             </div>
         </div>
 
-        <!-- Car Availability -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Car Availability Insights</h3>
                 <canvas id="carAvailabilityChart"></canvas>
             </div>
         </div>
 
-        <!-- Rental Type Distribution -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Rental Type Distribution</h3>
-                <canvas id="rentalTypeDistributionChart"></canvas>
-            </div>
-        </div>
 
-        <!-- Category Performance -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Category Performance</h3>
                 <canvas id="categoryPerformanceChart"></canvas>
             </div>
         </div>
 
-        <!-- Peak Booking Hours -->
-        <div class="col-md-6" style="margin-bottom: 20px;">
+        <div class="col-md-8" style="margin-bottom: 20px;">
             <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 15px;">Peak Booking Hours</h3>
                 <canvas id="peakBookingHoursChart"></canvas>
             </div>
         </div>
+        <div class="col-md-8" style="margin-bottom: 20px;">
+            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="margin-bottom: 15px;">Rental Type Distribution</h3>
+                <canvas id="rentalTypeDistributionChart"></canvas>
+            </div>
+        </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" ng-if="vm.loading" 
+    <div class="loading-overlay" ng-if="vm.loading"
         style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-        <div style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <div
+            style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
+        </div>
     </div>
 </div>
 
 <style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
 
-@media (max-width: 768px) {
-    .container-fluid {
-        padding: 10px !important;
+        100% {
+            transform: rotate(360deg);
+        }
     }
-    
-    canvas {
-        height: 300px !important;
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding: 10px !important;
+        }
+
+        canvas {
+            height: 300px !important;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            float: none !important;
+            max-width: 100% !important;
+            margin-bottom: 15px;
+        }
     }
-    
-    h2 {
-        font-size: 24px;
-        margin-bottom: 15px;
-    }
-    
-    .form-control {
-        float: none !important;
-        max-width: 100% !important;
-        margin-bottom: 15px;
-    }
-}
 </style>

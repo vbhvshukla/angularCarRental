@@ -1,7 +1,9 @@
 mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
     function ($http, $q, errorService, $timeout) {
+        
+        // Local const BASE_URL = 'http://127.0.0.1:8006/api/v1/chat';
+        const BASE_URL = 'https://carental-12t8.onrender.com/api/v1/chat';
 
-        const BASE_URL = 'http://127.0.0.1:8006/api/v1/chat';
 
         /**
          * @function generateChatId()
@@ -64,14 +66,15 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
          * @param {*} file 
          * @returns resolved or rejected promise.
          */
-        this.sendMessage = function (chatId, fromUser, toUser, message, file) {
+        this.sendMessage = function (chatId, fromUser, toUser, message, attachment) {
             const messageData = {
                 chatId,
                 fromUser,
                 toUser,
                 message,
-                attachment: file || null
+                attachment: attachment || null
             };
+            console.log('Chat Service :: ', messageData);
             return $http.post(`${BASE_URL}/messages/send`, messageData)
                 .then(response => response.data)
                 .catch(error => errorService.handleError(error, 'ChatService :: Message Send Failed'));
@@ -151,10 +154,10 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
         };
 
         /**
- * Function :: getCarIdFromChatId
- * @param {string} chatId - The chat ID in the format "userId_ownerId_carId".
- * @returns {string} - The extracted car ID.
- */
+         * Function :: getCarIdFromChatId
+         * @param {string} chatId - The chat ID in the format "userId_ownerId_carId".
+         * @returns {string} - The extracted car ID.
+         */
         this.getCarIdFromChatId = function (chatId) {
             if (!chatId || typeof chatId !== 'string') {
                 throw new Error('Invalid chatId');
@@ -164,6 +167,35 @@ mainApp.service('chatService', ['$http', '$q', 'errorService', '$timeout',
                 throw new Error('Invalid chatId format');
             }
             return parts[2]; // Return the carId (last part of the chatId)
+        }
+
+
+        /**
+        * Function :: Get All Media of a particular chat
+        * @requires chatId 
+        * @returns {string} - Data of all attachments
+        */
+        this.getAllMedia = function (chatId) {
+            if (!chatId) {
+                throw new Error('Invalid Chat Id');
+            }
+
+            return $http.get(`${BASE_URL}/conversationfiles?chatId=${chatId}`).then(response => response.data).catch(err => errorService.handleError(err, 'ChatService :: Chat Participants Fetch Failed'));
+        }
+
+
+        this.searchOwnerConversation = function (ownerId, searchQuery) {
+            if (!searchQuery) {
+                throw new Error('Invalid Search Parameter');
+            }
+            return $http.get(`${BASE_URL}/owner/search/${ownerId}?searchQuery=${searchQuery}`).then(response => response.data).catch(error => errorService.handleError('ChatService :: Failed to search vonersations', error))
+        }
+
+        this.searchUserConversation = function (userId, searchQuery) {
+            if (!searchQuery) {
+                throw new Error('Invalid Search Parameter');
+            }
+            return $http.get(`${BASE_URL}/user/search/${userId}?searchQuery=${searchQuery}`).then(response => response.data).catch(error => errorService.handleError('ChatService :: Failed to search vonersations', error))
         }
     }
 ]);

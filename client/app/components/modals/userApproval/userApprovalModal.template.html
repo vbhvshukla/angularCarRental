@@ -7,8 +7,10 @@
         style="display: flex; flex-direction: column; padding: 10px; border-bottom: 1px solid #ccc;">
         <p>Username: {{vm.selectedUser.username}}</p>
         <p>Email: {{vm.selectedUser.email}}</p>
-        <label for="verificationFile">Verification File : </label>
-        <p><img ng-src="{{vm.selectedUser.verificationFile}}" style="display: flex; border-radius: 2px;"></p>
+        <div ng-if="vm.selectedUser.verificationFile && vm.selectedUser.verificationFile !== 'No Verification File Found!'">
+            <label for="verificationFile">Verification File : </label>
+            <p><img ng-src="{{vm.selectedUser.verificationFile}}" style="display: flex; border-radius: 2px;"></p>
+        </div>
     </div>
     <div class="approval-buttons" style="margin-top: 10px; display: flex; gap: 10px;">
         <button class="btn btn-success" ng-click="vm.approveUser()" ng-disabled="vm.selectedUser.isApproved"

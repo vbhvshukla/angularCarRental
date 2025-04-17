@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 
 export const bidValidationRules = [
     // Validate carId
@@ -51,4 +51,101 @@ export const bidValidationRules = [
         .withMessage("Role must be one of 'owner', 'admin', or 'customer'.")
         .notEmpty()
         .withMessage("Role is required."),
+        
+    // Add validation middleware
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
 ];
+
+export const validateBidId = [
+    param("bidId")
+        .isMongoId()
+        .withMessage("Bid ID must be a valid MongoDB ObjectId.")
+        .notEmpty()
+        .withMessage("Bid ID is required."),
+        
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+export const validateUpdateStatus = [
+    param("bidId")
+        .isMongoId()
+        .withMessage("Bid ID must be a valid MongoDB ObjectId.")
+        .notEmpty()
+        .withMessage("Bid ID is required."),
+        
+    body("status")
+        .isIn(["pending", "accepted", "rejected", "cancelled"])
+        .withMessage("Status must be one of 'pending', 'accepted', 'rejected', or 'cancelled'.")
+        .notEmpty()
+        .withMessage("Status is required."),
+        
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+export const validateCarId = [
+    param("carId")
+        .isMongoId()
+        .withMessage("Car ID must be a valid MongoDB ObjectId.")
+        .notEmpty()
+        .withMessage("Car ID is required."),
+        
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+export const validateUserId = [
+    param("userId")
+        .isMongoId()
+        .withMessage("User ID must be a valid MongoDB ObjectId.")
+        .notEmpty()
+        .withMessage("User ID is required."),
+        
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+export const validateOwnerId = [
+    param("ownerId")
+        .isMongoId()
+        .withMessage("Owner ID must be a valid MongoDB ObjectId.")
+        .notEmpty()
+        .withMessage("Owner ID is required."),
+        
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+

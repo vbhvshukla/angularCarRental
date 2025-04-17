@@ -16,7 +16,9 @@ mainApp.component('ownerSidebar', {
             { state: 'ownerdashboard.listedcars', icon: '🚗', label: 'My Cars' },
             { state: 'ownerdashboard.allmessages', icon: '✉️', label: 'My Messages' },
             { state: 'ownerdashboard.analytics', icon: '📊', label: 'Analytics' },
-            { state: 'ownerdashboard.manipulatecars', icon: '➕', label: 'List new car' }
+            { state: 'ownerdashboard.manipulatecars', icon: '➕', label: 'List new car' },
+            // { state: 'ownerdashboard.manipulatepackages', icon: '➕', label: 'List new package' }
+
         ];
 
         /**

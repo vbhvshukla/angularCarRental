@@ -13,7 +13,6 @@ aws.config.update({
 })
 
 var s3 = new aws.S3();
-//TODO : Handle error 
 var upload = multer({
     storage: multerS3({
         s3: s3,

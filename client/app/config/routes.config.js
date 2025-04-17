@@ -479,6 +479,33 @@ mainApp.config(['$stateProvider', '$urlMatcherFactoryProvider', '$urlRouterProvi
                 }
             })
 
+            // Owner Dashboard : Manipulate Packages(Add/Edit)
+            .state('ownerdashboard.manipulatepackages', {
+                url: '/package/:packageId',
+                templateUrl: 'app/views/dashboard/owner/packages/manipulatePackages/manipulatePackages.view.html',
+                controller: 'ManipulatePackageController',
+                controllerAs: 'vm',
+                params: {
+                    packageId: { value: null }
+                },
+                resolve: {
+                    redirectIfAuthenticated: ['userFactory', '$state', '$stateParams', function (userFactory, $state, $stateParams) {
+                        return userFactory.getCurrentUser().then(function (user) {
+                            if (user) {
+                                switch (user.role) {
+                                    case 'admin': return $state.go('admindashboard');
+                                    case 'owner' && !user.isApproved: return $state.go('home')
+                                    case 'customer': return $state.go('home');
+                                }
+                            }
+                            else {
+                                $state.go("home");
+                            }
+                        })
+                    }]
+                }
+            })
+
             // Owner Dashboard : All Messages
             .state('ownerdashboard.allmessages', {
                 url: '/allmessages',

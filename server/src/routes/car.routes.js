@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCar, deleteCar, getAllCars, getAvailableCars, getCarById, getCarsByCategory, getCarsByCity, getCarsByOwner, updateCar } from "../controllers/car.controller.js";
+import { createCar, deleteCar, getAllCars, getAvailableCars, getCarById, getCarsByCategory, getCarsByCity, getCarsByOwner, rateCar, updateCar } from "../controllers/car.controller.js";
 import { authorize, authenticate } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
 
@@ -26,6 +26,8 @@ router.put("/update/:carId",
 router.delete("/:carId", [
     authenticate,
     authorize("owner"),
-], deleteCar); // Soft delete a car
+], deleteCar);
+
+router.post("/rate/:carId",rateCar)
 
 export default router;

@@ -11,12 +11,29 @@ router.post("/", upload.single("file"), (req, res) => {
     try {
         // The file URL is available in `req.file.location`
         const fileUrl = req.file.location;
-        const { chatId } = req.body;
+        const { chatId, fromUser, toUser } = req.body;
+        
+        // Parse the JSON strings back into objects
+        const parsedFromUser = JSON.parse(fromUser);
+        const parsedToUser = JSON.parse(toUser);
+
         const newAttatchment = new Attachment({
             url: fileUrl,
             type: req.file.mimetype,
-            refId: chatId   
+            refId: chatId,
+            fromUser: {
+                userId: parsedFromUser._id,
+                username: parsedFromUser.username,
+                email: parsedFromUser.email
+            },
+            toUser: {
+                userId: parsedToUser._id,
+                username: parsedToUser.username,
+                email: parsedToUser.email
+            }
         })
+
+        console.log(newAttatchment);
 
         newAttatchment.save();
 
@@ -35,5 +52,7 @@ router.post("/", upload.single("file"), (req, res) => {
         });
     }
 });
+
+
 
 export default router;

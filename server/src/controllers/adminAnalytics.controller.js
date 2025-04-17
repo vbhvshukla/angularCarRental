@@ -49,7 +49,7 @@ export const getTotals = async (req, res) => {
 
 //Revenue per city
 export const revenueByCity = async (req, res) => {
-    const { numberOfDays = 7 } = req.body;
+    const { numberOfDays = 30 } = req.body;
 
     try {
         const today = new Date();
@@ -112,7 +112,7 @@ export const revenueByCity = async (req, res) => {
 
 //Revenue by rental type
 export const revenueByRentalType = async (req, res) => {
-    const { numberOfDays = 7 } = req.body;
+    const { numberOfDays = 30 } = req.body;
     try {
         const today = new Date();
         const startDate = new Date(today);

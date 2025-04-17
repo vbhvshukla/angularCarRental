@@ -261,14 +261,16 @@ mainApp.controller('AdminAnalyticsController', [
                                     data: localRevenue,
                                     borderColor: '#3498db',
                                     backgroundColor: 'rgba(52, 152, 219, 0.5)', // Transparentized blue
-                                    fill: true
+                                    fill: true,
+                                    tension: 0.4
                                 },
                                 {
                                     label: 'Outstation Revenue',
                                     data: outstationRevenue,
                                     borderColor: '#e74c3c',
                                     backgroundColor: 'rgba(231, 76, 60, 0.5)', // Transparentized red
-                                    fill: true
+                                    fill: true,
+                                    tension: 0.4
                                 }
                             ]
                         },
@@ -294,7 +296,7 @@ mainApp.controller('AdminAnalyticsController', [
                                 borderColor: '#2ecc71',
                                 backgroundColor: 'rgba(46, 204, 113, 0.1)',
                                 fill: true,
-                                tension: 0.4
+                                // tension: 0.4
                             }]
                         },
                         options: {
@@ -434,20 +436,73 @@ mainApp.controller('AdminAnalyticsController', [
 
             // Category Performance Chart
             if (charts.categoryPerformance) {
+                // Aggregate data by category
+                const categoryData = {};
+                charts.categoryPerformance.forEach(item => {
+                    const category = item._id.category;
+                    if (!categoryData[category]) {
+                        categoryData[category] = {
+                            totalRevenue: 0,
+                            totalBookings: 0,
+                            uniqueCustomers: 0
+                        };
+                    }
+                    categoryData[category].totalRevenue += item.totalRevenue;
+                    categoryData[category].totalBookings += item.totalBookings;
+                    categoryData[category].uniqueCustomers += item.uniqueCustomerCount;
+                });
+
+                // Convert to arrays for chart
+                const categories = Object.keys(categoryData);
+                const revenues = categories.map(cat => categoryData[cat].totalRevenue);
+
                 vm.chartInstances.categoryPerformanceChart = new Chart(
                     document.getElementById('categoryPerformanceChart'),
                     {
                         type: 'line',
                         data: {
-                            labels: charts.categoryPerformance.map(item => item._id.category),
+                            labels: categories,
                             datasets: [{
                                 label: 'Revenue',
-                                data: charts.categoryPerformance.map(item => item.totalRevenue),
+                                data: revenues,
                                 borderColor: '#2ecc71',
                                 fill: false
                             }]
                         },
-                        options: getChartOptions('revenue')
+                        options: {
+                            ...getChartOptions('revenue'),
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        font: {
+                                            family: 'Inter',
+                                            size: 11
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        callback: value => `₹${value.toLocaleString()}`,
+                                        font: {
+                                            family: 'Inter',
+                                            size: 11
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Revenue (₹)',
+                                        font: {
+                                            family: 'Inter',
+                                            size: 12,
+                                            weight: 500
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 );
             }
@@ -605,7 +660,7 @@ mainApp.controller('AdminAnalyticsController', [
                     const dayData = charts.peakHours.filter(item => item._id.dayOfWeek === index + 1);
                     return {
                         day,
-                        bookings: dayData.reduce((sum, item) => sum + item.bookingCount, 0),
+                        bookings: Math.round(dayData.reduce((sum, item) => sum + item.bookingCount, 0)),
                         revenue: dayData.reduce((sum, item) => sum + item.totalRevenue, 0)
                     };
                 });
@@ -648,10 +703,23 @@ mainApp.controller('AdminAnalyticsController', [
                                     position: 'left',
                                     title: {
                                         display: true,
-                                        text: 'Number of Bookings'
+                                        text: 'Number of Bookings',
+                                        font: {
+                                            family: 'Inter',
+                                            size: 12,
+                                            weight: 500
+                                        }
                                     },
                                     grid: {
                                         drawOnChartArea: false
+                                    },
+                                    ticks: {
+                                        stepSize: 1,
+                                        precision: 0,
+                                        font: {
+                                            family: 'Inter',
+                                            size: 11
+                                        }
                                     }
                                 },
                                 'y-revenue': {
@@ -659,10 +727,30 @@ mainApp.controller('AdminAnalyticsController', [
                                     position: 'right',
                                     title: {
                                         display: true,
-                                        text: 'Revenue (₹)'
+                                        text: 'Revenue (₹)',
+                                        font: {
+                                            family: 'Inter',
+                                            size: 12,
+                                            weight: 500
+                                        }
                                     },
                                     grid: {
                                         drawOnChartArea: false
+                                    },
+                                    ticks: {
+                                        font: {
+                                            family: 'Inter',
+                                            size: 11
+                                        },
+                                        callback: value => `₹${value.toLocaleString()}`
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            family: 'Inter',
+                                            size: 11
+                                        }
                                     }
                                 }
                             },
@@ -675,7 +763,7 @@ mainApp.controller('AdminAnalyticsController', [
                                             if (context.datasetIndex === 1) { // Revenue dataset
                                                 return `${label}: ₹${value.toLocaleString()}`;
                                             }
-                                            return `${label}: ${value}`;
+                                            return `${label}: ${Math.round(value)}`;
                                         }
                                     }
                                 }

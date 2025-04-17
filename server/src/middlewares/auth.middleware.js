@@ -45,9 +45,10 @@ const authorize = (...roles) => {
             if (!roles.includes(req.user.role)) {
                 return res.status(403).json({ msg: "Authorization Error :: Unauthorized Access Requested" });
             }
-
+            console.log('Authorized');
             next(); // Proceed to the next middleware or route handler
         } catch (error) {
+            console.log('Not Authorized')
             console.error("Authorization Error :: Error in authorize middleware:", error);
             return res.status(403).json({ msg: "Authorization Error :: Invalid token" });
         }

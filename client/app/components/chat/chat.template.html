@@ -3,7 +3,7 @@
     <div class="panel-heading">
         <h3 class="panel-title">
             <span class="glyphicon glyphicon-comment"></span>
-            Chat with {{$ctrl.toUser.username}}
+            Chat with {{$ctrl.toUser.username | capitalize}}
         </h3>
     </div>
 
@@ -12,10 +12,10 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="well"
-                    style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; margin-bottom: 15px; padding: 15px;">
+                    style="max-height: 300px; min-height: 277px; overflow-y: auto; background-color: #f8f9fa; margin-bottom: 15px; padding: 15px;">
                     <!-- Empty State -->
                     <p class="text-center text-muted" ng-show="!$ctrl.messages.length">
-                        Say Hi to {{$ctrl.toUser.username}}
+                        Say Hi to {{$ctrl.toUser.username | capitalize}}
                     </p>
 
                     <!-- Loading State -->
@@ -66,7 +66,7 @@
                         style="border-radius: 4px 0 0 4px;">
 
                     <!-- Send Button -->
-                    <span class="input-group-btn">
+                    <span class="input-group-btn" style="top:9px">
                         <button class="btn btn-primary btn-lg" ng-click="$ctrl.sendMessage()"
                             ng-disabled="!$ctrl.newMessage" style="border-radius: 0 4px 4px 0;">
                             <span class="glyphicon glyphicon-send"></span>

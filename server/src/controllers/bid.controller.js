@@ -133,8 +133,9 @@ export const submitBid = async (req, res) => {
       },
     });
 
+    await bid.save();
     // Push this data to AWS SQS queue
-    sendMessageToSQS(bid);
+    // sendMessageToSQS(bid);
     console.log("Message sent to SQS");
 
     res.status(201).json({ msg: "Bid submitted successfully", bid });
@@ -256,46 +257,20 @@ export const getBidById = async (req, res) => {
   }
 };
 
-/**
- * @function getBidsForOwner
- * @description Get all bids for a specific owner.
- * @param {*} req
- * @param {*} res
- */
-// export const getBidsForOwner = async (req, res) => {
-//     try {
-//         const { ownerId } = req.params;
-//         const { page = 1, limit = 10, bidStatus } = req.query;
-
-//         // Build the query
-//         const query = { "car.owner.userId": new mongoose.Types.ObjectId(ownerId) };
-
-//         if (bidStatus && bidStatus !== 'all') {
-//             query.status = bidStatus;
-//         }
-
-//         // Fetch total count and paginated bids
-//         const totalItems = await Bid.countDocuments(query);
-//         const bids = await Bid.find(query)
-//             .skip((page - 1) * limit)
-//             .limit(parseInt(limit));
-//         res.status(200).json({ bids, totalItems });
-//     } catch (error) {
-//         console.error("Bid Controller :: Error fetching bids for owner", error);
-//         res.status(500).json({ msg: "Server Error" });
-//     }
-// };
-
 export const getBidsForOwner = async (req, res) => {
   try {
     const { ownerId } = req.params;
-    const { page = 1, limit = 10, bidStatus } = req.query;
+    const { page = 1, limit = 10, bidStatus, carId } = req.query;
 
     // Parse limit and page as numbers
     const parsedLimit = parseInt(limit, 10) || 10;
     const parsedPage = parseInt(page, 10) || 1;
 
     const query = { "car.owner.userId": new mongoose.Types.ObjectId(ownerId) };
+
+    if (carId) {
+      query["car.carId"] = new mongoose.Types.ObjectId(carId);
+    }
 
     if (bidStatus && bidStatus !== "all") {
       const allowedStatuses = ["pending", "accepted", "rejected"];
@@ -304,6 +279,7 @@ export const getBidsForOwner = async (req, res) => {
       }
       query.status = bidStatus;
     }
+
     const totalItems = await Bid.countDocuments(query);
     const bids = await Bid.find(query)
       .skip((parsedPage - 1) * parsedLimit)

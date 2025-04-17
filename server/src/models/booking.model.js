@@ -41,6 +41,10 @@ const bookingSchema = new mongoose.Schema(
         totalFare: {
             type: Number,
             required: true
+        },
+        isRated: {
+            type: Boolean,
+            default: false
         }
     },
     {

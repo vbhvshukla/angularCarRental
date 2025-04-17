@@ -1,5 +1,8 @@
 mainApp.service('carService', ['$http', '$q', function ($http, $q) {
-    const BASE_URL = "http://127.0.0.1:8006/api/v1/car";
+
+    // Local ::  const BASE_URL = "http://127.0.0.1:8006/api/v1/car";
+    // Production :: 
+    const BASE_URL = "https://carental-12t8.onrender.com/api/v1/car";
 
     /**
      * @function getAllCars()
@@ -97,7 +100,7 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
             limit: itemsPerPage,
             ...filters // Include filters as query parameters
         };
-        console.log(filters)
+        console.log(params)
         $http.get(`${BASE_URL}/available`, { params })
             .then(response => deferred.resolve(response.data))
             .catch(error => deferred.reject(error));
@@ -159,4 +162,12 @@ mainApp.service('carService', ['$http', '$q', function ($http, $q) {
             .catch(error => deferred.reject(error));
         return deferred.promise;
     };
+
+    this.rateCar = function (bookingId, rating, carId) {
+        const deferred = $q.defer();
+        $http.post(`${BASE_URL}/rate/${carId}`, { bookingId, rating })
+            .then(response => deferred.resolve(response.data))
+            .catch(error => deferred.reject(error));
+        return deferred.promise;
+    }
 }]);
