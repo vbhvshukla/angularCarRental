@@ -34,7 +34,7 @@ const app = express();
 
 //CORS configuration
 app.use(cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "https://carental-12t8.onrender.com",
     credentials: true
 }));
 
