@@ -75,15 +75,15 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             secure: false,
             maxAge: 15 * 60 * 1000,
-            secure:true,
-            sameSite:'none'
+            secure: true,
+            sameSite: 'none'
         });
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: false,
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            secure:true,
-            sameSite:'none'
+            secure: true,
+            sameSite: 'none'
         });
 
         res.status(200).json({ msg: "Auth Controller :: Login Successful", user });
@@ -99,8 +99,8 @@ const loginUser = async (req, res) => {
  * @type {(req: any, res: any) => void}
  */
 const logout = ((req, res) => {
-    res.clearCookie("accessToken",{domain:'https://carental-12t8.onrender.com'});
-    res.clearCookie("refreshToken",{domain:'https://carental-12t8.onrender.com'});
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.status(200).json({ msg: "Logged out successfully" });
 });
 
