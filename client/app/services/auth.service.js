@@ -92,6 +92,8 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
 
         this.logout = function () {
             const deferred = $q.defer();
+            $cookies.remove('refreshToken',{domain:'carental-12t8.onrender.com'});
+            $cookies.remove('accessToken',{domain:'carental-12t8.onrender.com'});
 
             $http.post(`${BASE_URL}/logout`, { withCredentials: true })
                 .then(() => {
