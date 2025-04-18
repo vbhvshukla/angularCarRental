@@ -178,6 +178,10 @@ export const rentalDurationPerCar = async (req, res) => {
                 {
                     // Sort by totalLocalDurationInHours in descending order
                     $sort: { totalLocalDurationInHours: -1 }
+                },
+                {
+                    // Limit to top 10 cars
+                    $limit: 10
                 }
             ]
         )

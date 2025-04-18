@@ -99,8 +99,8 @@ const loginUser = async (req, res) => {
  * @type {(req: any, res: any) => void}
  */
 const logout = ((req, res) => {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken",{domain:'https://carental-12t8.onrender.com'});
+    res.clearCookie("refreshToken",{domain:'https://carental-12t8.onrender.com'});
     res.status(200).json({ msg: "Logged out successfully" });
 });
 

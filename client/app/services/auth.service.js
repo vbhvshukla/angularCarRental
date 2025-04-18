@@ -92,9 +92,8 @@ mainApp.service('authService', ['$http', '$q', '$state', '$cookies', 'errorServi
 
         this.logout = function () {
             const deferred = $q.defer();
-            $http.post(`${BASE_URL}/logout`, {}, { withCredentials: true })
+            $http.post(`${BASE_URL}/logout`, { withCredentials: true })
                 .then(() => {
-                    $cookies.remove('userId');
                     $state.go('home');
                     errorService.logInfo('AuthService :: Authentication', 'User logged out successfully');
                     deferred.resolve();

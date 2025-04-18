@@ -43,66 +43,73 @@
         </div>
     </div>
 
-
-    <div class="row">
-
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Monthly Revenue</h3>
-                <canvas id="monthlyRevenueChart"></canvas>
+    <uib-tabset active="active">
+        <!-- Revenue Tab -->
+        <uib-tab heading="Revenue Analytics">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Monthly Revenue</h3>
+                        <canvas id="monthlyRevenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Bid Amount per Car</h3>
+                        <canvas id="bidAmountChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
+        </uib-tab>
 
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Bookings per Car</h3>
-                <canvas id="bookingsPerCarChart"></canvas>
+        <!-- Insights Tab -->
+        <uib-tab heading="Car Insights">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Bookings per Car</h3>
+                        <canvas id="bookingsPerCarChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Car Availability Insights</h3>
+                        <canvas id="carAvailabilityChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Category Performance</h3>
+                        <canvas id="categoryPerformanceChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
+        </uib-tab>
 
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Rental Duration</h3>
-                <canvas id="rentalDurationChart"></canvas>
+        <!-- Miscellaneous Tab -->
+        <uib-tab heading="Miscellaneous">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Rental Duration</h3>
+                        <canvas id="rentalDurationChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Peak Booking Hours</h3>
+                        <canvas id="peakBookingHoursChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-8" style="margin-bottom: 20px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 15px;">Rental Type Distribution</h3>
+                        <canvas id="rentalTypeDistributionChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Bid Amount per Car</h3>
-                <canvas id="bidAmountChart"></canvas>
-            </div>
-        </div>
-
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Car Availability Insights</h3>
-                <canvas id="carAvailabilityChart"></canvas>
-            </div>
-        </div>
-
-
-
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Category Performance</h3>
-                <canvas id="categoryPerformanceChart"></canvas>
-            </div>
-        </div>
-
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Peak Booking Hours</h3>
-                <canvas id="peakBookingHoursChart"></canvas>
-            </div>
-        </div>
-        <div class="col-md-8" style="margin-bottom: 20px;">
-            <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 15px;">Rental Type Distribution</h3>
-                <canvas id="rentalTypeDistributionChart"></canvas>
-            </div>
-        </div>
-    </div>
+        </uib-tab>
+    </uib-tabset>
 
     <div class="loading-overlay" ng-if="vm.loading"
         style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;">
@@ -142,5 +149,19 @@
             max-width: 100% !important;
             margin-bottom: 15px;
         }
+    }
+
+    .nav-tabs {
+        margin-bottom: 20px;
+    }
+
+    .nav-tabs > li > a {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .nav-tabs > li.active > a {
+        color: #3498db;
+        font-weight: 600;
     }
 </style>
